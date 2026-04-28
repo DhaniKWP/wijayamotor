@@ -10,11 +10,11 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, $role): Response
     {
-        if (!$request()->check()) {
+        if (!$request->user()) {
             return redirect('/login');
         }
 
-        if ($request()->user()->role !== $role) {
+        if ($request->user()->role !== $role) {
             abort(403, 'Akses ditolak: Anda tidak memiliki izin untuk mengakses halaman ini.');
         }
         return $next($request);

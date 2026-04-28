@@ -11,17 +11,17 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
-        return "Customer Dashboard";
+        return view('dashboard');
     })->name('dashboard')->middleware('role:customer');
 
     Route::get('/admin/dashboard', function () {
-        return "Admin Dashboard";
+        return view('admin.dashboard');
     })->name('admin.dashboard')->middleware('role:admin');
 
     Route::get('/mekanik/dashboard', function () {
-        return "Mekanik Dashboard";
+        return view('mekanik.dashboard');
     })->name('mekanik.dashboard')->middleware('role:mekanik');
-    
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
