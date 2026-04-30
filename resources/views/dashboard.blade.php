@@ -7,7 +7,7 @@
         <h3 class="text-lg mb-4">Selamat datang, {{ auth()->user()->name }}</h3>
 
         <div class="space-y-3">
-            <a href="#" class="block bg-blue-500 text-white px-4 py-2 rounded">
+            <a href="{{ route('booking.create') }}" class="block bg-blue-500 text-white px-4 py-2 rounded">
                 Booking Service
             </a>
 
@@ -15,6 +15,9 @@
                 Lihat Riwayat Booking
             </a>
         </div>
+        <a href="{{ route('vehicle.create') }}" class="bg-green-500 text-white px-4 py-2 rounded">
+            Tambah Kendaraan
+        </a>
 
         <!-- Logout -->
         <div class="mt-6">
