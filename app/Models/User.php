@@ -32,6 +32,9 @@ class User extends Authenticatable
         'phone',
         'address',
         'role',
+        'otp_code',       // <-- Udah ditambahin
+        'otp_expires_at', // <-- Udah ditambahin
+        'email_verified_at',
     ];
 
     /**
@@ -54,6 +57,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'otp_expires_at' => 'datetime', // <-- Ditambahin biar gampang cek expired
         ];
     }
 

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\OtpVerificationController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -13,6 +14,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/verify-otp', [OtpVerificationController::class, 'show'])->name('otp.verify');
+Route::post('/verify-otp', [OtpVerificationController::class, 'verify'])->name('otp.verify.post');
 
 Route::middleware('auth')->group(function () {
 
