@@ -36,40 +36,38 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'phone' => ['required', 'string'],
-            'address' => ['nullable', 'string'],
+            'phone' => ['required', 'string', 'max:20'],
+            'address' => ['required', 'string'],
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
+
+        $otp = rand(100000, 999999);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
             'phone' => $request->phone,
             'address' => $request->address,
-            'role' => 'customer'
-        ]);
-
-        event(new Registered($user));
-
-       // 1. Generate 6 digit OTP acak
-        $otp = rand(100000, 999999);
-
-        // 2. Simpan OTP ke database dengan expired time (misal: 10 menit)
-        $user->update([
+            'role' => 'customer',
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
             'otp_code' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(10)
+            'otp_expires_at' => \Carbon\Carbon::now()->addMinutes(10),
         ]);
 
-        // 3. Kirim Email OTP
-        Mail::to($user->email)->send(new SendOtpMail($otp));
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\SendOtpMail($otp));
 
-        // 4. Simpan email ke session untuk pengecekan di halaman verifikasi
+        // SELAMATKAN DATA BOOKING SEMENTARA
+        $pendingBooking = session('pending_booking');
+
+        // BISA JADI DI SINI ADA AUTH::LOGIN ATAU SESSION INVALIDATE
+        // (Pastikan ini dijalankan setelah proses bikin user selesai)
+
+        // SIMPAN SESSION UNTUK HALAMAN OTP DAN KEMBALIKAN DATA BOOKING
         session(['otp_verify_email' => $user->email]);
+        if ($pendingBooking) {
+            session(['pending_booking' => $pendingBooking]);
+        }
 
-        // Catatan: Baris Auth::login($user); DIHAPUS agar tidak langsung masuk dashboard
-
-        // 5. Redirect ke halaman verifikasi OTP
         return redirect()->route('otp.verify');
     }
 }

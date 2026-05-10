@@ -24,6 +24,7 @@ public function store(Request $request)
         $validatedData = $request->validate([
             'brand' => 'required|string',
             'model' => 'required|string',
+            'year' => 'required|integer|min:1990|max:' . date('Y'),
             'plate_number' => 'required|string',
             'service_type' => 'required|string', 
             'preferred_date' => 'required|date',
@@ -50,7 +51,7 @@ public function store(Request $request)
             [
                 'user_id' => $user->id,
                 'name' => $validatedData['brand'] . ' ' . $validatedData['model'],
-                'year' => date('Y'),
+                'year' => $validatedData['year'],
             ]
         );
 

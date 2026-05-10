@@ -52,7 +52,7 @@ class OtpVerificationController extends Controller
                     [
                         'user_id' => $user->id,
                         'name' => $bookingData['brand'] . ' ' . $bookingData['model'],
-                        'year' => date('Y'),
+                        'year' => $bookingData['year'],
                     ]
                 );
 

@@ -24,7 +24,18 @@ Route::post('/booking', [BookingController::class, 'store'])->name('booking.stor
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        $user = Illuminate\Support\Facades\Auth::user();
+        
+        // Ambil mobil milik user
+        $vehicles = \App\Models\Vehicle::where('user_id', $user->id)->get();
+        
+        // Ambil booking milik user, gabungin sama data mobilnya
+        $bookings = \App\Models\Booking::where('user_id', $user->id)
+                        ->with('vehicle') // Pastiin ada relasi belongsTo di model Booking lu
+                        ->orderBy('tanggal', 'asc')
+                        ->get();
+
+        return view('dashboard', compact('vehicles', 'bookings'));
     })->name('dashboard')->middleware('role:customer');
 
     Route::get('/admin/dashboard', function () {

@@ -15,8 +15,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0A192F', // Dark Navy lu
-                        secondary: '#FF8C00', // Orange lu
+                        primary: '#0A192F', // Dark Navy
+                        secondary: '#FF8C00', // Orange
                         neutral: '#64748B',
                     },
                     fontFamily: { sans: ['Inter', 'sans-serif'] }
@@ -28,7 +28,6 @@
         body { font-family: 'Inter', sans-serif; } 
         [x-cloak] { display: none !important; }
         
-        /* Animasi Content Masuk */
         @keyframes fadeSlideUp {
             0% { opacity: 0; transform: translateY(15px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -124,7 +123,6 @@
             <div class="mb-12">
                 <h2 class="text-3xl md:text-4xl font-black text-primary tracking-tight">
                     Welcome back, {{ explode(' ', Auth::user()->name)[0] }}! <span class="origin-bottom-right inline-block hover:animate-bounce">👋</span>
-                
                 </h2>
                 <p class="text-neutral mt-3 text-lg leading-relaxed max-w-2xl">Akses cepat kontrol kendaraan, riwayat servis, dan katalog rekomendasi Anda.</p>
             </div>
@@ -142,63 +140,69 @@
                         </a>
                     </div>
 
-                    <div class="bg-primary rounded-3xl p-8 text-white shadow-xl shadow-primary/20 flex flex-col md:flex-row items-center relative overflow-hidden group hover:scale-[1.01] transition-transform">
+                    @forelse($bookings as $booking)
+                    <div class="bg-primary rounded-3xl p-8 text-white shadow-xl shadow-primary/20 flex flex-col md:flex-row items-center relative overflow-hidden group hover:scale-[1.01] transition-transform mb-6">
                         <div class="absolute -right-20 -top-20 w-64 h-64 bg-secondary rounded-full blur-[100px] opacity-10 transition group-hover:opacity-20"></div>
                         
                         <div class="md:flex-1 relative z-10 w-full mb-6 md:mb-0">
                             <div class="inline-flex items-center px-4 py-1.5 rounded-lg border border-secondary/30 bg-secondary/10 text-secondary text-xs font-bold tracking-widest uppercase mb-6">
-                                Pending Confirmation
+                                Status: {{ strtoupper($booking->status) }}
                             </div>
-                            <h4 class="text-3xl font-black mb-3">Honda CR-V</h4>
-                            <p class="text-secondary font-bold text-lg mb-8 uppercase tracking-wider">B 1234 XYZ</p>
+                            <h4 class="text-3xl font-black mb-3">{{ $booking->vehicle->name ?? 'Mobil Dihapus' }}</h4>
+                            <p class="text-secondary font-bold text-lg mb-8 uppercase tracking-wider">{{ $booking->vehicle->plate_number ?? '-' }}</p>
                             
                             <div class="grid grid-cols-2 gap-x-8 gap-y-4 text-sm max-w-sm">
-                                <p class="text-slate-400">Servis:</p>
-                                <p class="font-bold text-slate-100">Advanced Engine Tune-up</p>
+                                <p class="text-slate-400">Servis ID:</p>
+                                <p class="font-bold text-slate-100">Service #{{ $booking->service_id }}</p>
                                 <p class="text-slate-400">Jadwal:</p>
-                                <p class="font-bold text-slate-100">Selasa, 12 Mei 2026</p>
+                                <p class="font-bold text-slate-100">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('l, d M Y') }}</p>
                                 <p class="text-slate-400">Jam:</p>
-                                <p class="font-bold text-slate-100">10:00 AM</p>
+                                <p class="font-bold text-slate-100">{{ $booking->jam }} WIB</p>
                             </div>
                         </div>
 
                         <div class="w-40 h-40 bg-white rounded-3xl p-5 shadow-inner relative z-10 flex flex-col items-center justify-center shrink-0">
                             <div class="w-full h-full bg-slate-100 rounded-xl flex items-center justify-center">
-                                <svg class="w-20 h-20 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h.01M16 20h.01M21 12h.01M12 16h.01M12 20h.01M16 16h.01M12 4h.01M16 4h.01M8 12h.01M8 16h.01M8 20h.01M8 8h.01M4 8h.01M4 12h.01M4 16h.01M4 20h.01M4 4h.01M8 4h.01M12 8h.01M16 8h.01M21 4h.01M21 16h.01"/></svg>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=WM-BOOKING-{{ $booking->id }}" alt="QR Code" class="rounded-lg mix-blend-multiply opacity-80">
                             </div>
-                            <p class="text-[9px] text-neutral mt-2 font-mono">WM-BOOKING-9988</p>
+                            <p class="text-[9px] text-neutral mt-2 font-mono">WM-BOOKING-{{ str_pad($booking->id, 4, '0', STR_PAD_LEFT) }}</p>
                         </div>
                     </div>
+                    @empty
+                    <div class="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-12 text-center">
+                        <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        </div>
+                        <p class="text-neutral font-medium mb-4">Belum ada jadwal servis yang aktif.</p>
+                        <a href="{{ route('booking.create') }}" class="inline-block bg-secondary hover:bg-[#e67e00] text-white px-6 py-2 rounded-lg font-bold transition shadow-md shadow-secondary/20">+ Buat Jadwal Servis</a>
+                    </div>
+                    @endforelse
                 </div>
 
                 <div class="xl:col-span-1 space-y-6">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-primary flex items-center">
                             <svg class="w-6 h-6 mr-3 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                            Garasi Saya (2)
+                            Garasi Saya ({{ $vehicles->count() }})
                         </h3>
                     </div>
 
                     <div class="space-y-4">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center hover:shadow-md hover:border-secondary/30 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
-                            <div class="w-14 h-14 bg-slate-100 text-secondary rounded-xl flex items-center justify-center mr-4 shadow-inner">🚘</div>
+                        @forelse($vehicles as $vehicle)
+                        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center hover:shadow-md hover:border-secondary/30 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer group">
+                            <div class="w-14 h-14 bg-slate-100 text-secondary rounded-xl flex items-center justify-center mr-4 shadow-inner text-xl">🚘</div>
                             <div class="flex-1">
-                                <p class="text-xs text-neutral">Honda</p>
-                                <h4 class="font-bold text-primary mb-1">CR-V</h4>
-                                <p class="text-[11px] font-black text-secondary tracking-widest uppercase">B 1234 XYZ</p>
+                                <p class="text-xs text-neutral">Tahun: {{ $vehicle->year }}</p>
+                                <h4 class="font-bold text-primary mb-1">{{ $vehicle->name }}</h4>
+                                <p class="text-[11px] font-black text-secondary tracking-widest uppercase">{{ $vehicle->plate_number }}</p>
                             </div>
-                            <svg class="w-5 h-5 text-neutral-300 group-hover:text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            <svg class="w-5 h-5 text-neutral-300 group-hover:text-secondary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </div>
-
-                        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center hover:shadow-md hover:border-secondary/30 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
-                            <div class="w-14 h-14 bg-slate-100 text-secondary rounded-xl flex items-center justify-center mr-4 shadow-inner">🚙</div>
-                            <div class="flex-1">
-                                <p class="text-xs text-neutral">Toyota</p>
-                                <h4 class="font-bold text-primary mb-1">Avanza</h4>
-                                <p class="text-[11px] font-black text-secondary tracking-widest uppercase">B 5678 PQR</p>
-                            </div>
-                            <svg class="w-5 h-5 text-neutral-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        @empty
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 text-center">
+                            <p class="text-sm text-neutral mb-2">Garasi kosong.</p>
                         </div>
+                        @endforelse
 
                         <a href="{{ route('vehicle.create') }}" class="block w-full text-center bg-slate-100 hover:bg-slate-200 text-neutral-700 hover:text-primary font-bold px-6 py-4 rounded-xl border border-dashed border-slate-200 transition">
                             + Tambah Kendaraan
@@ -207,8 +211,7 @@
                 </div>
 
             </div>
-
-        </main>
+            </main>
     </div>
 
 </body>

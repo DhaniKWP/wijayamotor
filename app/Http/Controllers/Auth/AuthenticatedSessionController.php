@@ -30,34 +30,65 @@ class AuthenticatedSessionController extends Controller
 
         $user = \App\Models\User::find(Auth::id());
 
-        // --- CEK JIKA BELUM VERIFIKASI ---
+        // 1. Ambil data booking dari session (jika ada)
+        $pendingBooking = session('pending_booking');
+
+        // 2. CEK JIKA BELUM VERIFIKASI (Alur OTP)
         if ($user->email_verified_at === null) {
-            
-            // 1. Generate OTP baru 
             $otp = rand(100000, 999999);
-            
             $user->update([
                 'otp_code' => $otp,
                 'otp_expires_at' => \Carbon\Carbon::now()->addMinutes(10)
             ]);
 
-            // 2. Kirim ulang email OTP
             \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\SendOtpMail($otp));
 
-            // 3. LOGOUT-KAN DULU DAN BERSIHKAN SESSION LAMA
+            // Logout sementara untuk verifikasi
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            // 4. BARU SIMPAN SESSION EMAIL OTP DI SINI (Setelah dibersihkan)
             session(['otp_verify_email' => $user->email]);
+            
+            // Simpan kembali data booking agar tidak hilang saat session di-invalidate
+            if ($pendingBooking) {
+                session(['pending_booking' => $pendingBooking]);
+            }
 
-            // 5. Tendang ke halaman verifikasi OTP
-            return redirect()->route('otp.verify')->withErrors(['otp' => 'Akun belum diverifikasi. Kami telah mengirimkan OTP baru ke email Anda.']);
+            return redirect()->route('otp.verify')->withErrors(['otp' => 'Akun belum diverifikasi. Silakan masukkan OTP.']);
         }
-        // --- BATAS TAMBAHAN ---
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // 3. JIKA SUDAH VERIFIKASI (LOGIN BERHASIL)
+        // Kita cek: Apakah dia login setelah ngisi form booking?
+        if ($pendingBooking) {
+            // Simpan Kendaraan
+            $vehicle = \App\Models\Vehicle::firstOrCreate(
+                ['plate_number' => $pendingBooking['plate_number']],
+                [
+                    'user_id' => $user->id,
+                    'name' => $pendingBooking['brand'] . ' ' . $pendingBooking['model'],
+                    'year' => $pendingBooking['year'],
+                ]
+            );
+
+            // Simpan Booking
+            \App\Models\Booking::create([
+                'user_id' => $user->id,
+                'vehicle_id' => $vehicle->id,
+                'service_id' => 1, // Sesuaikan ID service
+                'tanggal' => $pendingBooking['preferred_date'],
+                'jam' => $pendingBooking['preferred_time'],
+                'keluhan' => $pendingBooking['complaint'] ?? null,
+                'status' => 'pending',
+            ]);
+
+            // Hapus session titipan
+            session()->forget('pending_booking');
+
+            return redirect()->intended(route('dashboard'))->with('success', 'Login sukses dan jadwal servis Anda telah tercatat!');
+        }
+
+        return redirect()->intended(route('dashboard'));
     }
 
     /**
