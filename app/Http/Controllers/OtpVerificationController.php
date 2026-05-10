@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Vehicle;
+use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -39,6 +41,37 @@ class OtpVerificationController extends Controller
             // Clear session dan login otomatis
             $request->session()->forget('otp_verify_email');
             Auth::login($user);
+
+            // PENANGKAP LAZY REGISTRATION (GUEST BOOKING)
+            if (session()->has('pending_booking')) {
+                $bookingData = session('pending_booking');
+                
+                // 1. Simpan/Ambil Kendaraan
+                $vehicle = Vehicle::firstOrCreate(
+                    ['plate_number' => $bookingData['plate_number']],
+                    [
+                        'user_id' => $user->id,
+                        'name' => $bookingData['brand'] . ' ' . $bookingData['model'],
+                        'year' => date('Y'),
+                    ]
+                );
+
+                // 2. Simpan Booking
+                Booking::create([
+                    'user_id' => $user->id,
+                    'vehicle_id' => $vehicle->id,
+                    'service_id' => 1, // Nanti ganti sesuai ID asli
+                    'tanggal' => $bookingData['preferred_date'],
+                    'jam' => $bookingData['preferred_time'],
+                    'keluhan' => $bookingData['complaint'] ?? null,
+                    'status' => 'pending',
+                ]);
+
+                // 3. Bersihkan Session
+                session()->forget('pending_booking');
+
+                return redirect()->route('dashboard')->with('success', 'Akun dibuat dan Booking langsung terkonfirmasi!');
+            }
 
             return redirect()->route('dashboard');
         }

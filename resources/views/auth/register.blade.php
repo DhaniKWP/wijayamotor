@@ -1,66 +1,144 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Wijaya Motor</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A192F',
+                        secondary: '#FF8C00',
+                        neutral: '#64748B',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style> 
+        body { font-family: 'Inter', sans-serif; } 
+        
+        /* Custom Animation */
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-form {
+            animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="bg-white flex min-h-screen font-sans antialiased">
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+    <div class="hidden lg:flex lg:w-1/2 lg:fixed lg:inset-y-0 lg:left-0 bg-primary items-end p-16 overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+             alt="Sport Car" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0A192F] via-[#0A192F]/80 to-transparent"></div>
+        <div class="relative z-10 w-full max-w-lg">
+            <h2 class="text-white font-black text-2xl tracking-tighter mb-6">WIJAYA MOTOR</h2>
+            <h1 class="text-white font-bold text-5xl leading-tight mb-6">Precision engineering for your peace of mind.</h1>
+            <p class="text-slate-300 text-lg mb-12">Access Indonesia's premier automotive service network. Track your maintenance, book specialists, and manage your vehicle's health with clinical precision.</p>
+            <div class="flex items-center space-x-12 border-t border-white/20 pt-8">
+                <div>
+                    <h3 class="text-secondary font-bold text-3xl">15k+</h3>
+                    <p class="text-white/60 text-xs tracking-widest uppercase font-semibold mt-1">Vehicles Serviced</p>
+                </div>
+                <div>
+                    <h3 class="text-secondary font-bold text-3xl">4.9/5</h3>
+                    <p class="text-white/60 text-xs tracking-widest uppercase font-semibold mt-1">Customer Rating</p>
+                </div>
+            </div>
+            <p class="text-white/40 text-xs mt-16">&copy; 2024 Wijaya Motor. Professional Automotive Excellence.</p>
         </div>
+    </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    <div class="w-full lg:w-1/2 lg:ml-[50%] min-h-screen flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-12">
+        <div class="w-full max-w-md mx-auto animate-form opacity-0">
+            
+            <h2 class="text-3xl font-bold text-primary mb-2">Create an account</h2>
+            <p class="text-neutral text-sm mb-8">Join Wijaya Motor to manage your vehicles and track services.</p>
+
+            <div class="bg-slate-100 p-1 rounded-xl flex items-center mb-8">
+                <a href="{{ route('login') }}" class="w-1/2 text-center py-2.5 rounded-lg text-neutral hover:text-primary font-medium text-sm transition">Login</a>
+                <a href="{{ route('register') }}" class="w-1/2 text-center py-2.5 rounded-lg bg-white shadow-sm text-secondary font-bold text-sm transition">Create Account</a>
+            </div>
+
+            @if ($errors->any())
+                <div class="mb-6 p-4 rounded-lg bg-red-50 text-red-600 text-sm border border-red-100">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+                <div class="mb-5">
+                    <label for="name" class="block text-sm font-semibold text-primary mb-2">Full Name</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
+                        class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent placeholder-slate-400 transition" 
+                        placeholder="John Doe">
+                </div>
+
+                <div class="mb-5">
+                    <label for="email" class="block text-sm font-semibold text-primary mb-2">Email Address</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                        class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent placeholder-slate-400 transition" 
+                        placeholder="name@example.com">
+                </div>
+
+                <div class="mb-5">
+                    <label for="phone" class="block text-sm font-semibold text-primary mb-2">Phone Number</label>
+                    <input id="phone" type="text" name="phone" value="{{ old('phone') }}" required
+                        class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent placeholder-slate-400 transition" 
+                        placeholder="081234567890">
+                </div>
+
+                <div class="mb-5">
+                    <label for="address" class="block text-sm font-semibold text-primary mb-2">Address</label>
+                    <textarea id="address" name="address" rows="2"
+                        class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent placeholder-slate-400 transition" 
+                        placeholder="Jl. Sudirman No. 123...">{{ old('address') }}</textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div>
+                        <label for="password" class="block text-sm font-semibold text-primary mb-2">Password</label>
+                        <input id="password" type="password" name="password" required
+                            class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent placeholder-slate-400 transition" 
+                            placeholder="••••••••">
+                    </div>
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-semibold text-primary mb-2">Confirm</label>
+                        <input id="password_confirmation" type="password" name="password_confirmation" required
+                            class="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent placeholder-slate-400 transition" 
+                            placeholder="••••••••">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-secondary hover:bg-[#e67e00] text-white font-bold py-3.5 px-4 rounded-lg transition shadow-lg shadow-secondary/20">
+                    Create Account
+                </button>
+            </form>
+
+            <p class="text-center text-sm text-neutral mt-8">
+                Already have an account? <a href="{{ route('login') }}" class="font-bold text-secondary hover:underline transition">Sign In</a>
+            </p>
+
+            <div class="flex justify-center space-x-6 mt-16 text-xs text-neutral font-medium pb-4">
+                <a href="#" class="hover:text-primary transition">Privacy Policy</a>
+                <a href="#" class="hover:text-primary transition">Terms of Service</a>
+                <a href="#" class="hover:text-primary transition">Support</a>
+            </div>
         </div>
-
-        <!-- PHONE -->
-        <div class="mt-4">
-            <x-input-label for="phone" :value="'Phone'" />
-            <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" required />
-            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
-        </div>
-
-        <!-- ADDRESS -->
-        <div class="mt-4">
-            <x-input-label for="address" :value="'Address'" />
-            <textarea name="address" class="block mt-1 w-full border rounded"></textarea>
-            <x-input-error :messages="$errors->get('address')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+</body>
+</html>

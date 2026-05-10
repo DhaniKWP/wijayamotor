@@ -18,6 +18,9 @@ Route::get('/', function () {
 Route::get('/verify-otp', [OtpVerificationController::class, 'show'])->name('otp.verify');
 Route::post('/verify-otp', [OtpVerificationController::class, 'verify'])->name('otp.verify.post');
 
+Route::get('/booking/create', [BookingController::class, 'create'])->name('booking.create');
+Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', function () {
@@ -37,12 +40,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 });
-
-Route::middleware(['auth', 'verified', 'role:customer'])->group(function () {
-    Route::get('/booking/create', [BookingController::class, 'create'])->name('booking.create');
-    Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
-});
-
 
 Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/vehicle/create', [VehicleController::class, 'create'])->name('vehicle.create');
