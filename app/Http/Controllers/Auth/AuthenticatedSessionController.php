@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\User; // <-- TAMBAHKAN IMPORT INI
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,12 +28,10 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        $user = \App\Models\User::find(Auth::id());
-
-        // 1. Ambil data booking dari session (jika ada)
+        $user = User::find(Auth::id());
         $pendingBooking = session('pending_booking');
 
-        // 2. CEK JIKA BELUM VERIFIKASI (Alur OTP)
+        // CEK JIKA BELUM VERIFIKASI (Alur OTP)
         if ($user->email_verified_at === null) {
             $otp = rand(100000, 999999);
             $user->update([
@@ -43,14 +41,12 @@ class AuthenticatedSessionController extends Controller
 
             \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\SendOtpMail($otp));
 
-            // Logout sementara untuk verifikasi
             Auth::guard('web')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             session(['otp_verify_email' => $user->email]);
             
-            // Simpan kembali data booking agar tidak hilang saat session di-invalidate
             if ($pendingBooking) {
                 session(['pending_booking' => $pendingBooking]);
             }
@@ -58,10 +54,16 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('otp.verify')->withErrors(['otp' => 'Akun belum diverifikasi. Silakan masukkan OTP.']);
         }
 
-        // 3. JIKA SUDAH VERIFIKASI (LOGIN BERHASIL)
-        // Kita cek: Apakah dia login setelah ngisi form booking?
+        // TENTUKAN ARAH REDIRECT BERDASARKAN ROLE
+        $url = route('dashboard'); // Default customer
+        if ($user->role === 'admin') {
+            $url = route('admin.dashboard');
+        } elseif ($user->role === 'mekanik') {
+            $url = route('mekanik.dashboard');
+        }
+
+        // JIKA ADA GUEST BOOKING
         if ($pendingBooking) {
-            // Simpan Kendaraan
             $vehicle = \App\Models\Vehicle::firstOrCreate(
                 ['plate_number' => $pendingBooking['plate_number']],
                 [
@@ -71,24 +73,22 @@ class AuthenticatedSessionController extends Controller
                 ]
             );
 
-            // Simpan Booking
             \App\Models\Booking::create([
                 'user_id' => $user->id,
                 'vehicle_id' => $vehicle->id,
-                'service_id' => 1, // Sesuaikan ID service
+                'service_id' => 1,
                 'tanggal' => $pendingBooking['preferred_date'],
                 'jam' => $pendingBooking['preferred_time'],
                 'keluhan' => $pendingBooking['complaint'] ?? null,
                 'status' => 'pending',
             ]);
 
-            // Hapus session titipan
             session()->forget('pending_booking');
 
-            return redirect()->intended(route('dashboard'))->with('success', 'Login sukses dan jadwal servis Anda telah tercatat!');
+            return redirect()->intended($url)->with('success', 'Login sukses dan jadwal servis Anda telah tercatat!');
         }
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended($url);
     }
 
     /**
@@ -97,9 +97,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');

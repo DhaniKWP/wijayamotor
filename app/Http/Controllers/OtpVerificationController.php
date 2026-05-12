@@ -13,7 +13,6 @@ class OtpVerificationController extends Controller
 {
     public function show()
     {
-        // Jika tidak ada session email pendaftar, tendang balik ke register
         if (!session('otp_verify_email')) {
             return redirect()->route('register');
         }
@@ -28,25 +27,29 @@ class OtpVerificationController extends Controller
 
         $user = User::where('email', session('otp_verify_email'))->first();
 
-        // Cek apakah user ada, OTP cocok, dan belum expired
         if ($user && $user->otp_code == $request->otp && Carbon::now()->lessThanOrEqualTo($user->otp_expires_at)) {
             
-            // Verifikasi sukses! 
             $user->update([
-                'email_verified_at' => now(), // Tandai email sudah diverifikasi
-                'otp_code' => null,           // Hapus OTP agar tidak bisa dipakai lagi
+                'email_verified_at' => now(), 
+                'otp_code' => null,           
                 'otp_expires_at' => null
             ]);
 
-            // Clear session dan login otomatis
             $request->session()->forget('otp_verify_email');
             Auth::login($user);
+
+            // TENTUKAN ARAH REDIRECT BERDASARKAN ROLE
+            $url = route('dashboard'); // Default customer
+            if ($user->role === 'admin') {
+                $url = route('admin.dashboard');
+            } elseif ($user->role === 'mekanik') {
+                $url = route('mekanik.dashboard');
+            }
 
             // PENANGKAP LAZY REGISTRATION (GUEST BOOKING)
             if (session()->has('pending_booking')) {
                 $bookingData = session('pending_booking');
                 
-                // 1. Simpan/Ambil Kendaraan
                 $vehicle = Vehicle::firstOrCreate(
                     ['plate_number' => $bookingData['plate_number']],
                     [
@@ -56,24 +59,22 @@ class OtpVerificationController extends Controller
                     ]
                 );
 
-                // 2. Simpan Booking
                 Booking::create([
                     'user_id' => $user->id,
                     'vehicle_id' => $vehicle->id,
-                    'service_id' => 1, // Nanti ganti sesuai ID asli
+                    'service_id' => 1, 
                     'tanggal' => $bookingData['preferred_date'],
                     'jam' => $bookingData['preferred_time'],
                     'keluhan' => $bookingData['complaint'] ?? null,
                     'status' => 'pending',
                 ]);
 
-                // 3. Bersihkan Session
                 session()->forget('pending_booking');
 
-                return redirect()->route('dashboard')->with('success', 'Akun dibuat dan Booking langsung terkonfirmasi!');
+                return redirect()->intended($url)->with('success', 'Akun dibuat dan Booking langsung terkonfirmasi!');
             }
 
-            return redirect()->route('dashboard');
+            return redirect()->intended($url);
         }
 
         return back()->withErrors(['otp' => 'Kode OTP tidak valid atau sudah kedaluwarsa.']);

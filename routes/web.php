@@ -9,11 +9,19 @@ use App\Http\Controllers\OtpVerificationController;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return redirect('/dashboard');
+        $role = Auth::user()->role;
+        
+        if ($role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif ($role === 'mekanik') {
+            return redirect()->route('mekanik.dashboard');
+        }
+        
+        // Default untuk customer
+        return redirect()->route('dashboard');
     }
     return view('welcome');
 });
-
 
 Route::get('/verify-otp', [OtpVerificationController::class, 'show'])->name('otp.verify');
 Route::post('/verify-otp', [OtpVerificationController::class, 'verify'])->name('otp.verify.post');
@@ -21,40 +29,66 @@ Route::post('/verify-otp', [OtpVerificationController::class, 'verify'])->name('
 Route::get('/booking/create', [BookingController::class, 'create'])->name('booking.create');
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
 
-Route::middleware('auth')->group(function () {
-
+// =========================================
+// ROUTE KHUSUS CUSTOMER
+// =========================================
+Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/dashboard', function () {
-        $user = Illuminate\Support\Facades\Auth::user();
-        
-        // Ambil mobil milik user
+        $user = Auth::user();
         $vehicles = \App\Models\Vehicle::where('user_id', $user->id)->get();
-        
-        // Ambil booking milik user, gabungin sama data mobilnya
         $bookings = \App\Models\Booking::where('user_id', $user->id)
-                        ->with('vehicle') // Pastiin ada relasi belongsTo di model Booking lu
+                        ->with('vehicle')
                         ->orderBy('tanggal', 'asc')
                         ->get();
 
         return view('dashboard', compact('vehicles', 'bookings'));
-    })->name('dashboard')->middleware('role:customer');
+    })->name('dashboard');
 
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard')->middleware('role:admin');
+    Route::get('/vehicle/create', [VehicleController::class, 'create'])->name('vehicle.create');
+    Route::post('/vehicle', [VehicleController::class, 'store'])->name('vehicle.store');
+});
 
-    Route::get('/mekanik/dashboard', function () {
-        return view('mekanik.dashboard');
-    })->name('mekanik.dashboard')->middleware('role:mekanik');
+// =========================================
+// ROUTE KHUSUS ADMIN
+// =========================================
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    Route::get('/dashboard', function () {
+        // Ambil semua data servis buat ditampilin di tabel admin
+        $services = \App\Models\Service::orderBy('created_at', 'desc')->get();
+        return view('admin.dashboard', compact('services'));
+    })->name('dashboard');
+    
+    Route::post('/services', function (\Illuminate\Http\Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price_estimate' => 'required|numeric',
+            'description' => 'nullable|string',
+        ]);
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        \App\Models\Service::create($request->all());
+
+        return redirect()->route('admin.dashboard')->with('success', 'Data servis berhasil ditambahkan!');
+    })->name('services.store');
 
 });
 
-Route::middleware(['auth', 'role:customer'])->group(function () {
-    Route::get('/vehicle/create', [VehicleController::class, 'create'])->name('vehicle.create');
-    Route::post('/vehicle', [VehicleController::class, 'store'])->name('vehicle.store');
+// =========================================
+// ROUTE KHUSUS MEKANIK
+// =========================================
+Route::middleware(['auth', 'role:mekanik'])->group(function () {
+    Route::get('/mekanik/dashboard', function () {
+        return view('mekanik.dashboard');
+    })->name('mekanik.dashboard');
+});
+
+// =========================================
+// ROUTE PROFILE (Bawaan Breeze)
+// =========================================
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';
