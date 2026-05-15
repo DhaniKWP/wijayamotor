@@ -55,7 +55,8 @@ class AuthenticatedSessionController extends Controller
         }
 
         // TENTUKAN ARAH REDIRECT BERDASARKAN ROLE
-        $url = route('dashboard'); // Default customer
+        $url = '/'; // Default customer
+
         if ($user->role === 'admin') {
             $url = route('admin.dashboard');
         } elseif ($user->role === 'mekanik') {
@@ -85,10 +86,10 @@ class AuthenticatedSessionController extends Controller
 
             session()->forget('pending_booking');
 
-            return redirect()->intended($url)->with('success', 'Login sukses dan jadwal servis Anda telah tercatat!');
+            return redirect($url)->with('success', 'Login sukses dan jadwal servis Anda telah tercatat!');
         }
 
-        return redirect()->intended($url);
+        return redirect($url);
     }
 
     /**

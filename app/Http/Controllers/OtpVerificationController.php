@@ -39,7 +39,7 @@ class OtpVerificationController extends Controller
             Auth::login($user);
 
             // TENTUKAN ARAH REDIRECT BERDASARKAN ROLE
-            $url = route('dashboard'); // Default customer
+            $url = '/'; // Default customer
             if ($user->role === 'admin') {
                 $url = route('admin.dashboard');
             } elseif ($user->role === 'mekanik') {
@@ -71,10 +71,10 @@ class OtpVerificationController extends Controller
 
                 session()->forget('pending_booking');
 
-                return redirect()->intended($url)->with('success', 'Akun dibuat dan Booking langsung terkonfirmasi!');
+                return redirect($url)->with('success', 'Akun dibuat dan Booking langsung terkonfirmasi!');
             }
 
-            return redirect()->intended($url);
+            return redirect($url);
         }
 
         return back()->withErrors(['otp' => 'Kode OTP tidak valid atau sudah kedaluwarsa.']);

@@ -18,9 +18,6 @@ Route::get('/', function () {
         } elseif ($role === 'mekanik') {
             return redirect()->route('mekanik.dashboard');
         }
-        
-        // Default untuk customer
-        return redirect()->route('dashboard');
     }
     return view('welcome');
 });
