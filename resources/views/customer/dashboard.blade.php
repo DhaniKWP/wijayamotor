@@ -204,8 +204,12 @@
                         </div>
                         @endforelse
 
-                        <a href="{{ route('vehicle.create') }}" class="block w-full text-center bg-slate-100 hover:bg-slate-200 text-neutral-700 hover:text-primary font-bold px-6 py-4 rounded-xl border border-dashed border-slate-200 transition">
-                            + Tambah Kendaraan
+                        <a href="{{ route('garasi.index') }}" class="...">
+                        Garasi Saya
+                        </a>
+
+                        <a href="{{ route('garasi.index') }}" class="...">
+                        + Tambah Kendaraan
                         </a>
                     </div>
                 </div>

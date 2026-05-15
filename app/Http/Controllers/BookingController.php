@@ -15,7 +15,7 @@ class BookingController extends Controller
     $vihicles = Auth::check() ? Vehicle::where("user_id", Auth::id())->get() : collect();
     $services = Service::all();
 
-    return view('booking.create', compact('vihicles', 'services'));
+    return view('customer.booking.create', compact('vihicles', 'services'));
 }
 
 public function store(Request $request)

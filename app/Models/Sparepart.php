@@ -20,6 +20,7 @@ class Sparepart extends Model
         'price',
         'stock',
         'description',
+        'image', // <-- INI TAMBAHANNYA BIAR BISA DI-SAVE DARI FORM
     ];
 
     /**
