@@ -85,55 +85,57 @@
                         @csrf
                         
                         <div class="mb-10">
-                            <h3 class="text-xl font-bold text-primary flex items-center mb-6">
-                                <span class="text-secondary mr-3 text-2xl">🚘</span> Informasi Kendaraan
+                            <h3 class="text-lg font-bold text-primary mb-5 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                                Pilih Kendaraan Anda
                             </h3>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-primary mb-2">Merek (Brand)</label>
-                                    <input type="text" name="brand" placeholder="Contoh: Honda" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all">
+                            @if($vehicles->count() > 0)
+                                <select name="vehicle_id" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary outline-none bg-slate-50">
+                                    <option value="" disabled selected>-- Pilih Kendaraan dari Garasi --</option>
+                                    @foreach($vehicles as $vehicle)
+                                        <option value="{{ $vehicle->id }}">
+                                            {{ $vehicle->name }} - Plat: {{ $vehicle->plate_number }} ({{ $vehicle->year }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-xs text-neutral mt-2">*Mobil tidak ada di pilihan? <a href="{{ route('garasi.index') }}" class="text-secondary font-bold hover:underline">Tambah di Garasi Saya</a></p>
+                            @else
+                                <div class="bg-rose-50 border border-rose-200 p-4 rounded-xl">
+                                    <p class="text-sm text-rose-600 font-medium mb-2">Anda belum mendaftarkan kendaraan di Garasi.</p>
+                                    <a href="{{ route('garasi.index') }}" class="inline-block bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-[#112a4f] transition-colors">
+                                        + Tambah Kendaraan Sekarang
+                                    </a>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-primary mb-2">Tipe (Model)</label>
-                                    <input type="text" name="model" placeholder="Contoh: CR-V" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label class="block text-sm font-semibold text-primary mb-2">Tahun Kendaraan</label>
-                                    <input type="number" name="year" placeholder="Contoh: 2018" min="1990" max="{{ date('Y') }}" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-semibold text-primary mb-2">Plat Nomor</label>
-                                    <input type="text" name="plate_number" placeholder="B 1234 ABC" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all uppercase">
-                                </div>
-                            </div>
+                            @endif
                         </div>
 
                         <div class="mb-10">
-                            <h3 class="text-xl font-bold text-primary flex items-center mb-6">
-                                <span class="text-secondary mr-3 text-2xl">🛠️</span> Detail Servis
+                            <h3 class="text-lg font-bold text-primary mb-5 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                Detail Servis
                             </h3>
                             
                             <div class="mb-6">
-                                <label class="block text-sm font-semibold text-primary mb-2">Pilih Jenis Servis</label>
-                                <select name="service_type" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all bg-white appearance-none">
-                                    <option value="1">Routine Maintenance (Oil Change & Inspection)</option>
-                                    <option value="2">Advanced Engine Tune-up</option>
-                                    <option value="3">Brake Service & Replacement</option>
-                                    <option value="4">Electrical & Battery Diagnostics</option>
+                                <label class="block text-sm font-semibold text-slate-600 mb-2">Pilih Jenis Servis</label>
+                                <select name="service_id" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary outline-none">
+                                    <option value="" disabled selected>-- Pilih Layanan yang Dibutuhkan --</option>
+                                    @foreach($services as $service)
+                                        <option value="{{ $service->id }}">
+                                            {{ $service->name }} (Estimasi: Rp {{ number_format($service->price_estimate, 0, ',', '.') }})
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-semibold text-primary mb-2">Tanggal Servis</label>
-                                    <input type="date" name="preferred_date" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all text-neutral">
+                                    <input type="date" name="preferred_date" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary outline-none transition-all text-neutral">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-semibold text-primary mb-2">Jam Servis</label>
-                                    <select name="preferred_time" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all bg-white">
+                                    <select name="preferred_time" required class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary outline-none transition-all bg-white">
                                         <option value="08:00">08:00 WIB</option>
                                         <option value="10:00">10:00 WIB</option>
                                         <option value="13:00">13:00 WIB</option>
@@ -144,13 +146,12 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-primary mb-2">Keluhan (Opsional)</label>
-                                <textarea name="complaint" rows="3" placeholder="Contoh: Bunyi berdecit saat rem diinjak..." class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all resize-none"></textarea>
+                                <textarea name="complaint" rows="3" placeholder="Contoh: Bunyi berdecit saat rem diinjak..." class="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:ring-2 focus:ring-secondary outline-none transition-all resize-none"></textarea>
                             </div>
-                        </div>
-
-                        <button type="submit" class="w-full bg-[#E86E25] hover:bg-[#c95a1a] text-white font-bold py-4 px-4 rounded-xl transition shadow-lg shadow-[#E86E25]/30 text-lg">
+                        </div> <button type="submit" class="w-full bg-[#E86E25] hover:bg-[#c95a1a] text-white font-bold py-4 px-4 rounded-xl transition shadow-lg shadow-[#E86E25]/30 text-lg">
                             Konfirmasi Booking Servis
                         </button>
+
                     </form>
                 </div>
             </div>
@@ -161,7 +162,7 @@
                     <div class="space-y-4 mb-6">
                         <div class="flex justify-between items-center pb-4 border-b border-white/10">
                             <span class="text-slate-300 text-sm">Estimasi Biaya Dasar</span>
-                            <span class="font-bold">Rp 150.000*</span>
+                            <span class="font-bold">Sesuai Pilihan</span>
                         </div>
                         <div class="flex justify-between items-center pb-4 border-b border-white/10">
                             <span class="text-slate-300 text-sm">Estimasi Durasi</span>
@@ -185,6 +186,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </body>

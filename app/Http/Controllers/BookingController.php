@@ -10,13 +10,17 @@ use App\Models\Service;
 
 class BookingController extends Controller
 {
-    public function create(Request $request)
-{
-    $vihicles = Auth::check() ? Vehicle::where("user_id", Auth::id())->get() : collect();
-    $services = Service::all();
-
-    return view('customer.booking.create', compact('vihicles', 'services'));
-}
+    public function create()
+    {
+        // 1. Ambil data kendaraan khusus milik user yang lagi login
+        $vehicles = \App\Models\Vehicle::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
+        
+        // 2. Ambil data master servis dari database
+        $services = \App\Models\Service::all();
+        
+        // 3. Lempar kedua data ini ke file Blade (sesuaikan path folder view lu ya)
+        return view('customer.booking.create', compact('vehicles', 'services'));
+    }
 
 public function store(Request $request)
     {
