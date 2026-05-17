@@ -23,7 +23,9 @@ class Booking extends Model
         'user_id',
         'vehicle_id',
         'service_id',
+        'tipe_booking',   // <-- BARU: Untuk ngenalin Bengkel / Home Service
         'cabang',
+        'alamat_lengkap', // <-- BARU: Untuk alamat Home Service
         'jenis_servis',
         'kilometer',
         'addons',
@@ -40,9 +42,12 @@ class Booking extends Model
     protected $casts = [
         'tanggal' => 'date',
         'jam' => 'datetime:H:i',
+        'addons' => 'array', // <-- BARU: Otomatis convert JSON ke Array
     ];
 
+    // =====================================
     // RELASI
+    // =====================================
 
     // Booking milik user
     public function user()
@@ -74,7 +79,9 @@ class Booking extends Model
         return $this->hasOne(MechanicAssignment::class);
     }
 
+    // =====================================
     // HELPER (STATUS)
+    // =====================================
 
     public function isPending()
     {

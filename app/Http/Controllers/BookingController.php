@@ -33,57 +33,82 @@ class BookingController extends Controller
     }
 
     /**
+     * Menampilkan form booking Home Service (INI YANG TADI HILANG)
+     */
+    public function createHomeService()
+    {
+        // Ambil data kendaraan khusus milik user yang login
+        $vehicles = \App\Models\Vehicle::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
+        
+        // Lempar ke view home-service
+        return view('customer.booking.home-service', compact('vehicles'));
+    }
+
+    /**
      * Memproses data form booking ke Database
      */
     public function store(Request $request)
     {
-        // 1. Validasi input harus SAMA PERSIS dengan name="..." di HTML
-        $validatedData = $request->validate([
+        // 1. Cek ini booking Home Service atau Bengkel biasa
+        $isHomeService = $request->input('tipe_booking') === 'home_service';
+
+        // 2. Siapkan aturan validasi dasar
+        $rules = [
             'vehicle_id'       => 'required|exists:vehicles,id',
-            'service_category' => 'required|in:berkala,lainnya',
-            'km_service'       => 'nullable|integer',
-            'addons'           => 'nullable|array',
-            'custom_complaint' => 'nullable|string|max:250',
-            'branch'           => 'required|string',
+            'service_category' => 'required|in:berkala,lainnya,umum',
             'date'             => 'required|date',
             'time'             => 'required|string',
             'estimasi_harga'   => 'required|numeric',
-        ]);
+        ];
 
-        // JIKA GUEST (Sistem Jaga-jaga kalau tembus tanpa login)
+        // 3. Validasi dinamis: Kalau Bengkel wajib pilih Cabang, kalau Home Service wajib isi Alamat
+        if ($isHomeService) {
+            $rules['alamat_lengkap'] = 'required|string';
+        } else {
+            $rules['branch'] = 'required|string';
+        }
+
+        $validatedData = $request->validate($rules);
+
+        // JIKA GUEST (Belum Login)
         if (!Auth::check()) {
-            session(['pending_booking' => $validatedData]);
+            session(['pending_booking' => $request->all()]);
             return redirect()->route('register')
                 ->withErrors(['email' => 'Silakan buat akun atau login untuk mengonfirmasi jadwal servis.']);
         }
 
-        $user = Auth::user();
+        // 4. Siapkan data Addons / Perbaikan Umum untuk disimpan jadi JSON
+        $addonsData = null;
+        if ($request->service_category === 'berkala' && $request->has('addons')) {
+            $addonsData = json_encode($request->addons);
+        } elseif ($request->service_category === 'umum' && $request->has('general_repairs')) {
+            $addonsData = json_encode($request->general_repairs); // Simpan pilihan Engine Oil, dll
+        }
 
-        // 2. Simpan Data Booking dengan Kolom Baru
+        // 5. Masukkan ke Database
         Booking::create([
-            'user_id'        => $user->id,
-            'vehicle_id'     => $validatedData['vehicle_id'], // Udah langsung dapet dari radio button Garasi
-            'service_id'     => 1, // Biarkan default 1 dulu, atau sesuaikan relasi lu
+            'user_id'        => Auth::id(),
+            'vehicle_id'     => $request->vehicle_id,
+            'service_id'     => 1, // Default service master ID
             
-            // Kolom Baru
-            'cabang'         => $validatedData['branch'],
-            'jenis_servis'   => $validatedData['service_category'],
-            'kilometer'      => $validatedData['service_category'] === 'berkala' ? $validatedData['km_service'] : null,
-            'addons'         => isset($validatedData['addons']) ? json_encode($validatedData['addons']) : null, // Ubah array Addons ke JSON
-            'estimasi_harga' => $validatedData['estimasi_harga'],
+            // Pembeda Utama
+            'tipe_booking'   => $isHomeService ? 'home_service' : 'bengkel',
+            'cabang'         => $isHomeService ? null : $request->branch,
+            'alamat_lengkap' => $isHomeService ? $request->alamat_lengkap : null,
             
-            // Kolom Lama
-            'tanggal'        => $validatedData['date'],
-            'jam'            => $validatedData['time'],
-            'keluhan'        => $validatedData['service_category'] === 'lainnya' ? $validatedData['custom_complaint'] : null,
+            // Detail Servis
+            'jenis_servis'   => $request->service_category,
+            'kilometer'      => $request->service_category === 'berkala' ? $request->km_service : null,
+            'addons'         => $addonsData,
+            'estimasi_harga' => $request->estimasi_harga,
+            
+            // Jadwal & Lainnya
+            'tanggal'        => $request->date,
+            'jam'            => $request->time,
+            'keluhan'        => $request->service_category === 'lainnya' ? $request->custom_complaint : '-',
             'status'         => 'pending',
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Booking servis Anda berhasil dibuat!');
+        return redirect()->route('dashboard')->with('success', 'Booking berhasil dibuat!');
     }
-
-    public function createHomeService() {
-    $vehicles = \App\Models\Vehicle::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
-    return view('customer.booking.home-service', compact('vehicles'));
-}
 }
