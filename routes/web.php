@@ -25,7 +25,9 @@ Route::get('/', function () {
 Route::get('/verify-otp', [OtpVerificationController::class, 'show'])->name('otp.verify');
 Route::post('/verify-otp', [OtpVerificationController::class, 'verify'])->name('otp.verify.post');
 
+Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
 Route::get('/booking/create', [BookingController::class, 'create'])->name('booking.create');
+Route::get('/home-service', [BookingController::class, 'createHomeService'])->name('booking.homeservice');
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
 
 // =========================================

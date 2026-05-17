@@ -29,29 +29,29 @@
   </div>
 </div>
 
-<nav class="bg-white sticky top-0 z-40 shadow-sm border-b border-gray-100">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <div class="flex justify-between items-center h-20">
       
       <a href="{{ url('/') }}" class="flex items-center gap-2 shrink-0">
-        <span class="font-black text-2xl tracking-tighter text-ink">WIJAYA<span class="text-danger border-b-4 border-brand leading-none inline-block pb-0.5">MOTOR</span></span>
+        <span class="font-black text-2xl tracking-tighter text-ink">WIJAYA<span class="text-danger border-b-4 border-brand leading-none inline-block pb-0.5 ml-1">MOTOR</span></span>
       </a>
 
-      <div class="hidden md:flex space-x-8 items-center font-bold text-sm text-gray-700">
-        <a href="{{ route('booking.create') }}" class="hover:text-brand transition">BOOKING SERVIS</a>
-        <a href="#sparepart" class="hover:text-brand transition">SPAREPART</a>
-        <a href="#promo" class="hover:text-brand transition">PROMO</a>
-        <a href="#" class="hover:text-brand transition">HOME SERVICE</a>
-        <a href="#berita" class="hover:text-brand transition">TIPS & BERITA</a>
+      <div class="hidden md:flex space-x-8 items-center font-bold text-xs text-gray-700 uppercase tracking-wider">
+        <a href="{{ route('booking.index') }}" class="hover:text-brand transition">Booking Servis</a>
+        <a href="{{ url('/#sparepart') }}" class="hover:text-brand transition">Sparepart</a>
+        <a href="{{ url('/#promo') }}" class="hover:text-brand transition">Promo</a>
+        <a href="{{ url('/#berita') }}" class="hover:text-brand transition">Tips & Berita</a>
+        <a href="#lokasi" class="hover:text-brand transition">Lokasi Bengkel</a> 
       </div>
 
       <div class="hidden lg:flex items-center">
         <div class="relative">
-          <input type="text" placeholder="Pencarian..." class="pl-4 pr-10 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-brand w-64 bg-gray-50 focus:bg-white transition-colors">
+          <input type="text" placeholder="Cari layanan atau sparepart..." class="pl-4 pr-10 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-brand w-64 bg-gray-50 focus:bg-white transition-all">
           <svg class="w-4 h-4 text-gray-400 absolute right-4 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
       </div>
-
+      
       <button @click="mobileMenu = !mobileMenu" class="md:hidden text-gray-600">
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
