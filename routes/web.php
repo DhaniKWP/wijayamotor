@@ -15,8 +15,6 @@ Route::get('/', function () {
         
         if ($role === 'admin') {
             return redirect()->route('admin.dashboard');
-        } elseif ($role === 'mekanik') {
-            return redirect()->route('mekanik.dashboard');
         }
     }
     return view('welcome');
@@ -76,15 +74,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/spareparts/{id}', [SparepartController::class, 'update'])->name('spareparts.update');
     Route::delete('/spareparts/{id}', [SparepartController::class, 'destroy'])->name('spareparts.destroy');
 
-});
-
-// =========================================
-// ROUTE KHUSUS MEKANIK
-// =========================================
-Route::middleware(['auth', 'role:mekanik'])->group(function () {
-    Route::get('/mekanik/dashboard', function () {
-        return view('mekanik.dashboard');
-    })->name('mekanik.dashboard');
 });
 
 // =========================================

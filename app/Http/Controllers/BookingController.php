@@ -85,18 +85,28 @@ class BookingController extends Controller
             $addonsData = json_encode($request->general_repairs); // Simpan pilihan Engine Oil, dll
         }
 
+        // LOGIKA PENENTUAN SERVICE ID OTOMATIS
+        $serviceIdMapped = 1; // Default Servis Berkala
+        if ($request->service_category === 'umum') {
+            $serviceIdMapped = 2;
+        } elseif ($request->service_category === 'lainnya') {
+            $serviceIdMapped = 3;
+        }
+
         // 5. Masukkan ke Database
         Booking::create([
             'user_id'        => Auth::id(),
             'vehicle_id'     => $request->vehicle_id,
-            'service_id'     => 1, // Default service master ID
+            
+            // INI YANG DIUBAH, NGGAK LAGI HARDCODE ANGKA 1
+            'service_id'     => $serviceIdMapped, 
             
             // Pembeda Utama
             'tipe_booking'   => $isHomeService ? 'home_service' : 'bengkel',
             'cabang'         => $isHomeService ? null : $request->branch,
             'alamat_lengkap' => $isHomeService ? $request->alamat_lengkap : null,
             
-            // Detail Servis
+            // Detail Servis (Di sini detail ganti oli, dll udah aman kesimpen)
             'jenis_servis'   => $request->service_category,
             'kilometer'      => $request->service_category === 'berkala' ? $request->km_service : null,
             'addons'         => $addonsData,

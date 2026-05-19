@@ -21,8 +21,11 @@ return new class extends Migration
             
             $table->string('phone');
             $table->text('address')->nullable();
-            $table->enum('role', ['admin', 'customer', 'mekanik'])->default('customer');
+            $table->enum('role', ['admin', 'customer'])->default('customer');
 
+            $table->string('otp_code')->nullable();
+            $table->timestamp('otp_expires_at')->nullable();
+            
             $table->timestamps();
         });
 
