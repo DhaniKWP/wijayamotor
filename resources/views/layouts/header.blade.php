@@ -39,7 +39,7 @@
 
       <div class="hidden md:flex space-x-8 items-center font-bold text-xs text-gray-700 uppercase tracking-wider">
         <a href="{{ route('booking.index') }}" class="hover:text-brand transition">Booking Servis</a>
-        <a href="{{ url('/#sparepart') }}" class="hover:text-brand transition">Sparepart</a>
+        <a href="{{ route('sparepart.index') }}" class="hover:text-brand transition">Sparepart</a>
         <a href="{{ url('/#promo') }}" class="hover:text-brand transition">Promo</a>
         <a href="{{ url('/#berita') }}" class="hover:text-brand transition">Tips & Berita</a>
         <a href="#lokasi" class="hover:text-brand transition">Lokasi Bengkel</a> 

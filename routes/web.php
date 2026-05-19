@@ -3,11 +3,14 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\OtpVerificationController;
-use App\Http\Controllers\Admin\SparepartController;
+
+// 1. IMPORT KEDUA CONTROLLER DENGAN NAMA ALIAS BIAR GAK BENTROK
+use App\Http\Controllers\Customer\BookingController;
+use App\Http\Controllers\Customer\VehicleController;
+use App\Http\Controllers\Customer\SparepartController as CustomerSparepartController;
 use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\SparepartController as AdminSparepartController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -28,6 +31,9 @@ Route::get('/booking/create', [BookingController::class, 'create'])->name('booki
 Route::get('/home-service', [BookingController::class, 'createHomeService'])->name('booking.homeservice');
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
 
+// 2. ROUTE AKSESORIS PAKE CONTROLLER CUSTOMER
+Route::get('/aksesoris', [CustomerSparepartController::class, 'index'])->name('sparepart.index');
+
 // =========================================
 // ROUTE KHUSUS CUSTOMER
 // =========================================
@@ -37,18 +43,16 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/dashboard', function () {
         $user = \Illuminate\Support\Facades\Auth::user();
         
-        // 1. Ambil data kendaraan user
         $vehicles = \App\Models\Vehicle::where('user_id', $user->id)->get();
         
-        // 2. Ambil data tiket booking user (INI YANG TADI HILANG)
         $bookings = \App\Models\Booking::where('user_id', $user->id)
                         ->with('vehicle')
                         ->orderBy('tanggal', 'asc')
                         ->get();
 
-        // 3. Lempar kedua data ke view dashboard
         return view('customer.dashboard', compact('vehicles', 'bookings'));
     })->name('dashboard');
+    
     // FITUR GARASI SAYA
     Route::get('/garasi', [VehicleController::class, 'index'])->name('garasi.index');
     Route::post('/garasi', [VehicleController::class, 'store'])->name('garasi.store');
@@ -67,12 +71,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');
 
     // =========================================
-    // MASTER SPAREPART
+    // MASTER SPAREPART PAKE CONTROLLER ADMIN
     // =========================================
-    Route::get('/spareparts', [SparepartController::class, 'index'])->name('spareparts.index');
-    Route::post('/spareparts', [SparepartController::class, 'store'])->name('spareparts.store');
-    Route::put('/spareparts/{id}', [SparepartController::class, 'update'])->name('spareparts.update');
-    Route::delete('/spareparts/{id}', [SparepartController::class, 'destroy'])->name('spareparts.destroy');
+    Route::get('/spareparts', [AdminSparepartController::class, 'index'])->name('spareparts.index');
+    Route::post('/spareparts', [AdminSparepartController::class, 'store'])->name('spareparts.store');
+    Route::put('/spareparts/{id}', [AdminSparepartController::class, 'update'])->name('spareparts.update');
+    Route::delete('/spareparts/{id}', [AdminSparepartController::class, 'destroy'])->name('spareparts.destroy');
 
 });
 

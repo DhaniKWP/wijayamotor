@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Customer;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Vehicle;
 use App\Models\Booking;
 use App\Models\Service;
+use App\Http\Controllers\Controller;
 
 class BookingController extends Controller
 {
