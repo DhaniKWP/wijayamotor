@@ -21,6 +21,15 @@
             <a href="#" class="flex items-center px-2 py-3 text-danger font-bold border-b border-gray-100">Dashboard Profil</a>
             <a href="{{ route('garasi.index') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-brand transition border-b border-gray-100">Garasi Saya</a>
             <a href="{{ route('booking.create') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-brand transition border-b border-gray-100">Booking Baru</a>
+            
+            <form method="POST" action="{{ route('logout') }}" class="block">
+                @csrf
+                <a href="{{ route('logout') }}" 
+                   onclick="event.preventDefault(); this.closest('form').submit();"
+                   class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">
+                    Logout
+                </a>
+            </form>
         </nav>
     </aside>
 
