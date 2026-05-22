@@ -21,129 +21,129 @@
 @endpush
 
 @section('content')
-<div class="bg-surface min-h-screen pb-20" x-data="{ 
-          dbServices: {{ $services->toJson() }},
-          vehicleSelected: '', 
-          serviceType: 'berkala', 
-          kmSelected: '1.000', 
-          showDetailModal: false,
-          detailTab: 'diperiksa',
-          addonSpooring: false,
-          addonAC: false,
-          addonEngine: false,
-          branch: '',
-          date: '',
-          time: '',
-          customComplaint: '',
-          
-          init() {
-              this.$watch('serviceType', (value) => {
-                  if (value === 'lainnya') {
-                      this.addonSpooring = false;
-                      this.addonAC = false;
-                      this.addonEngine = false;
-                  }
-              });
-          },
-          
-          get realServiceId() {
-              if (this.serviceType === 'lainnya') {
-                  let s = this.dbServices.find(x => x.name.toLowerCase().includes('lain'));
-                  return s ? s.id : '';
-              } else {
-                  let s = this.dbServices.find(x => x.name.includes(this.kmSelected));
-                  return s ? s.id : '';
-              }
-          },
-          
-          kmOptions: ['1.000', '10.000', '20.000', '30.000', '40.000', '50.000', '60.000', '70.000', '80.000', '90.000', '100.000'],
-          get currentKmIndex() { return this.kmOptions.indexOf(this.kmSelected); },
-          nextKm() { if(this.currentKmIndex < 10) this.kmSelected = this.kmOptions[this.currentKmIndex + 1]; },
-          prevKm() { if(this.currentKmIndex > 0) this.kmSelected = this.kmOptions[this.currentKmIndex - 1]; },
-          
-          serviceData: {
-              '1.000': {
-                  title: 'SERVIS BERKALA 1.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Minyak Power Steering', 'Oli Mesin', 'Pedal Kopling', 'Sistem Pengereman', 'Tali Kipas', 'Wiper & Washer'],
-                  diganti: []
-              },
-              '10.000': {
-                  title: 'SERVIS BERKALA 10.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Minyak Power Steering', 'Sistem Pengereman', 'Sistem Pendingin', 'Saringan Udara'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
-              },
-              '20.000': {
-                  title: 'SERVIS BERKALA 20.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }]
-              },
-              '30.000': {
-                  title: 'SERVIS BERKALA 30.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
-              },
-              '40.000': {
-                  title: 'SERVIS BERKALA 40.000 KM (SERVIS BESAR)',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Suspensi', 'Tali Kipas', 'Wiper', 'Celah Katup'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Minyak Rem', price: 50000 }, { name: 'Filter Udara', price: 120000 }, { name: 'Oli Gardan/Transmisi', price: 300000 }]
-              },
-              '50.000': {
-                  title: 'SERVIS BERKALA 50.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
-              },
-              '60.000': {
-                  title: 'SERVIS BERKALA 60.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }]
-              },
-              '70.000': {
-                  title: 'SERVIS BERKALA 70.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
-              },
-              '80.000': {
-                  title: 'SERVIS BERKALA 80.000 KM (SERVIS BESAR)',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Suspensi', 'Tali Kipas', 'Wiper', 'Celah Katup'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Minyak Rem', price: 50000 }, { name: 'Filter Udara', price: 120000 }, { name: 'Oli Gardan/Transmisi', price: 300000 }]
-              },
-              '90.000': {
-                  title: 'SERVIS BERKALA 90.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
-              },
-              '100.000': {
-                  title: 'SERVIS BERKALA 100.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
-                  diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }, { name: 'Coolant Radiator', price: 100000 }]
-              }
-          },
+    <div class="bg-surface min-h-screen pb-20" x-data="{ 
+            dbServices: {{ $services->toJson() }},
+            vehicleSelected: '', 
+            serviceType: 'berkala', 
+            kmSelected: '1.000', 
+            showDetailModal: false,
+            detailTab: 'diperiksa',
+            addonSpooring: false,
+            addonAC: false,
+            addonEngine: false,
+            branch: '',
+            date: '',
+            time: '',
+            customComplaint: '',
+            
+            init() {
+                this.$watch('serviceType', (value) => {
+                    if (value === 'lainnya') {
+                        this.addonSpooring = false;
+                        this.addonAC = false;
+                        this.addonEngine = false;
+                    }
+                });
+            },
+            
+            get realServiceId() {
+                if (this.serviceType === 'lainnya') {
+                    let s = this.dbServices.find(x => x.name.toLowerCase().includes('lain'));
+                    return s ? s.id : '';
+                } else {
+                    let s = this.dbServices.find(x => x.name.includes(this.kmSelected));
+                    return s ? s.id : '';
+                }
+            },
+            
+            kmOptions: ['1.000', '10.000', '20.000', '30.000', '40.000', '50.000', '60.000', '70.000', '80.000', '90.000', '100.000'],
+            get currentKmIndex() { return this.kmOptions.indexOf(this.kmSelected); },
+            nextKm() { if(this.currentKmIndex < 10) this.kmSelected = this.kmOptions[this.currentKmIndex + 1]; },
+            prevKm() { if(this.currentKmIndex > 0) this.kmSelected = this.kmOptions[this.currentKmIndex - 1]; },
+            
+            serviceData: {
+                '1.000': {
+                    title: 'SERVIS BERKALA 1.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Minyak Power Steering', 'Oli Mesin', 'Pedal Kopling', 'Sistem Pengereman', 'Tali Kipas', 'Wiper & Washer'],
+                    diganti: []
+                },
+                '10.000': {
+                    title: 'SERVIS BERKALA 10.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Minyak Power Steering', 'Sistem Pengereman', 'Sistem Pendingin', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '20.000': {
+                    title: 'SERVIS BERKALA 20.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }]
+                },
+                '30.000': {
+                    title: 'SERVIS BERKALA 30.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '40.000': {
+                    title: 'SERVIS BERKALA 40.000 KM (SERVIS BESAR)',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Suspensi', 'Tali Kipas', 'Wiper', 'Celah Katup'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Minyak Rem', price: 50000 }, { name: 'Filter Udara', price: 120000 }, { name: 'Oli Gardan/Transmisi', price: 300000 }]
+                },
+                '50.000': {
+                    title: 'SERVIS BERKALA 50.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '60.000': {
+                    title: 'SERVIS BERKALA 60.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }]
+                },
+                '70.000': {
+                    title: 'SERVIS BERKALA 70.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '80.000': {
+                    title: 'SERVIS BERKALA 80.000 KM (SERVIS BESAR)',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Suspensi', 'Tali Kipas', 'Wiper', 'Celah Katup'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Minyak Rem', price: 50000 }, { name: 'Filter Udara', price: 120000 }, { name: 'Oli Gardan/Transmisi', price: 300000 }]
+                },
+                '90.000': {
+                    title: 'SERVIS BERKALA 90.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '100.000': {
+                    title: 'SERVIS BERKALA 100.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }, { name: 'Coolant Radiator', price: 100000 }]
+                }
+            },
 
-          // LOGIKA HARGA JASA DIAMBIL DARI DATABASE
-          get serviceFee() {
-              let s = this.dbServices.find(x => x.name.includes(this.kmSelected));
-              return s && s.price_estimate ? parseFloat(s.price_estimate) : 0;
-          },
+            // LOGIKA HARGA JASA DIAMBIL DARI DATABASE
+            get serviceFee() {
+                let s = this.dbServices.find(x => x.name.includes(this.kmSelected));
+                return s && s.price_estimate ? parseFloat(s.price_estimate) : 0;
+            },
 
-          get totalPrice() {
-              let total = 0;
-              if(this.serviceType === 'berkala') {
-                  let parts = this.serviceData[this.kmSelected].diganti;
-                  parts.forEach(p => total += p.price);
-                  
-                  // Tambah harga jasa murni dari database
-                  total += this.serviceFee;
-                  
-                  if(this.addonSpooring) total += 250000;
-                  if(this.addonAC) total += 350000;
-                  if(this.addonEngine) total += 400000;
-              }
-              return total;
-          },
-          get formattedPrice() {
-              return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(this.totalPrice);
-          }
-      }">
+            get totalPrice() {
+                let total = 0;
+                if(this.serviceType === 'berkala') {
+                    let parts = this.serviceData[this.kmSelected].diganti;
+                    parts.forEach(p => total += p.price);
+                    
+                    // Tambah harga jasa murni dari database
+                    total += this.serviceFee;
+                    
+                    if(this.addonSpooring) total += 250000;
+                    if(this.addonAC) total += 350000;
+                    if(this.addonEngine) total += 400000;
+                }
+                return total;
+            },
+            get formattedPrice() {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(this.totalPrice);
+            }
+        }">
 
     <div class="bg-white border-b border-gray-200 py-4">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center space-x-3">
@@ -305,20 +305,14 @@
                     <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                         <div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-black text-lg">3</div>
                         <div>
-                            <h2 class="text-xl font-black text-ink">Lokasi & Jadwal</h2>
-                            <p class="text-xs text-gray-500 mt-1">Pilih waktu kedatangan di bengkel</p>
+                            <h2 class="text-xl font-black text-ink">Jadwal Kedatangan</h2>
+                            <p class="text-xs text-gray-500 mt-1">Pilih waktu kedatangan Anda di bengkel</p>
                         </div>
                     </div>
 
                     <div class="space-y-5">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Cabang Bengkel</label>
-                            <select name="branch" x-model="branch" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-bold text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink">
-                                <option value="" disabled selected>-- Pilih Cabang --</option>
-                                <option value="selatan">Wijaya Motor Jakarta Selatan</option>
-                                <option value="pusat">Wijaya Motor Jakarta Pusat</option>
-                            </select>
-                        </div>
+                        <input type="hidden" name="branch" value="pusat">
+                        
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
@@ -377,11 +371,10 @@
                 </div>
 
                 <button type="button" @click="document.getElementById('bookingForm').submit()" 
-                        :disabled="!branch || !date || !time || !vehicleSelected"
-                        :class="(!branch || !date || !time || !vehicleSelected) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink hover:bg-ink-light text-white shadow-lg'" 
-                        class="w-full font-bold py-4 rounded-xl transition-all flex items-center justify-center group">
-                    KONFIRMASI SEKARANG
-                    <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    :disabled="!date || !time || !vehicleSelected"
+                    :class="(!date || !time || !vehicleSelected) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink hover:bg-ink-light text-white shadow-lg'" 
+                    class="w-full font-bold py-4 rounded-xl transition-all flex items-center justify-center group">
+                KONFIRMASI SEKARANG
                 </button>
             </div>
         </div>

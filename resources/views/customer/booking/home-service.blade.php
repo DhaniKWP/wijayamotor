@@ -7,7 +7,6 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <style>
-    /* Styling custom untuk radio card yang lebih modern */
     .radio-card-input:checked + div {
         border-color: #0A192F;
         background-color: #F8FAFC;
@@ -27,18 +26,16 @@
 
 @section('content')
 <div class="bg-surface min-h-screen pb-20" x-data="{ 
+          dbServices: {{ $services->toJson() }},
           bookingType: 'home_service',
           vehicleSelected: '', 
           serviceType: 'berkala', 
-          
-          /* State Berkala */
-          kmSelected: '1000',
+          kmSelected: '1.000', 
           showDetailModal: false,
           detailTab: 'diperiksa',
           addonAC: false,
           addonEngine: false,
           
-          /* State Perbaikan Umum */
           generalRepairs: [],
           repairOptions: {
               'engine_oil': { name: 'Engine Oil', price: 498000 },
@@ -51,15 +48,110 @@
               'other': { name: 'Other Service (Harga disesuaikan)', price: 0 }
           },
 
-          /* State Lokasi & Waktu */
+          get realServiceId() {
+              if (this.serviceType === 'umum') {
+                  let s = this.dbServices.find(x => x.name.toLowerCase().includes('lain') || x.name.toLowerCase().includes('umum'));
+                  return s ? s.id : '';
+              } else {
+                  let s = this.dbServices.find(x => x.name.includes(this.kmSelected));
+                  return s ? s.id : '';
+              }
+          },
+
+          get serviceFee() {
+              if (this.serviceType !== 'berkala') return 0;
+              let s = this.dbServices.find(x => x.name.includes(this.kmSelected));
+              return s && s.price_estimate ? parseFloat(s.price_estimate) : 0;
+          },
+
+          kmOptions: ['1.000', '10.000', '20.000', '30.000', '40.000', '50.000', '60.000', '70.000', '80.000', '90.000', '100.000'],
+          get currentKmIndex() { return this.kmOptions.indexOf(this.kmSelected); },
+          nextKm() { if(this.currentKmIndex < 10) this.kmSelected = this.kmOptions[this.currentKmIndex + 1]; },
+          prevKm() { if(this.currentKmIndex > 0) this.kmSelected = this.kmOptions[this.currentKmIndex - 1]; },
+          
+          serviceData: {
+                '1.000': {
+                    title: 'SERVIS BERKALA 1.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Minyak Power Steering', 'Oli Mesin', 'Pedal Kopling', 'Sistem Pengereman', 'Tali Kipas', 'Wiper & Washer'],
+                    diganti: []
+                },
+                '10.000': {
+                    title: 'SERVIS BERKALA 10.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Minyak Power Steering', 'Sistem Pengereman', 'Sistem Pendingin', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '20.000': {
+                    title: 'SERVIS BERKALA 20.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }]
+                },
+                '30.000': {
+                    title: 'SERVIS BERKALA 30.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '40.000': {
+                    title: 'SERVIS BERKALA 40.000 KM (SERVIS BESAR)',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Suspensi', 'Tali Kipas', 'Wiper', 'Celah Katup'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Minyak Rem', price: 50000 }, { name: 'Filter Udara', price: 120000 }, { name: 'Oli Gardan/Transmisi', price: 300000 }]
+                },
+                '50.000': {
+                    title: 'SERVIS BERKALA 50.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '60.000': {
+                    title: 'SERVIS BERKALA 60.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }]
+                },
+                '70.000': {
+                    title: 'SERVIS BERKALA 70.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '80.000': {
+                    title: 'SERVIS BERKALA 80.000 KM (SERVIS BESAR)',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Suspensi', 'Tali Kipas', 'Wiper', 'Celah Katup'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Minyak Rem', price: 50000 }, { name: 'Filter Udara', price: 120000 }, { name: 'Oli Gardan/Transmisi', price: 300000 }]
+                },
+                '90.000': {
+                    title: 'SERVIS BERKALA 90.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Sistem Pengereman', 'Saringan Udara'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }]
+                },
+                '100.000': {
+                    title: 'SERVIS BERKALA 100.000 KM',
+                    diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Klakson', 'Kondisi Ban', 'Lampu', 'Suspensi', 'Tali Kipas', 'Wiper'],
+                    diganti: [{ name: 'Gasket', price: 15000 }, { name: 'Oli Mesin', price: 450000 }, { name: 'Saringan Oli', price: 85000 }, { name: 'Busi (Set)', price: 160000 }, { name: 'Coolant Radiator', price: 100000 }]
+                }
+            },
+
+          get totalPrice() {
+              let total = 0;
+              if(this.serviceType === 'berkala') {
+                  total += this.serviceFee;
+                  if(this.serviceData[this.kmSelected]) {
+                      this.serviceData[this.kmSelected].diganti.forEach(p => total += p.price);
+                  }
+                  if(this.addonAC) total += 350000;
+                  if(this.addonEngine) total += 400000;
+              } else {
+                  this.generalRepairs.forEach(key => { total += this.repairOptions[key].price; });
+              }
+              return total;
+          },
+          get formattedPrice() {
+              return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(this.totalPrice);
+          },    
+
           address: '',
           tempAddress: '',
-          addressDetail: '', // Patokan/Blok/Unit
+          addressDetail: '', 
           showMapModal: false,
           date: '',
           time: '',
           
-          /* State Peta & Search */
           map: null,
           marker: null,
           isLocating: false,
@@ -84,7 +176,6 @@
               });
           },
 
-          /* LOGIKA PETA & PENCARIAN */
           initMap() {
               if (this.map) {
                   this.map.invalidateSize();
@@ -165,60 +256,8 @@
               this.marker.setLatLng(newLatLng);
               this.tempAddress = item.display_name;
               
-              // Reset search
               this.searchQuery = '';
               this.searchResults = [];
-          },
-          
-          /* DATA DETAIL SERVIS BERKALA */
-          kmOptions: ['1000', '10000', '20000'],
-          get currentKmIndex() { return this.kmOptions.indexOf(this.kmSelected); },
-          nextKm() { if(this.currentKmIndex < 2) this.kmSelected = this.kmOptions[this.currentKmIndex + 1]; },
-          prevKm() { if(this.currentKmIndex > 0) this.kmSelected = this.kmOptions[this.currentKmIndex - 1]; },
-          
-          serviceData: {
-              '1000': {
-                  title: 'SERVIS BERKALA 1.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Kandungan Gas Buang', 'Klakson', 'Kondisi Ban', 'Kekencangan Baut', 'Lampu-Lampu', 'Minyak Power Steering', 'Oli Mesin', 'Pedal Kopling', 'Sistem Pengereman', 'Sistem Pendingin', 'Tali Kipas', 'Wiper & Washer'],
-                  diganti: []
-              },
-              '10000': {
-                  title: 'SERVIS BERKALA 10.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Kandungan Gas Buang', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Minyak Power Steering', 'Sistem Pengereman', 'Sistem Pendingin', 'Sistem Pembakaran', 'Saringan Udara', 'Wiper & Washer'],
-                  diganti: [
-                      { name: 'Gasket', price: 15000 },
-                      { name: 'Oli Mesin', price: 450000 },
-                      { name: 'Saringan Oli', price: 85000 }
-                  ]
-              },
-              '20000': {
-                  title: 'SERVIS BERKALA 20.000 KM',
-                  diperiksa: ['Aki/Battery', 'Chasis Kendaraan', 'Freon', 'Kandungan Gas Buang', 'Klakson', 'Kondisi Ban', 'Lampu-Lampu', 'Minyak Power Steering', 'Oli Gardan', 'Oli Transmisi', 'Sistem Pengereman', 'Sistem Pendingin', 'Sistem Pembakaran', 'Saringan Udara', 'Suspensi', 'Tali Kipas', 'Wiper'],
-                  diganti: [
-                      { name: 'Gasket', price: 15000 },
-                      { name: 'Oli Mesin', price: 450000 },
-                      { name: 'Saringan Oli', price: 85000 }
-                  ]
-              }
-          },
-
-          /* KALKULATOR HARGA */
-          get totalPrice() {
-              let total = 0;
-              if(this.serviceType === 'berkala') {
-                  let parts = this.serviceData[this.kmSelected].diganti;
-                  parts.forEach(p => total += p.price);
-                  if(this.kmSelected === '10000') total += 300000; 
-                  if(this.kmSelected === '20000') total += 400000; 
-                  if(this.addonAC) total += 350000;
-                  if(this.addonEngine) total += 400000;
-              } else if (this.serviceType === 'umum') {
-                  this.generalRepairs.forEach(key => { total += this.repairOptions[key].price; });
-              }
-              return total;
-          },
-          get formattedPrice() {
-              return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(this.totalPrice);
           }
       }">
 
@@ -249,8 +288,10 @@
             <form action="{{ route('booking.store') }}" method="POST" id="homeServiceForm">
                 @csrf
                 <input type="hidden" name="tipe_booking" value="home_service">
+                <input type="hidden" name="service_id" :value="realServiceId">
                 <input type="hidden" name="estimasi_harga" :value="totalPrice">
                 <input type="hidden" name="alamat_lengkap" :value="address ? address + (addressDetail ? ' (Patokan: ' + addressDetail + ')' : '') : ''">
+                <input type="hidden" name="branch" value="pusat">
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
                     <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
@@ -289,7 +330,7 @@
                     @endif
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-6 transition-opacity duration-300" :class="!vehicleSelected ? 'opacity-50 pointer-events-none' : ''">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-6 transition-all duration-300" :class="!vehicleSelected ? 'opacity-50 pointer-events-none select-none' : ''">
                     <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                         <div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-black text-lg">2</div>
                         <div>
@@ -300,7 +341,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <label class="relative cursor-pointer">
-                            <input type="radio" name="service_category" value="berkala" class="peer sr-only radio-card-input" x-model="serviceType">
+                            <input type="radio" name="service_category" value="berkala" class="peer sr-only radio-card-input" x-model="serviceType" :disabled="!vehicleSelected">
                             <div class="border-2 border-gray-100 rounded-xl p-5 transition-all bg-white h-full flex flex-col justify-center items-center text-center">
                                 <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mb-3">
                                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -311,7 +352,7 @@
                         </label>
 
                         <label class="relative cursor-pointer">
-                            <input type="radio" name="service_category" value="umum" class="peer sr-only radio-card-input" x-model="serviceType">
+                            <input type="radio" name="service_category" value="umum" class="peer sr-only radio-card-input" x-model="serviceType" :disabled="!vehicleSelected">
                             <div class="border-2 border-gray-100 rounded-xl p-5 transition-all bg-white h-full flex flex-col justify-center items-center text-center">
                                 <div class="w-12 h-12 rounded-full bg-red-50 text-danger flex items-center justify-center mb-3">
                                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -323,31 +364,38 @@
                     </div>
 
                     <div class="bg-gray-50 rounded-xl p-5 border border-gray-100">
-                        
                         <div x-show="serviceType === 'berkala'" x-collapse>
                             <div class="flex justify-between items-center mb-3">
                                 <label class="block text-sm font-black text-ink">Jarak Tempuh (KM)</label>
-                                <button type="button" @click.prevent="showDetailModal = true" class="text-xs font-bold text-brand hover:text-brand-dark flex items-center">
+                                <button type="button" @click.prevent="showDetailModal = true" :disabled="!vehicleSelected" class="text-xs font-bold text-brand hover:text-brand-dark flex items-center">
                                     <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     Cek Rincian Part
                                 </button>
                             </div>
-                            <select name="km_service" x-model="kmSelected" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink font-medium">
-                                <option value="1000">1.000 KM (Servis Perdana) - Bebas Biaya Jasa</option>
-                                <option value="10000">10.000 KM (Servis Reguler) - +Jasa Rp300rb</option>
-                                <option value="20000">20.000 KM (Servis Besar) - +Jasa Rp400rb</option>
+                            <select name="km_service" x-model="kmSelected" :disabled="!vehicleSelected" class="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink font-medium">
+                                <option value="1.000">1.000 KM</option>
+                                <option value="10.000">10.000 KM</option>
+                                <option value="20.000">20.000 KM</option>
+                                <option value="30.000">30.000 KM</option>
+                                <option value="40.000">40.000 KM</option>
+                                <option value="50.000">50.000 KM</option>
+                                <option value="60.000">60.000 KM</option>
+                                <option value="70.000">70.000 KM</option>
+                                <option value="80.000">80.000 KM</option>
+                                <option value="90.000">90.000 KM</option>
+                                <option value="100.000">100.000 KM</option>
                             </select>
 
                             <div class="mt-6 border-t border-gray-200 pt-5">
                                 <label class="block text-sm font-black text-ink mb-3">Layanan Tambahan di Tempat (Opsional)</label>
                                 <div class="space-y-3">
                                     <label class="flex items-center cursor-pointer p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition">
-                                        <input type="checkbox" name="addons[]" value="ac" x-model="addonAC" class="custom-checkbox w-5 h-5 rounded border-gray-300 text-ink focus:ring-ink">
+                                        <input type="checkbox" name="addons[]" value="ac" x-model="addonAC" :disabled="!vehicleSelected" class="custom-checkbox w-5 h-5 rounded border-gray-300 text-ink focus:ring-ink">
                                         <span class="ml-3 text-sm text-gray-700 flex-1">AC Superlight Care</span>
                                         <span class="text-xs font-bold text-gray-500">+Rp 350.000</span>
                                     </label>
                                     <label class="flex items-center cursor-pointer p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition">
-                                        <input type="checkbox" name="addons[]" value="engine" x-model="addonEngine" class="custom-checkbox w-5 h-5 rounded border-gray-300 text-ink focus:ring-ink">
+                                        <input type="checkbox" name="addons[]" value="engine" x-model="addonEngine" :disabled="!vehicleSelected" class="custom-checkbox w-5 h-5 rounded border-gray-300 text-ink focus:ring-ink">
                                         <span class="ml-3 text-sm text-gray-700 flex-1">Engine Room Treatment</span>
                                         <span class="text-xs font-bold text-gray-500">+Rp 400.000</span>
                                     </label>
@@ -360,7 +408,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <template x-for="(repair, key) in repairOptions" :key="key">
                                     <label class="flex items-center cursor-pointer group">
-                                        <input type="checkbox" name="general_repairs[]" :value="key" x-model="generalRepairs" class="w-5 h-5 rounded border-gray-300 text-danger focus:ring-danger accent-danger">
+                                        <input type="checkbox" name="general_repairs[]" :value="key" x-model="generalRepairs" :disabled="!vehicleSelected" class="w-5 h-5 rounded border-gray-300 text-danger focus:ring-danger accent-danger">
                                         <div class="ml-3 flex-1 flex justify-between items-center border-b border-gray-200 pb-2 group-hover:border-gray-300">
                                             <span class="text-sm text-gray-700 font-medium" x-text="repair.name"></span>
                                             <span class="text-xs font-bold text-ink" x-text="repair.price > 0 ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(repair.price) : 'Rp0'"></span>
@@ -369,11 +417,10 @@
                                 </template>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-6 transition-opacity duration-300" :class="!vehicleSelected ? 'opacity-50 pointer-events-none' : ''">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-6 transition-all duration-300" :class="!vehicleSelected ? 'opacity-50 pointer-events-none select-none' : ''">
                     <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                         <div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-black text-lg">3</div>
                         <div>
@@ -386,7 +433,7 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Alamat Servis <span class="text-red-500">*</span></label>
                             
-                            <div @click="showMapModal = true" class="w-full bg-gray-50 border border-gray-200 hover:border-brand rounded-lg p-4 cursor-pointer transition flex items-center justify-between group">
+                            <button type="button" @click="showMapModal = true" :disabled="!vehicleSelected" class="w-full text-left bg-gray-50 border border-gray-200 hover:border-brand rounded-lg p-4 cursor-pointer transition flex items-center justify-between group">
                                 <div class="flex items-center w-full pr-4">
                                     <div class="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center mr-4 shrink-0">
                                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -397,17 +444,17 @@
                                     </div>
                                 </div>
                                 <svg class="w-5 h-5 text-gray-400 group-hover:text-brand shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                            </div>
+                            </button>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
-                                <input type="date" name="date" x-model="date" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-bold text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink">
+                                <input type="date" name="date" x-model="date" required :disabled="!vehicleSelected" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-bold text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:bg-gray-100 disabled:cursor-not-allowed">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Jam</label>
-                                <select name="time" x-model="time" required class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-bold text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink">
+                                <select name="time" x-model="time" required :disabled="!vehicleSelected" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-bold text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:bg-gray-100 disabled:cursor-not-allowed">
                                     <option value="" disabled selected>-- Pilih Waktu --</option>
                                     <option value="09:00">09:00 WIB</option>
                                     <option value="11:00">11:00 WIB</option>
@@ -421,7 +468,7 @@
             </form>
         </div>
 
-        <div class="lg:col-span-4 hidden lg:block" :class="!vehicleSelected ? 'opacity-50 pointer-events-none' : ''">
+        <div class="lg:col-span-4 hidden lg:block" :class="!vehicleSelected ? 'opacity-50 pointer-events-none select-none' : ''">
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-28">
                 <h3 class="font-black text-ink text-lg border-b border-gray-100 pb-4 mb-4">Ringkasan Booking</h3>
                 
@@ -433,7 +480,7 @@
                     
                     <div class="flex justify-between items-start text-sm">
                         <span class="text-gray-500">Layanan</span>
-                        <span class="font-bold text-ink text-right" x-text="serviceType === 'berkala' ? serviceData[kmSelected].title : 'Perbaikan Umum'"></span>
+                        <span class="font-bold text-ink text-right" x-text="serviceType === 'berkala' ? (serviceData[kmSelected] ? serviceData[kmSelected].title : 'SERVIS BERKALA') : 'Perbaikan Umum'"></span>
                     </div>
 
                     <div class="flex justify-between items-start text-sm">
@@ -477,7 +524,6 @@
                 </button>
             </div>
         </div>
-
     </div>
 
     <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-30 p-4 flex justify-between items-center" x-show="vehicleSelected" x-transition.opacity>
@@ -579,19 +625,19 @@
             </div>
             
             <div class="flex items-center justify-between px-6 py-4 bg-gray-50 border-b border-gray-200 shrink-0">
-                <button @click="prevKm()" :class="currentKmIndex === 0 ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 hover:text-brand transition'"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
-                <span class="font-black text-brand text-sm tracking-widest" x-text="serviceData[kmSelected].title"></span>
-                <button @click="nextKm()" :class="currentKmIndex === 2 ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 hover:text-brand transition'"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                <button type="button" @click="prevKm()" :class="currentKmIndex === 0 ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 hover:text-brand transition'"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+                <span class="font-black text-brand text-sm tracking-widest" x-text="serviceData[kmSelected] ? serviceData[kmSelected].title : 'SERVIS BERKALA ' + kmSelected + ' KM'"></span>
+                <button type="button" @click="nextKm()" :class="currentKmIndex === 10 ? 'text-gray-200 cursor-not-allowed' : 'text-gray-500 hover:text-brand transition'"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
             </div>
 
             <div class="flex bg-gray-100 p-1 m-6 rounded-full shrink-0">
-                <button @click="detailTab = 'diperiksa'" :class="detailTab === 'diperiksa' ? 'bg-white text-ink shadow-sm' : 'text-gray-500 hover:text-ink'" class="flex-1 py-2 text-sm font-bold rounded-full transition-all">Part Diperiksa</button>
-                <button @click="detailTab = 'diganti'" :class="detailTab === 'diganti' ? 'bg-white text-ink shadow-sm' : 'text-gray-500 hover:text-ink'" class="flex-1 py-2 text-sm font-bold rounded-full transition-all">Part Diganti</button>
+                <button type="button" @click="detailTab = 'diperiksa'" :class="detailTab === 'diperiksa' ? 'bg-white text-ink shadow-sm' : 'text-gray-500 hover:text-ink'" class="flex-1 py-2 text-sm font-bold rounded-full transition-all">Part Diperiksa</button>
+                <button type="button" @click="detailTab = 'diganti'" :class="detailTab === 'diganti' ? 'bg-white text-ink shadow-sm' : 'text-gray-500 hover:text-ink'" class="flex-1 py-2 text-sm font-bold rounded-full transition-all">Part Diganti</button>
             </div>
 
             <div class="flex-1 overflow-y-auto px-6 pb-6">
                 <ul x-show="detailTab === 'diperiksa'" class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
-                    <template x-for="item in serviceData[kmSelected].diperiksa" :key="item">
+                    <template x-for="item in (serviceData[kmSelected] ? serviceData[kmSelected].diperiksa : [])" :key="item">
                         <li class="flex items-start text-sm font-medium text-gray-700">
                             <svg class="w-4 h-4 text-brand mr-2 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                             <span x-text="item"></span>
@@ -600,7 +646,7 @@
                 </ul>
 
                 <div x-show="detailTab === 'diganti'" class="py-2">
-                    <div x-show="serviceData[kmSelected].diganti.length === 0" class="text-center py-8">
+                    <div x-show="!serviceData[kmSelected] || serviceData[kmSelected].diganti.length === 0" class="text-center py-8">
                         <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                             <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         </div>
@@ -608,7 +654,7 @@
                         <p class="text-sm text-gray-500 max-w-xs mx-auto">Perawatan perdana ini berfokus pada pengecekan fungsi tanpa pergantian komponen.</p>
                     </div>
 
-                    <div x-show="serviceData[kmSelected].diganti.length > 0" class="space-y-3">
+                    <div x-show="serviceData[kmSelected] && serviceData[kmSelected].diganti.length > 0" class="space-y-3">
                         <template x-for="part in serviceData[kmSelected].diganti" :key="part.name">
                             <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
                                 <span class="text-sm font-bold text-ink flex items-center">
@@ -618,15 +664,15 @@
                                 <span class="font-bold text-gray-600" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(part.price)"></span>
                             </div>
                         </template>
-                        <div class="flex justify-between items-center bg-brand/10 p-3 rounded-lg mt-2 border border-brand/20">
-                            <span class="text-sm font-bold text-brand">Estimasi Biaya Jasa</span>
-                            <span class="font-black text-brand" x-text="kmSelected === '10000' ? 'Rp300.000' : 'Rp400.000'"></span>
+                        
+                        <div x-show="serviceFee > 0" class="flex justify-between items-center bg-brand/10 p-3 rounded-lg mt-2 border border-brand/20">
+                            <span class="text-sm font-bold text-brand">Estimasi Biaya Jasa Dasar</span>
+                            <span class="font-black text-brand" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(serviceFee)"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
 @endsection

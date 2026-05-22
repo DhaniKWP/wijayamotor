@@ -62,6 +62,7 @@ class BookingController extends Controller
             'date'             => 'required|date',
             'time'             => 'required|string',
             'estimasi_harga'   => 'required|numeric',
+            'branch'           => 'required',
         ];
 
         // 3. Validasi dinamis: Kalau Bengkel wajib pilih Cabang, kalau Home Service wajib isi Alamat
