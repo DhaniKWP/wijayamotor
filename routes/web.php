@@ -65,7 +65,13 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 // =========================================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     
-    Route::get('/dashboard', [ServiceController::class, 'index'])->name('dashboard');
+    // 1. Route Dashboard Booking
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    // 2. Route Master Servis (Rute Baru)
+    Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
     Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
     Route::put('/services/{id}', [ServiceController::class, 'update'])->name('services.update');
     Route::delete('/services/{id}', [ServiceController::class, 'destroy'])->name('services.destroy');

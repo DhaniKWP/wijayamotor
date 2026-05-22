@@ -8,11 +8,12 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    // Tampilkan halaman dashboard admin & tabel servis
+    // Tampilkan halaman tabel master servis
     public function index()
     {
         $services = Service::orderBy('created_at', 'desc')->get();
-        return view('admin.dashboard', compact('services'));
+        // UBAH: Arahkan ke view admin.services.index
+        return view('admin.services.index', compact('services'));
     }
 
     // Proses simpan servis baru
@@ -26,7 +27,8 @@ class ServiceController extends Controller
 
         Service::create($request->all());
 
-        return redirect()->route('admin.dashboard')->with('success', 'Data servis berhasil ditambahkan!');
+        // UBAH: Redirect ke route admin.services.index
+        return redirect()->route('admin.services.index')->with('success', 'Data servis berhasil ditambahkan!');
     }
 
     // Proses update servis
@@ -42,7 +44,8 @@ class ServiceController extends Controller
 
         $service->update($request->all());
 
-        return redirect()->route('admin.dashboard')->with('success', 'Data servis berhasil diperbarui!');
+        // UBAH: Redirect ke route admin.services.index
+        return redirect()->route('admin.services.index')->with('success', 'Data servis berhasil diperbarui!');
     }
 
     // Proses hapus servis
@@ -51,6 +54,7 @@ class ServiceController extends Controller
         $service = Service::findOrFail($id);
         $service->delete();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Layanan servis berhasil dihapus permanen!');
+        // UBAH: Redirect ke route admin.services.index
+        return redirect()->route('admin.services.index')->with('success', 'Layanan servis berhasil dihapus permanen!');
     }
 }
