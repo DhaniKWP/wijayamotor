@@ -24,25 +24,27 @@ class BookingController extends Controller
      */
     public function create()
     {
-        // 1. Ambil data kendaraan khusus milik user yang login
-        $vehicles = \App\Models\Vehicle::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
+        $vehicles = \App\Models\Vehicle::where('user_id', Auth::id())->get();
         
-        // 2. Ambil data master servis
+        // Ambil SEMUA data master servis untuk dilempar ke Alpine.js
         $services = \App\Models\Service::all();
         
         return view('customer.booking.create', compact('vehicles', 'services'));
     }
 
     /**
-     * Menampilkan form booking Home Service (INI YANG TADI HILANG)
+     * Menampilkan form booking Home Service
      */
     public function createHomeService()
     {
         // Ambil data kendaraan khusus milik user yang login
-        $vehicles = \App\Models\Vehicle::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
+        $vehicles = Vehicle::where('user_id', Auth::id())->get();
+        
+        // Ambil data servis buat jaga-jaga kalau form Home Service butuh milih servis
+        $services = Service::all();
         
         // Lempar ke view home-service
-        return view('customer.booking.home-service', compact('vehicles'));
+        return view('customer.booking.home-service', compact('vehicles', 'services'));
     }
 
     /**
@@ -83,31 +85,39 @@ class BookingController extends Controller
         if ($request->service_category === 'berkala' && $request->has('addons')) {
             $addonsData = json_encode($request->addons);
         } elseif ($request->service_category === 'umum' && $request->has('general_repairs')) {
-            $addonsData = json_encode($request->general_repairs); // Simpan pilihan Engine Oil, dll
+            $addonsData = json_encode($request->general_repairs); 
         }
 
-        // LOGIKA PENENTUAN SERVICE ID OTOMATIS
-        $serviceIdMapped = 1; // Default Servis Berkala
-        if ($request->service_category === 'umum') {
-            $serviceIdMapped = 2;
-        } elseif ($request->service_category === 'lainnya') {
-            $serviceIdMapped = 3;
+        // ==========================================
+        // PERBAIKAN LOGIKA PENENTUAN SERVICE ID
+        // ==========================================
+        // Kita ambil ID servis pertama yang ada di database sebagai "Fallback/Default"
+        // Biar nggak error Foreign Key kalau formnya nggak ngirim ID.
+        $defaultService = Service::first();
+        
+        if (!$defaultService) {
+            // Kalau admin bener-bener belum bikin data servis, kasih peringatan!
+            return back()->withErrors(['service_id' => 'Sistem belum memiliki Master Servis. Harap hubungi Admin.'])->withInput();
         }
+
+        // Kalau form ngirim 'service_id', pakai itu. Kalau nggak, pakai ID servis pertama.
+        $finalServiceId = $request->filled('service_id') ? $request->service_id : $defaultService->id;
+        // ==========================================
 
         // 5. Masukkan ke Database
         Booking::create([
             'user_id'        => Auth::id(),
             'vehicle_id'     => $request->vehicle_id,
             
-            // INI YANG DIUBAH, NGGAK LAGI HARDCODE ANGKA 1
-            'service_id'     => $serviceIdMapped, 
+            // INI YANG BIKIN AMAN
+            'service_id'     => $finalServiceId, 
             
             // Pembeda Utama
             'tipe_booking'   => $isHomeService ? 'home_service' : 'bengkel',
             'cabang'         => $isHomeService ? null : $request->branch,
             'alamat_lengkap' => $isHomeService ? $request->alamat_lengkap : null,
             
-            // Detail Servis (Di sini detail ganti oli, dll udah aman kesimpen)
+            // Detail Servis
             'jenis_servis'   => $request->service_category,
             'kilometer'      => $request->service_category === 'berkala' ? $request->km_service : null,
             'addons'         => $addonsData,

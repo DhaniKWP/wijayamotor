@@ -121,12 +121,26 @@
                 <form action="{{ route('admin.services.store') }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Nama Servis</label>
-                        <input type="text" name="name" value="{{ old('name') }}" required placeholder="Contoh: Ganti Kampas Rem" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-[#FF8C00]/50 focus:border-[#FF8C00] outline-none transition-all placeholder-slate-300">
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Nama Servis (Pilih Sesuai Standar)</label>
+                        <select name="name" required class="w-full bg-white rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-[#FF8C00]/50 focus:border-[#FF8C00] outline-none transition-all font-medium text-slate-800">
+                            <option value="" disabled selected>-- Pilih Jenis Servis --</option>
+                            <option value="Servis Berkala 1.000 KM">Servis Berkala 1.000 KM</option>
+                            <option value="Servis Berkala 10.000 KM">Servis Berkala 10.000 KM</option>
+                            <option value="Servis Berkala 20.000 KM">Servis Berkala 20.000 KM</option>
+                            <option value="Servis Berkala 30.000 KM">Servis Berkala 30.000 KM</option>
+                            <option value="Servis Berkala 40.000 KM">Servis Berkala 40.000 KM</option>
+                            <option value="Servis Berkala 50.000 KM">Servis Berkala 50.000 KM</option>
+                            <option value="Servis Berkala 60.000 KM">Servis Berkala 60.000 KM</option>
+                            <option value="Servis Berkala 70.000 KM">Servis Berkala 70.000 KM</option>
+                            <option value="Servis Berkala 80.000 KM">Servis Berkala 80.000 KM</option>
+                            <option value="Servis Berkala 90.000 KM">Servis Berkala 90.000 KM</option>
+                            <option value="Servis Berkala 100.000 KM">Servis Berkala 100.000 KM</option>
+                            <option value="Servis Lainnya">Servis Lainnya / Keluhan Umum</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Harga Estimasi (Rp)</label>
-                        <input type="number" name="price_estimate" value="{{ old('price_estimate') }}" required placeholder="Contoh: 250000" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-[#FF8C00]/50 focus:border-[#FF8C00] outline-none transition-all placeholder-slate-300">
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Harga Estimasi Jasa (Rp)</label>
+                        <input type="number" name="price_estimate" value="{{ old('price_estimate') }}" required placeholder="Contoh: 300000" class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-[#FF8C00]/50 focus:border-[#FF8C00] outline-none transition-all placeholder-slate-300">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Deskripsi Layanan</label>
@@ -164,10 +178,23 @@
                     @method('PUT')
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Nama Servis</label>
-                        <input type="text" name="name" x-model="editName" required class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all">
+                        <select name="name" x-model="editName" required class="w-full bg-white rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all font-medium text-slate-800">
+                            <option value="Servis Berkala 1.000 KM">Servis Berkala 1.000 KM</option>
+                            <option value="Servis Berkala 10.000 KM">Servis Berkala 10.000 KM</option>
+                            <option value="Servis Berkala 20.000 KM">Servis Berkala 20.000 KM</option>
+                            <option value="Servis Berkala 30.000 KM">Servis Berkala 30.000 KM</option>
+                            <option value="Servis Berkala 40.000 KM">Servis Berkala 40.000 KM</option>
+                            <option value="Servis Berkala 50.000 KM">Servis Berkala 50.000 KM</option>
+                            <option value="Servis Berkala 60.000 KM">Servis Berkala 60.000 KM</option>
+                            <option value="Servis Berkala 70.000 KM">Servis Berkala 70.000 KM</option>
+                            <option value="Servis Berkala 80.000 KM">Servis Berkala 80.000 KM</option>
+                            <option value="Servis Berkala 90.000 KM">Servis Berkala 90.000 KM</option>
+                            <option value="Servis Berkala 100.000 KM">Servis Berkala 100.000 KM</option>
+                            <option value="Servis Lainnya">Servis Lainnya / Keluhan Umum</option>
+                        </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Harga Estimasi (Rp)</label>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Harga Estimasi Jasa (Rp)</label>
                         <input type="number" name="price_estimate" x-model="editPrice" required class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 outline-none transition-all">
                     </div>
                     <div>
