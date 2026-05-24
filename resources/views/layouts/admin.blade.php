@@ -27,13 +27,18 @@
 </head>
 <body class="bg-[#F8FAFC] flex h-screen overflow-hidden antialiased" x-data="{ sidebarOpen: false }">
     
-    <aside class="w-64 bg-primary text-white flex flex-col hidden md:flex shrink-0">
-        <div class="h-20 flex items-center justify-center border-b border-white/5">
+    <div x-show="sidebarOpen" x-cloak class="fixed inset-0 z-20 bg-slate-900/50 backdrop-blur-sm md:hidden" @click="sidebarOpen = false" x-transition.opacity></div>
+
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-30 w-64 bg-primary text-white flex flex-col transition-transform duration-300 md:relative md:translate-x-0 shrink-0 shadow-2xl md:shadow-none">
+        <div class="h-20 flex items-center justify-between px-6 border-b border-white/5 shrink-0">
             <span class="font-black text-2xl tracking-tighter text-white">ADMIN <span class="text-secondary">PANEL</span></span>
+            <button @click="sidebarOpen = false" class="md:hidden text-slate-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
         </div>
         
         <nav class="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 px-4 py-3.5 rounded-xl font-bold transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-white/5 text-white border-r-4 border-secondary' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 px-4 py-3.5 rounded-xl font-bold transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-white/5 text-white border-r-4 border-secondary' : 'text-slate-400 hover:bg-white/5 hover:text-white group' }}">
                 <svg class="w-5 h-5 {{ request()->routeIs('admin.dashboard') ? 'text-secondary' : 'group-hover:text-secondary' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
                 <span>Data Booking</span>
             </a>
@@ -54,7 +59,7 @@
             </a>
         </nav>
 
-        <div class="p-4 border-t border-white/5">
+        <div class="p-4 border-t border-white/5 shrink-0">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="flex items-center space-x-3 text-red-300 hover:bg-red-500/10 px-4 py-3 rounded-xl w-full transition-all">
@@ -65,16 +70,16 @@
         </div>
     </aside>
 
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col overflow-hidden w-full">
         
-        <header class="bg-white h-20 flex items-center justify-between px-8 z-10 shrink-0 border-b border-slate-200/60 shadow-sm">
+        <header class="bg-white h-20 flex items-center justify-between px-4 md:px-8 z-10 shrink-0 border-b border-slate-200/60 shadow-sm w-full">
             <div class="flex items-center">
-                <button @click="sidebarOpen = !sidebarOpen" class="md:hidden mr-4 text-slate-500 hover:text-slate-700">
+                <button @click="sidebarOpen = true" class="md:hidden mr-4 text-slate-500 hover:text-slate-800 p-2 rounded-lg hover:bg-slate-50">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
-                <h1 class="text-xl font-bold text-slate-800 tracking-tight">@yield('header_title', 'Overview')</h1>
+                <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight truncate">@yield('header_title', 'Overview')</h1>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4 shrink-0">
                 <div class="text-right hidden sm:block">
                     <p class="text-sm font-bold text-primary">{{ Auth::user()->name ?? 'Admin' }}</p>
                     <p class="text-[10px] text-secondary font-bold uppercase tracking-wider">Administrator</p>

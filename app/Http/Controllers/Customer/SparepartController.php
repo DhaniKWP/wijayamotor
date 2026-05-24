@@ -60,4 +60,13 @@ class SparepartController extends Controller
 
         return view('customer.spareparts.index', compact('spareparts', 'categories'));
     }
+
+
+    public function show($id)
+    {
+        // Cari sparepart, kalau nggak ada bakal nampilin halaman 404
+        $sparepart = \App\Models\Sparepart::findOrFail($id);
+        
+        return view('customer.spareparts.show', compact('sparepart'));
+    }
 }

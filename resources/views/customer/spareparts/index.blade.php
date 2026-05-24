@@ -74,7 +74,7 @@
                     Terapkan Filter
                 </button>
                 @if(request()->anyFilled(['search', 'sort', 'category', 'min_price', 'max_price']))
-                    <a href="{{ route('spareparts.index') }}" class="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-black uppercase tracking-widest py-3 rounded-lg transition">
+                    <a href="{{ route('sparepart.index') }}" class="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-black uppercase tracking-widest py-3 rounded-lg transition">
                         Reset Filter
                     </a>
                 @endif
@@ -89,11 +89,14 @@
             @else
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     @foreach($spareparts as $item)
-                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition flex flex-col justify-between group">
+                        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition flex flex-col justify-between group relative">
+                            
+                            <a href="{{ route('sparepart.show', $item->id) }}" class="absolute inset-0 z-10"></a>
+
                             <div>
                                 <div class="bg-gray-50 aspect-square w-full flex items-center justify-center p-6 relative overflow-hidden border-b border-gray-100">
                                     @if($item->image)
-                                        <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" class="object-contain max-h-full max-w-full group-hover:scale-105 transition duration-300">
+                                        <img src="{{ asset('uploads/spareparts/' . $item->image) }}" alt="{{ $item->name }}" class="object-cover max-h-full max-w-full group-hover:scale-105 transition duration-300 rounded-lg">
                                     @else
                                         <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -102,13 +105,13 @@
                                     @endif
                                     
                                     @if($item->stock <= 0)
-                                        <div class="absolute inset-0 bg-white/80 flex items-center justify-center">
+                                        <div class="absolute inset-0 bg-white/80 flex items-center justify-center z-20">
                                             <span class="bg-gray-900 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded">Stok Habis</span>
                                         </div>
                                     @endif
                                 </div>
 
-                                <div class="p-5">
+                                <div class="p-5 relative z-20">
                                     <h3 class="font-bold text-gray-900 text-sm line-clamp-2 min-h-[40px] group-hover:text-danger transition">
                                         {{ $item->name }}
                                     </h3>
@@ -116,18 +119,18 @@
                                 </div>
                             </div>
 
-                            <div class="px-5 pb-5 pt-2 border-t border-gray-50 bg-gray-50/50">
+                            <div class="px-5 pb-5 pt-2 border-t border-gray-50 bg-gray-50/50 relative z-20">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Harga Resmi</p>
                                         <p class="font-black text-gray-900 text-base">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
                                     </div>
                                     
-                                    <a href="#" class="bg-white hover:bg-danger text-gray-700 hover:text-white border border-gray-200 hover:border-danger p-2 rounded-lg transition shadow-sm">
+                                    <div class="bg-white group-hover:bg-danger text-gray-700 group-hover:text-white border border-gray-200 group-hover:border-danger p-2 rounded-lg transition shadow-sm pointer-events-none">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                                         </svg>
-                                    </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
