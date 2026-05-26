@@ -68,11 +68,15 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 // =========================================
 // ROUTE KHUSUS ADMIN
 // =========================================
+// =========================================
+// ROUTE KHUSUS ADMIN
+// =========================================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     
-    // PAKE ADMIN BOOKING CONTROLLER
-    Route::get('/dashboard', [AdminBookingController::class, 'index'])->name('dashboard');
+    // DASHBOARD REKAPAN
+    Route::get('/dashboard', [AdminBookingController::class, 'dashboard'])->name('dashboard');
     
+    // MANAJEMEN BOOKING
     Route::get('/bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
     Route::post('/bookings/{id}/accept', [AdminBookingController::class, 'accept'])->name('bookings.accept');
     Route::post('/bookings/{id}/reject', [AdminBookingController::class, 'reject'])->name('bookings.reject');

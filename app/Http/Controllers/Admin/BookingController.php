@@ -9,9 +9,10 @@ use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    public function index(Request $request)
+    // 1. HALAMAN DASHBOARD (REKAPAN)
+    public function dashboard()
     {
-        // 1. Statistik
+        // Hitung Statistik
         $pendingCount = Booking::where('status', 'pending')->count();
         $todayCount = Booking::whereDate('tanggal', Carbon::today())->count(); 
         $processCount = Booking::where('status', 'process')->count();
@@ -19,9 +20,28 @@ class BookingController extends Controller
                                 ->whereMonth('updated_at', Carbon::now()->month)
                                 ->count();
 
-        // 2. Query Data dengan Filter
-        // Tambahkan relasi user dan vehicle agar bisa dipanggil di view
-        $query = Booking::with(['user', 'vehicle', 'service'])->orderBy('tanggal', 'asc')->orderBy('jam', 'asc');
+        // Ambil 5 bookingan terbaru buat mejeng di dashboard
+        $recentBookings = Booking::with(['user', 'vehicle', 'service'])
+                                ->orderBy('created_at', 'desc')
+                                ->take(5)
+                                ->get();
+
+        return view('admin.dashboard', compact(
+            'pendingCount', 
+            'todayCount', 
+            'processCount', 
+            'doneMonthCount',
+            'recentBookings'
+        ));
+    }
+
+    // 2. HALAMAN MANAJEMEN BOOKING (TABEL FULL)
+    public function index(Request $request)
+    {
+        // Query Data dengan Filter
+        $query = Booking::with(['user', 'vehicle', 'service'])
+                        ->orderBy('tanggal', 'asc')
+                        ->orderBy('jam', 'asc');
 
         if ($request->has('status') && $request->status != '') {
             $query->where('status', $request->status);
@@ -29,20 +49,14 @@ class BookingController extends Controller
 
         $bookings = $query->paginate(15);
 
-        // 3. Return view
-        return view('admin.dashboard', compact(
-            'bookings', 
-            'pendingCount', 
-            'todayCount', 
-            'processCount', 
-            'doneMonthCount'
-        ));
+        // Arahin ke folder admin/booking/index.blade.php
+        return view('admin.booking.index', compact('bookings'));
     }
 
+    // FUNGSI AKSI STATUS (TETAP SAMA)
     public function accept($id)
     {
         $booking = Booking::findOrFail($id);
-        // Sesuaikan dengan enum migration
         $booking->update(['status' => 'confirmed']); 
         return redirect()->back()->with('success', 'Booking berhasil disetujui.');
     }
@@ -50,7 +64,6 @@ class BookingController extends Controller
     public function reject($id)
     {
         $booking = Booking::findOrFail($id);
-        // Sesuaikan dengan enum migration
         $booking->update(['status' => 'cancelled']); 
         return redirect()->back()->with('success', 'Booking berhasil ditolak.');
     }
