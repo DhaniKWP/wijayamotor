@@ -51,7 +51,7 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
         $vehicles = \App\Models\Vehicle::where('user_id', $user->id)->get();
         
         $bookings = \App\Models\Booking::where('user_id', $user->id)
-                        ->with('vehicle')
+                        ->with(['vehicle', 'service'])
                         ->orderBy('tanggal', 'asc')
                         ->get();
 

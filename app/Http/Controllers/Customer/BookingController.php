@@ -120,7 +120,7 @@ class BookingController extends Controller
             
             // Detail Servis
             'jenis_servis'   => $request->service_category,
-            'kilometer'      => $request->service_category === 'berkala' ? $request->km_service : null,
+            'kilometer'      => $request->service_category === 'berkala' ? (int) str_replace('.', '', $request->km_service) : null,
             'addons'         => $addonsData,
             'estimasi_harga' => $request->estimasi_harga,
             

@@ -20,9 +20,11 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:services,name',
             'price_estimate' => 'required|numeric|min:0',
             'description' => 'nullable|string',
+        ], [
+            'name.unique' => 'Layanan dengan nama ini sudah terdaftar. Silakan edit data yang sudah ada.',
         ]);
 
         Service::create($request->all());
@@ -37,9 +39,11 @@ class ServiceController extends Controller
         $service = Service::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:services,name,' . $service->id,
             'price_estimate' => 'required|numeric|min:0',
             'description' => 'nullable|string',
+        ], [
+            'name.unique' => 'Layanan dengan nama ini sudah terdaftar. Silakan edit data yang sudah ada.',
         ]);
 
         $service->update($request->all());
