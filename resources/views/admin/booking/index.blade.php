@@ -114,10 +114,15 @@
                                 <button type="submit" class="bg-ink hover:bg-ink-light text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none">Mulai Kerjakan</button>
                             </form>
                         @elseif($booking->status == 'process')
-                            <form action="{{ route('admin.bookings.complete', $booking->id) }}" method="POST" class="inline-block">
-                                @csrf
-                                <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none">Selesaikan Servis</button>
-                            </form>
+                            <a href="{{ route('admin.bookings.complete.form', $booking->id) }}" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Selesaikan Servis
+                            </a>
+                        @elseif($booking->status == 'done')
+                            <a href="{{ route('admin.bookings.invoice', $booking->id) }}" class="inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                Lihat Invoice
+                            </a>
                         @endif
                     </td>
                 </tr>

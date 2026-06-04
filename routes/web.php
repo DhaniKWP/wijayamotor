@@ -14,6 +14,7 @@ use App\Http\Controllers\Customer\VehicleController;
 use App\Http\Controllers\Customer\SparepartController as CustomerSparepartController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SparepartController as AdminSparepartController;
+use App\Http\Controllers\Admin\TransactionController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -82,6 +83,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/bookings/{id}/reject', [AdminBookingController::class, 'reject'])->name('bookings.reject');
     Route::post('/bookings/{id}/process', [AdminBookingController::class, 'process'])->name('bookings.process');
     Route::post('/bookings/{id}/complete', [AdminBookingController::class, 'complete'])->name('bookings.complete');
+
+    // WORK ORDER & TRANSAKSI SERVIS
+    Route::get('/bookings/{id}/complete-form', [TransactionController::class, 'showCompleteForm'])->name('bookings.complete.form');
+    Route::post('/bookings/{id}/complete-transaction', [TransactionController::class, 'store'])->name('bookings.complete.transaction');
+    Route::get('/bookings/{id}/invoice', [TransactionController::class, 'invoice'])->name('bookings.invoice');
 
     // Route Master Servis
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
