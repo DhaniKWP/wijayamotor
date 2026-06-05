@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Booking;
 use App\Models\Vehicle;
+use App\Models\Order;
 
 class DashboardController extends Controller
 {
@@ -37,24 +38,31 @@ class DashboardController extends Controller
     }
 
     /**
-     * Halaman "Pesanan Saya" — daftar lengkap semua booking + info tagihan.
+     * Halaman "Pesanan Saya" — tab Servis & tab Sparepart.
      */
     public function pesanan()
     {
         $user = Auth::user();
 
+        // Tab Servis: semua booking
         $bookings = Booking::where('user_id', $user->id)
                         ->with(['vehicle', 'service', 'transaction.items'])
                         ->orderBy('created_at', 'desc')
                         ->get();
 
+        // Tab Sparepart: semua order pembelian sparepart
+        $orders = Order::where('user_id', $user->id)
+                        ->with(['items.sparepart'])
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
         // Info rekening bengkel (hardcoded sementara)
         $bankInfo = [
-            'bank'   => 'BCA',
-            'nomor'  => '1234567890',
+            'bank'      => 'BCA',
+            'nomor'     => '1234567890',
             'atas_nama' => 'Wijaya Motor',
         ];
 
-        return view('customer.pesanan', compact('bookings', 'bankInfo'));
+        return view('customer.pesanan', compact('bookings', 'orders', 'bankInfo'));
     }
 }

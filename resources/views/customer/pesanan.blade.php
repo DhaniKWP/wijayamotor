@@ -15,6 +15,11 @@
     </div>
 </div>
 
+@php
+    // Tentukan tab aktif dari query string, default ke 'servis'
+    $activeTab = request('tab', 'servis');
+@endphp
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
 
     {{-- Sidebar --}}
@@ -44,17 +49,42 @@
     {{-- Main Content --}}
     <main class="lg:col-span-3">
 
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        {{-- Page Header --}}
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
                 <h2 class="text-2xl font-black uppercase text-gray-900 tracking-tight">PESANAN SAYA</h2>
-                <p class="text-gray-500 text-sm mt-1">{{ $bookings->count() }} total riwayat servis kendaraan Anda.</p>
+                <p class="text-gray-500 text-sm mt-1">Riwayat servis dan pembelian sparepart kendaraan Anda.</p>
             </div>
             <a href="{{ route('booking.create') }}" class="bg-gray-900 hover:bg-black text-white px-5 py-2.5 rounded-lg font-bold text-xs uppercase tracking-widest transition shadow-sm flex items-center shrink-0">
                 <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                Booking Baru
+                Booking Servis
             </a>
         </div>
 
+        {{-- TABS --}}
+        <div class="flex border-b border-gray-200 mb-6">
+            <a href="{{ route('customer.pesanan') }}?tab=servis"
+               class="px-5 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition
+                      {{ $activeTab === 'servis' ? 'border-danger text-danger' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                Riwayat Servis
+                @if($bookings->count() > 0)
+                    <span class="ml-1.5 bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">{{ $bookings->count() }}</span>
+                @endif
+            </a>
+            <a href="{{ route('customer.pesanan') }}?tab=sparepart"
+               class="px-5 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition
+                      {{ $activeTab === 'sparepart' ? 'border-danger text-danger' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                Pembelian Sparepart
+                @if($orders->count() > 0)
+                    <span class="ml-1.5 bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded">{{ $orders->count() }}</span>
+                @endif
+            </a>
+        </div>
+
+        {{-- ============================== --}}
+        {{-- TAB SERVIS                     --}}
+        {{-- ============================== --}}
+        @if($activeTab === 'servis')
         @php
             $addonLabels = [
                 'spooring'        => 'Spooring & Balancing',
@@ -89,7 +119,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-wrap gap-2 text-right">
+                <div class="flex flex-wrap gap-2">
                     @if($booking->tipe_booking === 'home_service')
                         <span class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
@@ -141,7 +171,7 @@
                     <div>
                         <p class="text-[9px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Lokasi</p>
                         @if($booking->tipe_booking === 'home_service')
-                            <p class="font-bold text-gray-900 line-clamp-2" title="{{ $booking->alamat_lengkap }}">{{ $booking->alamat_lengkap }}</p>
+                            <p class="font-bold text-gray-900 line-clamp-2">{{ $booking->alamat_lengkap }}</p>
                         @else
                             <p class="font-bold text-gray-900">Cabang {{ ucfirst($booking->cabang ?? 'Pusat') }}</p>
                         @endif
@@ -151,19 +181,19 @@
                             {{ $booking->status === 'done' ? 'Total Tagihan' : 'Estimasi Biaya' }}
                         </p>
                         @if($booking->status === 'done' && $booking->transaction)
-                            <p class="font-black text-danger text-base">Rp {{ number_format($booking->transaction->total_cost, 0, ',', '.') }}</p>
+                            <p class="font-black text-danger text-sm">Rp {{ number_format($booking->transaction->total_cost, 0, ',', '.') }}</p>
                         @else
                             <p class="font-bold text-gray-900">Rp {{ number_format($booking->estimasi_harga, 0, ',', '.') }}</p>
                         @endif
                     </div>
                 </div>
 
-                {{-- ===== TAGIHAN SECTION (done + belum lunas) ===== --}}
+                {{-- TAGIHAN (done + belum lunas) --}}
                 @if($booking->status === 'done' && $booking->transaction)
                     @if($booking->transaction->payment_status === 'pending')
                     <div class="mt-5 border-t border-gray-100 pt-5">
-                        <button @click="billOpen = !billOpen" class="w-full flex items-center justify-between text-sm font-bold text-red-700 bg-red-50 border border-red-100 rounded-lg px-5 py-3.5 hover:bg-red-100/50 transition">
-                            <span class="flex items-center gap-2 uppercase tracking-wider text-xs">
+                        <button @click="billOpen = !billOpen" class="w-full flex items-center justify-between text-xs font-bold text-red-700 bg-red-50 border border-red-100 rounded-lg px-5 py-3.5 hover:bg-red-100/50 transition uppercase tracking-wider">
+                            <span class="flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                 Lihat Rincian & Cara Pembayaran
                             </span>
@@ -171,8 +201,6 @@
                         </button>
 
                         <div x-show="billOpen" x-collapse x-cloak class="mt-4 space-y-4">
-                            
-                            {{-- Rincian Biaya --}}
                             <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
                                 <table class="w-full text-xs">
                                     <thead class="bg-gray-50 border-b border-gray-200">
@@ -211,75 +239,58 @@
                                 </table>
                             </div>
 
-                            {{-- Cara Pembayaran --}}
                             <div class="border border-gray-200 rounded-xl p-5 bg-gray-50/50">
                                 <p class="text-xs font-bold text-gray-900 uppercase tracking-wider mb-4 border-b border-gray-200 pb-2">Cara Pembayaran</p>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    {{-- Tunai --}}
                                     <div class="border border-gray-200 rounded-lg p-4 bg-white">
                                         <div class="flex items-center gap-2 mb-2">
                                             <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                                             <p class="text-xs font-bold text-gray-900 uppercase tracking-wider">Tunai (Cash)</p>
                                         </div>
-                                        <p class="text-xs text-gray-500 leading-relaxed">Lakukan pembayaran langsung di kasir bengkel. Admin akan mengkonfirmasi pembayaran secara sistem.</p>
+                                        <p class="text-xs text-gray-500 leading-relaxed">Bayar langsung di kasir bengkel saat mengambil kendaraan.</p>
                                     </div>
-                                    {{-- Transfer --}}
                                     <div class="border border-gray-200 rounded-lg p-4 bg-white">
                                         <div class="flex items-center gap-2 mb-3">
                                             <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                                             <p class="text-xs font-bold text-gray-900 uppercase tracking-wider">Transfer Bank</p>
                                         </div>
-                                        <div class="space-y-2 text-xs">
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-500">Bank</span>
-                                                <span class="font-bold text-gray-900">{{ $bankInfo['bank'] }}</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-500">No. Rekening</span>
-                                                <span class="font-bold text-gray-900 tracking-wider">{{ $bankInfo['nomor'] }}</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-500">Atas Nama</span>
-                                                <span class="font-bold text-gray-900">{{ $bankInfo['atas_nama'] }}</span>
-                                            </div>
+                                        <div class="space-y-1.5 text-xs">
+                                            <div class="flex justify-between"><span class="text-gray-500">Bank</span><span class="font-bold text-gray-900">{{ $bankInfo['bank'] }}</span></div>
+                                            <div class="flex justify-between"><span class="text-gray-500">Rekening</span><span class="font-bold text-gray-900 tracking-wider">{{ $bankInfo['nomor'] }}</span></div>
+                                            <div class="flex justify-between"><span class="text-gray-500">A.N.</span><span class="font-bold text-gray-900">{{ $bankInfo['atas_nama'] }}</span></div>
                                         </div>
-                                        <p class="text-[10px] text-gray-400 mt-3 border-t border-gray-100 pt-2 leading-relaxed">Setelah transfer, tunjukkan bukti transfer kepada mekanik/kasir untuk diverifikasi.</p>
+                                        <p class="text-[10px] text-gray-400 mt-3 border-t border-gray-100 pt-2">Tunjukkan bukti transfer kepada mekanik/kasir.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     @else
-                    {{-- Sudah Lunas --}}
                     <div class="mt-5 pt-5 border-t border-gray-100">
-                        <div class="bg-gray-50 border border-gray-200 rounded-lg px-5 py-3.5 flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <div>
-                                    <p class="text-sm font-bold text-gray-900">Pembayaran Lunas</p>
-                                    <p class="text-xs text-gray-500">Total: Rp {{ number_format($booking->transaction->total_cost, 0, ',', '.') }} &bull; Via {{ $booking->transaction->payment_method === 'cash' ? 'Tunai' : 'Transfer' }}</p>
-                                </div>
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg px-5 py-3.5 flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div>
+                                <p class="text-sm font-bold text-gray-900">Pembayaran Lunas</p>
+                                <p class="text-xs text-gray-500">Total: Rp {{ number_format($booking->transaction->total_cost, 0, ',', '.') }} &bull; Via {{ $booking->transaction->payment_method === 'cash' ? 'Tunai' : 'Transfer' }}</p>
                             </div>
                         </div>
                     </div>
                     @endif
                 @endif
 
-                {{-- Toggle Detail Addon & Keluhan --}}
-                @if(($booking->addons && is_array($booking->addons) && count($booking->addons) > 0) || ($booking->keluhan && $booking->keluhan !== '-') || ($booking->tipe_booking === 'home_service'))
+                {{-- Detail Addon & Keluhan --}}
+                @if(($booking->addons && is_array($booking->addons) && count($booking->addons) > 0) || ($booking->keluhan && $booking->keluhan !== '-'))
                     <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end">
-                        <button @click="open = !open" class="text-xs font-bold text-gray-500 hover:text-danger uppercase tracking-wider transition-all duration-200 inline-flex items-center gap-1">
+                        <button @click="open = !open" class="text-xs font-bold text-gray-500 hover:text-danger uppercase tracking-wider transition inline-flex items-center gap-1">
                             <span x-text="open ? 'Sembunyikan Rincian' : 'Lihat Keluhan & Layanan Tambahan'"></span>
-                            <svg class="w-4 h-4 transform transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                            <svg class="w-4 h-4 transform transition-transform" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                     </div>
-                    
                     <div x-show="open" x-collapse x-cloak class="mt-4 border-t border-gray-100 pt-4">
-                        <div class="bg-gray-50 rounded-lg p-5">
+                        <div class="bg-gray-50 rounded-lg p-4">
                             @if($booking->addons && is_array($booking->addons) && count($booking->addons) > 0)
                                 <div class="mb-4">
-                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Layanan Tambahan (Add-ons)</span>
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">Layanan Tambahan</span>
                                     <div class="flex flex-wrap gap-2">
                                         @foreach($booking->addons as $addon)
                                             <span class="inline-flex items-center px-3 py-1 bg-white border border-gray-200 rounded-md text-xs font-bold text-gray-700">
@@ -289,30 +300,106 @@
                                     </div>
                                 </div>
                             @endif
-                            
                             @if($booking->keluhan && $booking->keluhan !== '-')
                                 <div>
-                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Catatan Keluhan / Deskripsi Tambahan</span>
-                                    <p class="text-xs text-gray-700 leading-relaxed italic bg-white p-3 rounded-md border border-gray-200">
-                                        &ldquo;{{ $booking->keluhan }}&rdquo;
-                                    </p>
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Catatan Keluhan</span>
+                                    <p class="text-xs text-gray-700 leading-relaxed italic bg-white p-3 rounded-md border border-gray-200">&ldquo;{{ $booking->keluhan }}&rdquo;</p>
                                 </div>
                             @endif
                         </div>
                     </div>
                 @endif
-
             </div>
         </div>
         @empty
-        <div class="border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 p-10 text-center py-16">
+        <div class="border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 p-10 text-center">
             <div class="w-16 h-16 bg-white shadow-sm rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
             </div>
-            <p class="text-gray-500 text-sm font-medium">Belum ada pesanan servis.</p>
+            <p class="text-gray-500 text-sm font-medium">Belum ada riwayat servis.</p>
             <a href="{{ route('booking.create') }}" class="inline-block mt-3 text-xs font-bold text-danger hover:underline uppercase tracking-wider">Buat Booking Sekarang &rarr;</a>
         </div>
         @endforelse
+        @endif
+
+        {{-- ============================== --}}
+        {{-- TAB SPAREPART                  --}}
+        {{-- ============================== --}}
+        @if($activeTab === 'sparepart')
+        @forelse($orders as $order)
+        <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm hover:shadow-md transition">
+            
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-gray-100 gap-3">
+                <div>
+                    <p class="text-xs text-gray-400 font-medium uppercase tracking-widest">#ORD-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</p>
+                    <p class="text-sm text-gray-500 mt-1">{{ $order->created_at->translatedFormat('d F Y, H:i') }} WIB</p>
+                </div>
+                <div>
+                    @if($order->status === 'pending')
+                        <span class="text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Menunggu Konfirmasi</span>
+                    @elseif($order->status === 'paid')
+                        <span class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Dikonfirmasi · Siap Diambil</span>
+                    @elseif($order->status === 'shipped')
+                        <span class="text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Diproses</span>
+                    @elseif($order->status === 'done')
+                        <span class="text-green-600 bg-green-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Selesai & Lunas</span>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Item List --}}
+            <div class="py-4 space-y-3">
+                @foreach($order->items as $item)
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gray-50 border border-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                        @if($item->sparepart && $item->sparepart->image)
+                            <img src="{{ asset('uploads/spareparts/' . $item->sparepart->image) }}" class="w-full h-full object-cover" alt="">
+                        @else
+                            <svg class="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        @endif
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-gray-900 text-sm truncate">{{ $item->sparepart->name ?? 'Produk dihapus' }}</p>
+                        <p class="text-xs text-gray-500">{{ $item->qty }} unit &times; Rp {{ number_format($item->price, 0, ',', '.') }}</p>
+                    </div>
+                    <p class="text-sm font-bold text-gray-900 shrink-0">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</p>
+                </div>
+                @endforeach
+            </div>
+
+            {{-- Footer --}}
+            <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Total Pembayaran</p>
+                    <p class="text-base font-black text-danger">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
+                </div>
+                @if($order->status === 'pending')
+                <div class="bg-amber-50 border border-amber-100 rounded-lg px-4 py-2.5 text-xs text-amber-700 font-bold">
+                    Menunggu admin konfirmasi · Pickup di bengkel setelah dikonfirmasi
+                </div>
+                @elseif($order->status === 'paid')
+                <div class="bg-blue-50 border border-blue-100 rounded-lg px-4 py-2.5 text-xs text-blue-700 font-bold flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Barang siap diambil di bengkel
+                </div>
+                @elseif($order->status === 'done')
+                <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-xs text-gray-600 font-bold flex items-center gap-2">
+                    <svg class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Pesanan Selesai
+                </div>
+                @endif
+            </div>
+        </div>
+        @empty
+        <div class="border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 p-10 text-center">
+            <div class="w-16 h-16 bg-white shadow-sm rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            </div>
+            <p class="text-gray-500 text-sm font-medium">Belum ada pembelian sparepart.</p>
+            <a href="{{ route('sparepart.index') }}" class="inline-block mt-3 text-xs font-bold text-danger hover:underline uppercase tracking-wider">Lihat Katalog Sparepart &rarr;</a>
+        </div>
+        @endforelse
+        @endif
 
     </main>
 </div>

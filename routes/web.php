@@ -15,7 +15,9 @@ use App\Http\Controllers\Customer\SparepartController as CustomerSparepartContro
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SparepartController as AdminSparepartController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Customer\DashboardController;
+use App\Http\Controllers\Customer\OrderController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -49,8 +51,12 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Dashboard Ringkasan Akun
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Pesanan Saya (halaman baru)
+    // Pesanan Saya (halaman baru) — tab Servis & Sparepart
     Route::get('/pesanan-saya', [DashboardController::class, 'pesanan'])->name('customer.pesanan');
+
+    // ORDER SPAREPART (Beli Langsung, tanpa cart)
+    Route::post('/order', [OrderController::class, 'store'])->name('customer.order.store');
+    Route::get('/order/{id}/sukses', [OrderController::class, 'success'])->name('customer.order.success');
 
     // FITUR GARASI SAYA
     Route::get('/garasi', [VehicleController::class, 'index'])->name('garasi.index');
@@ -94,6 +100,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/spareparts', [AdminSparepartController::class, 'store'])->name('spareparts.store');
     Route::put('/spareparts/{id}', [AdminSparepartController::class, 'update'])->name('spareparts.update');
     Route::delete('/spareparts/{id}', [AdminSparepartController::class, 'destroy'])->name('spareparts.destroy');
+
+    // PESANAN SPAREPART (Order dari customer)
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/{id}/mark-done', [AdminOrderController::class, 'markDone'])->name('orders.mark.done');
+    Route::get('/orders/{id}/struk', [AdminOrderController::class, 'struk'])->name('orders.struk');
 
 });
 

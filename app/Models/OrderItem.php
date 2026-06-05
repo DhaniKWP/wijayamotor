@@ -15,6 +15,8 @@ class OrderItem extends Model
     /**
      * Mass assignable
      */
+    public $timestamps = false;
+
     protected $fillable = [
         'order_id',
         'sparepart_id',

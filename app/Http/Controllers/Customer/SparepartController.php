@@ -12,17 +12,17 @@ class SparepartController extends Controller
     {
         $query = Sparepart::query();
 
-        // 1. Fitur Search (Cari Nama)
+        // 1. Fitur Search
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // 2. Fitur Filter Kategori (Mencocokkan kata pada nama produk)
+        // 2. Filter Kategori
         if ($request->filled('category')) {
             $query->where('name', 'like', '%' . $request->category . '%');
         }
 
-        // 3. Fitur Filter Kisaran Harga
+        // 3. Kisaran Harga
         if ($request->filled('min_price')) {
             $query->where('price', '>=', $request->min_price);
         }
@@ -30,43 +30,38 @@ class SparepartController extends Controller
             $query->where('price', '<=', $request->max_price);
         }
 
-        // 4. Fitur Urutkan (Sorting)
+        // 4. Sorting
         if ($request->filled('sort')) {
             switch ($request->sort) {
-                case 'az':
-                    $query->orderBy('name', 'asc');
-                    break;
-                case 'za':
-                    $query->orderBy('name', 'desc');
-                    break;
-                case 'price_asc':
-                    $query->orderBy('price', 'asc');
-                    break;
-                case 'price_desc':
-                    $query->orderBy('price', 'desc');
-                    break;
-                default:
-                    $query->latest();
-                    break;
+                case 'az':         $query->orderBy('name', 'asc');    break;
+                case 'za':         $query->orderBy('name', 'desc');   break;
+                case 'price_asc':  $query->orderBy('price', 'asc');   break;
+                case 'price_desc': $query->orderBy('price', 'desc');  break;
+                default:           $query->latest();                   break;
             }
         } else {
-            $query->latest(); // Default produk terbaru
+            $query->latest();
         }
 
         $spareparts = $query->get();
 
-        // Daftar kategori tiruan ala Auto2000 untuk tombol filter
+        // Kategori hardcoded (sesuai produk bengkel umum)
         $categories = ['Aki', 'Oli', 'Ban', 'Wiper', 'Busi', 'Filter'];
 
         return view('customer.spareparts.index', compact('spareparts', 'categories'));
     }
 
-
     public function show($id)
     {
-        // Cari sparepart, kalau nggak ada bakal nampilin halaman 404
-        $sparepart = \App\Models\Sparepart::findOrFail($id);
-        
-        return view('customer.spareparts.show', compact('sparepart'));
+        $sparepart = Sparepart::findOrFail($id);
+
+        // Produk terkait: ambil 4 produk lain secara acak
+        $related = Sparepart::where('id', '!=', $id)
+                    ->where('stock', '>', 0)
+                    ->inRandomOrder()
+                    ->limit(4)
+                    ->get();
+
+        return view('customer.spareparts.show', compact('sparepart', 'related'));
     }
 }
