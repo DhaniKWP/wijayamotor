@@ -15,6 +15,7 @@ use App\Http\Controllers\Customer\SparepartController as CustomerSparepartContro
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SparepartController as AdminSparepartController;
 use App\Http\Controllers\Admin\TransactionController;
+use App\Http\Controllers\Customer\DashboardController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -45,20 +46,12 @@ Route::get('/aksesoris/{id}', [CustomerSparepartController::class, 'show'])->nam
 // =========================================
 Route::middleware(['auth', 'role:customer'])->group(function () {
     
-   // Dashboard Utama Customer
-    Route::get('/dashboard', function () {
-        $user = \Illuminate\Support\Facades\Auth::user();
-        
-        $vehicles = \App\Models\Vehicle::where('user_id', $user->id)->get();
-        
-        $bookings = \App\Models\Booking::where('user_id', $user->id)
-                        ->with(['vehicle', 'service'])
-                        ->orderBy('tanggal', 'asc')
-                        ->get();
+    // Dashboard Ringkasan Akun
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        return view('customer.dashboard', compact('vehicles', 'bookings'));
-    })->name('dashboard');
-    
+    // Pesanan Saya (halaman baru)
+    Route::get('/pesanan-saya', [DashboardController::class, 'pesanan'])->name('customer.pesanan');
+
     // FITUR GARASI SAYA
     Route::get('/garasi', [VehicleController::class, 'index'])->name('garasi.index');
     Route::post('/garasi', [VehicleController::class, 'store'])->name('garasi.store');
@@ -88,6 +81,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/bookings/{id}/complete-form', [TransactionController::class, 'showCompleteForm'])->name('bookings.complete.form');
     Route::post('/bookings/{id}/complete-transaction', [TransactionController::class, 'store'])->name('bookings.complete.transaction');
     Route::get('/bookings/{id}/invoice', [TransactionController::class, 'invoice'])->name('bookings.invoice');
+    Route::post('/bookings/{id}/mark-paid', [TransactionController::class, 'markPaid'])->name('bookings.mark.paid');
 
     // Route Master Servis
     Route::get('/services', [ServiceController::class, 'index'])->name('services.index');

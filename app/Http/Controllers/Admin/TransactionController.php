@@ -115,6 +115,23 @@ class TransactionController extends Controller
     }
 
     /**
+     * Admin tandai pembayaran sebagai LUNAS.
+     */
+    public function markPaid($id)
+    {
+        $booking = Booking::with('transaction')->findOrFail($id);
+
+        if (!$booking->transaction) {
+            return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
+        }
+
+        $booking->transaction->update(['payment_status' => 'paid']);
+
+        return redirect()->route('admin.bookings.invoice', $booking->id)
+            ->with('success', 'Pembayaran berhasil ditandai LUNAS.');
+    }
+
+    /**
      * Tampilkan Invoice / Struk Servis.
      */
     public function invoice($id)

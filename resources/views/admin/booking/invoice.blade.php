@@ -12,6 +12,8 @@
 </div>
 @endif
 
+
+
 <div class="max-w-3xl mx-auto space-y-5">
 
     {{-- Breadcrumb --}}
@@ -21,13 +23,36 @@
         <span class="text-slate-600">Invoice #WM-{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}</span>
     </div>
 
-    {{-- Print Button --}}
-    <div class="flex justify-end">
-        <button onclick="window.print()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-lg text-xs font-black transition-all shadow-sm print:hidden">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-            Cetak Invoice
-        </button>
+    {{-- Action Buttons --}}
+    <div class="flex items-center justify-between print:hidden">
+        <a href="{{ route('admin.bookings.index') }}" class="inline-flex items-center gap-2 text-slate-500 hover:text-slate-700 text-sm font-bold transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            Kembali
+        </a>
+        <div class="flex items-center gap-3">
+            @if($booking->transaction->payment_status === 'pending')
+            @php $bookingCode = str_pad($booking->id, 5, '0', STR_PAD_LEFT); @endphp
+            <form action="{{ route('admin.bookings.mark.paid', $booking->id) }}" method="POST"
+                  onsubmit="return confirm('Tandai pembayaran booking #WM-{{ $bookingCode }} sebagai LUNAS?')">
+                @csrf
+                <button type="submit" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg text-xs font-black transition-all shadow-sm">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    Tandai Lunas
+                </button>
+            </form>
+            @else
+            <span class="inline-flex items-center gap-1.5 bg-teal-50 text-teal-700 border border-teal-200 px-4 py-2.5 rounded-lg text-xs font-black">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                Sudah Lunas
+            </span>
+            @endif
+            <button onclick="window.print()" class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-lg text-xs font-black transition-all shadow-sm">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                Cetak Invoice
+            </button>
+        </div>
     </div>
+
 
     {{-- Invoice Card --}}
     <div id="invoiceCard" class="bg-white border border-slate-200/60 rounded-xl shadow-sm overflow-hidden">
