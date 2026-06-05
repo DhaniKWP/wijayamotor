@@ -43,6 +43,11 @@ Route::post('/booking', [CustomerBookingController::class, 'store'])->name('book
 Route::get('/aksesoris', [CustomerSparepartController::class, 'index'])->name('sparepart.index');
 Route::get('/aksesoris/{id}', [CustomerSparepartController::class, 'show'])->name('sparepart.show');
 
+// ROUTE LOKASI BENGKEL (public)
+Route::get('/lokasi', function () {
+    return view('lokasi');
+})->name('lokasi');
+
 // =========================================
 // ROUTE KHUSUS CUSTOMER
 // =========================================

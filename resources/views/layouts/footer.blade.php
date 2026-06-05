@@ -20,7 +20,7 @@
         <h4 class="font-bold text-ink mb-4">Dukungan</h4>
         <ul class="space-y-2 text-sm text-gray-500">
           <li><a href="#" class="hover:text-brand">Hubungi Kami</a></li>
-          <li><a href="#" class="hover:text-brand">Lokasi Bengkel</a></li>
+          <li><a href="{{ route('lokasi') }}" class="hover:text-brand">Lokasi Bengkel</a></li>
           <li><a href="#" class="hover:text-brand">FAQ</a></li>
         </ul>
       </div>

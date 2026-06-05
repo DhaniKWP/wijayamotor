@@ -42,7 +42,7 @@
         <a href="{{ route('sparepart.index') }}" class="hover:text-brand transition">Sparepart</a>
         <a href="{{ url('/#promo') }}" class="hover:text-brand transition">Promo</a>
         <a href="{{ url('/#berita') }}" class="hover:text-brand transition">Tips & Berita</a>
-        <a href="#lokasi" class="hover:text-brand transition">Lokasi Bengkel</a> 
+        <a href="{{ route('lokasi') }}" class="hover:text-brand transition">Lokasi Bengkel</a>
       </div>
 
       <div class="hidden lg:flex items-center">
