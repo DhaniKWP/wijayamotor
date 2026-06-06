@@ -8,9 +8,12 @@
       <svg class="w-3.5 h-3.5 mr-1.5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
       Jakarta Selatan
     </div>
-    <a href="#" class="flex items-center text-gray-600 hover:text-brand transition border-l border-gray-300 pl-6">
+    @php
+        $cartCount = Auth::check() && Auth::user()->role === 'customer' ? \App\Models\CartItem::where('user_id', Auth::id())->count() : 0;
+    @endphp
+    <a href="{{ route('cart.index') }}" class="flex items-center text-gray-600 hover:text-brand transition border-l border-gray-300 pl-6">
       <svg class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"/></svg>
-      Keranjang (0)
+      Keranjang ({{ $cartCount }})
     </a>
     
     <div class="border-l border-gray-300 pl-6">

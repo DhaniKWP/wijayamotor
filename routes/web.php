@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Customer\DashboardController;
 use App\Http\Controllers\Customer\OrderController;
+use App\Http\Controllers\Customer\CartController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -59,8 +60,17 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     // Pesanan Saya (halaman baru) — tab Servis & Sparepart
     Route::get('/pesanan-saya', [DashboardController::class, 'pesanan'])->name('customer.pesanan');
 
-    // ORDER SPAREPART (Beli Langsung, tanpa cart)
+    // KERANJANG & CHECKOUT SPAREPART
+    Route::get('/keranjang', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/keranjang/tambah', [CartController::class, 'add'])->name('cart.add');
+    Route::put('/keranjang/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/keranjang/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/keranjang/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+    // ORDER LANGSUNG (Beli Sekarang)
     Route::post('/order', [OrderController::class, 'store'])->name('customer.order.store');
+
+    // ORDER SUCCESS
     Route::get('/order/{id}/sukses', [OrderController::class, 'success'])->name('customer.order.success');
 
     // FITUR GARASI SAYA

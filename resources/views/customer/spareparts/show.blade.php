@@ -106,17 +106,17 @@
                 @if($sparepart->stock > 0)
                     @auth
                         @if(Auth::user()->role === 'customer')
-                        <form action="{{ route('customer.order.store') }}" method="POST" class="space-y-5">
+                        <form action="{{ route('cart.add') }}" method="POST" class="space-y-5">
                             @csrf
                             <input type="hidden" name="sparepart_id" value="{{ $sparepart->id }}">
                             
                             <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Jumlah</label>
-                                    <div class="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden h-11 w-32">
-                                        <button type="button" @click="decrement()" class="w-10 h-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition bg-gray-50 border-r border-gray-200 font-black text-lg focus:outline-none">-</button>
-                                        <input type="number" name="quantity" x-model="qty" readonly class="flex-1 h-full text-center text-sm font-black text-gray-900 focus:outline-none bg-white">
-                                        <button type="button" @click="increment()" class="w-10 h-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition bg-gray-50 border-l border-gray-200 font-black text-lg focus:outline-none">+</button>
+                                    <div class="flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden h-11 w-36">
+                                        <button type="button" @click="decrement()" class="w-10 shrink-0 h-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition bg-gray-50 border-r border-gray-200 font-black text-lg focus:outline-none">-</button>
+                                        <input type="number" name="quantity" x-model="qty" readonly class="flex-1 min-w-0 w-full h-full text-center text-sm font-black text-gray-900 focus:outline-none bg-white">
+                                        <button type="button" @click="increment()" class="w-10 shrink-0 h-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition bg-gray-50 border-l border-gray-200 font-black text-lg focus:outline-none">+</button>
                                     </div>
                                 </div>
                                 <div class="text-left sm:text-right">
@@ -126,11 +126,17 @@
                             </div>
 
                             <div class="pt-4 border-t border-gray-200">
-                                <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white font-bold uppercase tracking-widest text-xs py-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                                    Pesan Sekarang
-                                </button>
-                                <p class="text-center text-xs text-gray-400 mt-2 font-medium">Pickup langsung di bengkel · Bayar saat ambil atau via transfer</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button type="submit" formaction="{{ route('cart.add') }}" class="w-full bg-white border border-gray-900 text-gray-900 hover:bg-gray-50 font-bold uppercase tracking-widest text-xs py-3.5 rounded-xl transition flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"/></svg>
+                                        Keranjang
+                                    </button>
+                                    <button type="submit" formaction="{{ route('customer.order.store') }}" class="w-full bg-gray-900 hover:bg-black text-white font-bold uppercase tracking-widest text-xs py-3.5 rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                        Beli Langsung
+                                    </button>
+                                </div>
+                                <p class="text-center text-[10px] text-gray-400 mt-3 font-medium">Beli banyak via keranjang, atau langsung checkout satu jenis barang</p>
                             </div>
                         </form>
                         @else

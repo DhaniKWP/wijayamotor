@@ -91,7 +91,7 @@
                     @foreach($spareparts as $item)
                         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition flex flex-col justify-between group relative">
                             
-                            <a href="{{ route('sparepart.show', $item->id) }}" class="absolute inset-0 z-10"></a>
+                            <a href="{{ route('sparepart.show', $item->id) }}" class="absolute inset-0 z-30"></a>
 
                             <div>
                                 <div class="bg-gray-50 aspect-square w-full flex items-center justify-center p-6 relative overflow-hidden border-b border-gray-100">
