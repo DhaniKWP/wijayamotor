@@ -28,16 +28,33 @@ class OrderController extends Controller
             })->orWhere('id', $request->search);
         }
 
-        $orders  = $query->paginate(20)->withQueryString();
-        $pending = Order::where('status', 'pending')->count();
-        $paid    = Order::where('status', 'paid')->count();
-        $done    = Order::where('status', 'done')->count();
+        $orders    = $query->paginate(20)->withQueryString();
+        $pending   = Order::where('status', 'pending')->count();
+        $confirmed = Order::where('status', 'confirmed')->count();
+        $done      = Order::where('status', 'done')->count();
 
-        return view('admin.orders.index', compact('orders', 'pending', 'paid', 'done'));
+        return view('admin.orders.index', compact('orders', 'pending', 'confirmed', 'done'));
     }
 
     /**
-     * Tandai order sebagai lunas & selesai.
+     * Konfirmasi order: barang disiapkan, customer bisa pickup.
+     */
+    public function confirm($id)
+    {
+        $order = Order::findOrFail($id);
+
+        if ($order->status !== 'pending') {
+            return back()->withErrors(['error' => 'Order tidak dalam status menunggu.']);
+        }
+
+        $order->update(['status' => 'confirmed']);
+
+        return redirect()->route('admin.orders.index')
+                         ->with('success', 'Order #ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . ' dikonfirmasi. Customer siap untuk pickup.');
+    }
+
+    /**
+     * Tandai order sebagai lunas & selesai (setelah customer pickup & bayar).
      */
     public function markDone(Request $request, $id)
     {
@@ -46,6 +63,11 @@ class OrderController extends Controller
         ]);
 
         $order = Order::findOrFail($id);
+
+        if ($order->status !== 'confirmed') {
+            return back()->withErrors(['error' => 'Order harus dikonfirmasi terlebih dahulu sebelum ditandai lunas.']);
+        }
+
         $order->update([
             'status'         => 'done',
             'payment_method' => $request->payment_method,

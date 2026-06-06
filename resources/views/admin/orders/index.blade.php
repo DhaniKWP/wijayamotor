@@ -21,7 +21,7 @@
     </div>
     <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Siap Diambil</p>
-        <p class="text-3xl font-black text-blue-500">{{ $paid }}</p>
+        <p class="text-3xl font-black text-blue-500">{{ $confirmed }}</p>
     </div>
     <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Selesai & Lunas</p>
@@ -37,8 +37,9 @@
                class="flex-1 text-sm border-slate-200 rounded-lg focus:ring-brand focus:border-brand">
         <select name="status" class="text-sm border-slate-200 rounded-lg focus:ring-brand focus:border-brand sm:w-48">
             <option value="">Semua Status</option>
-            <option value="pending"  {{ request('status') === 'pending'  ? 'selected' : '' }}>Menunggu Konfirmasi</option>
-            <option value="done"     {{ request('status') === 'done'     ? 'selected' : '' }}>Selesai & Lunas</option>
+            <option value="pending"   {{ request('status') === 'pending'    ? 'selected' : '' }}>Menunggu Konfirmasi</option>
+            <option value="confirmed" {{ request('status') === 'confirmed'  ? 'selected' : '' }}>Siap Diambil</option>
+            <option value="done"      {{ request('status') === 'done'       ? 'selected' : '' }}>Selesai & Lunas</option>
         </select>
         <button type="submit" class="bg-ink hover:bg-ink/90 text-white text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-lg transition shadow-sm whitespace-nowrap">
             Cari
@@ -111,6 +112,11 @@
                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                                 Menunggu
                             </span>
+                        @elseif($order->status === 'confirmed')
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-100">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                Siap Diambil
+                            </span>
                         @elseif($order->status === 'done')
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-green-50 text-green-700 border border-green-100">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
@@ -130,15 +136,28 @@
                                 Struk
                             </a>
 
-                            {{-- Tombol Tandai Lunas (hanya kalau pending) --}}
+                            {{-- STEP 1: Konfirmasi Order (hanya kalau pending) --}}
                             @if($order->status === 'pending')
+                            <form action="{{ route('admin.orders.confirm', $order->id) }}" method="POST"
+                                  onsubmit="return confirm('Konfirmasi order ini? Barang akan disiapkan dan customer diberitahu untuk pickup.')">
+                                @csrf
+                                <button type="submit"
+                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-wider rounded-lg transition shadow-sm">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Konfirmasi
+                                </button>
+                            </form>
+                            @endif
+
+                            {{-- STEP 2: Tandai Lunas (hanya kalau sudah confirmed / siap diambil) --}}
+                            @if($order->status === 'confirmed')
                             <button @click="confirmModal = true"
                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[10px] font-black uppercase tracking-wider rounded-lg transition shadow-sm">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                 Tandai Lunas
                             </button>
 
-                            {{-- MODAL KONFIRMASI --}}
+                            {{-- MODAL TANDAI LUNAS --}}
                             <div x-show="confirmModal" x-cloak
                                  class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4"
                                  x-transition:enter="transition ease-out duration-200"
@@ -149,30 +168,31 @@
                                      x-transition:enter="transition ease-out duration-200"
                                      x-transition:enter-start="opacity-0 scale-95"
                                      x-transition:enter-end="opacity-100 scale-100">
-                                    
+
                                     <div class="p-6 border-b border-slate-100">
-                                        <h3 class="font-black text-slate-800 text-base">Konfirmasi Pembayaran</h3>
+                                        <h3 class="font-black text-slate-800 text-base">Tandai Lunas</h3>
                                         <p class="text-xs text-slate-500 mt-1">Order <strong>#ORD-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</strong> · {{ $order->user->name ?? '-' }}</p>
                                         <p class="text-sm font-black text-slate-800 mt-2">Total: Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
+                                        <p class="text-[10px] text-slate-400 mt-1">Customer sudah pickup dan melakukan pembayaran.</p>
                                     </div>
 
                                     <form action="{{ route('admin.orders.mark.done', $order->id) }}" method="POST" class="p-6 space-y-4">
                                         @csrf
                                         <div>
-                                            <label class="block text-xs font-black text-slate-700 uppercase tracking-wider mb-2">Metode Pembayaran</label>
+                                            <label class="block text-xs font-black text-slate-700 uppercase tracking-wider mb-2">Metode Pembayaran Customer</label>
                                             <div class="grid grid-cols-2 gap-3">
                                                 <label class="flex items-center gap-2 border border-slate-200 rounded-xl p-3 cursor-pointer hover:border-green-400 transition has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
                                                     <input type="radio" name="payment_method" value="cash" class="accent-green-600" required>
                                                     <div>
                                                         <p class="text-xs font-bold text-slate-800">Tunai</p>
-                                                        <p class="text-[10px] text-slate-400">Cash</p>
+                                                        <p class="text-[10px] text-slate-400">Bayar di kasir</p>
                                                     </div>
                                                 </label>
                                                 <label class="flex items-center gap-2 border border-slate-200 rounded-xl p-3 cursor-pointer hover:border-green-400 transition has-[:checked]:border-green-500 has-[:checked]:bg-green-50">
                                                     <input type="radio" name="payment_method" value="transfer" class="accent-green-600">
                                                     <div>
                                                         <p class="text-xs font-bold text-slate-800">Transfer</p>
-                                                        <p class="text-[10px] text-slate-400">Bank</p>
+                                                        <p class="text-[10px] text-slate-400">Via bank</p>
                                                     </div>
                                                 </label>
                                             </div>
@@ -184,7 +204,7 @@
                                             </button>
                                             <button type="submit"
                                                     class="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-bold uppercase tracking-wider py-3 rounded-xl transition shadow-sm">
-                                                Konfirmasi Lunas
+                                                Tandai Lunas
                                             </button>
                                         </div>
                                     </form>

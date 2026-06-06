@@ -94,6 +94,28 @@ class SparepartController extends Controller
         return redirect()->route('admin.spareparts.index')->with('success', 'Data sparepart berhasil diperbarui!');
     }
 
+    // Proses Tambah Stok Cepat
+    public function addStock(Request $request, $id)
+    {
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'added_stock' => 'required|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->with('add_stock_error', true)
+                ->with('add_stock_action', route('admin.spareparts.add_stock', $id))
+                ->with('add_stock_name', Sparepart::find($id)->name)
+                ->with('add_stock_current', Sparepart::find($id)->stock);
+        }
+
+        $sparepart = Sparepart::findOrFail($id);
+        $sparepart->increment('stock', $request->added_stock);
+
+        return redirect()->route('admin.spareparts.index')->with('success', 'Stok ' . $sparepart->name . ' berhasil ditambah sebanyak ' . $request->added_stock . ' unit!');
+    }
+
     // Proses Hapus Data
     public function destroy($id)
     {

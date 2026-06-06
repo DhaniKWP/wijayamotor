@@ -114,10 +114,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/spareparts', [AdminSparepartController::class, 'index'])->name('spareparts.index');
     Route::post('/spareparts', [AdminSparepartController::class, 'store'])->name('spareparts.store');
     Route::put('/spareparts/{id}', [AdminSparepartController::class, 'update'])->name('spareparts.update');
+    Route::post('/spareparts/{id}/add-stock', [AdminSparepartController::class, 'addStock'])->name('spareparts.add_stock');
     Route::delete('/spareparts/{id}', [AdminSparepartController::class, 'destroy'])->name('spareparts.destroy');
 
     // PESANAN SPAREPART (Order dari customer)
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/{id}/confirm', [AdminOrderController::class, 'confirm'])->name('orders.confirm');
     Route::post('/orders/{id}/mark-done', [AdminOrderController::class, 'markDone'])->name('orders.mark.done');
     Route::get('/orders/{id}/struk', [AdminOrderController::class, 'struk'])->name('orders.struk');
 

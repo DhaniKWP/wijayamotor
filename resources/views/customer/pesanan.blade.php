@@ -336,13 +336,20 @@
                 </div>
                 <div>
                     @if($order->status === 'pending')
-                        <span class="text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Menunggu Konfirmasi</span>
-                    @elseif($order->status === 'paid')
-                        <span class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Dikonfirmasi · Siap Diambil</span>
-                    @elseif($order->status === 'shipped')
-                        <span class="text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Diproses</span>
+                        <span class="text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                            Menunggu Konfirmasi
+                        </span>
+                    @elseif($order->status === 'confirmed')
+                        <span class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Siap Diambil
+                        </span>
                     @elseif($order->status === 'done')
-                        <span class="text-green-600 bg-green-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider">Selesai & Lunas</span>
+                        <span class="text-green-600 bg-green-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Selesai & Lunas
+                        </span>
                     @endif
                 </div>
             </div>
@@ -375,17 +382,17 @@
                 </div>
                 @if($order->status === 'pending')
                 <div class="bg-amber-50 border border-amber-100 rounded-lg px-4 py-2.5 text-xs text-amber-700 font-bold">
-                    Menunggu admin konfirmasi · Pickup di bengkel setelah dikonfirmasi
+                    Menunggu admin konfirmasi. Kami akan menyiapkan barang Anda.
                 </div>
-                @elseif($order->status === 'paid')
+                @elseif($order->status === 'confirmed')
                 <div class="bg-blue-50 border border-blue-100 rounded-lg px-4 py-2.5 text-xs text-blue-700 font-bold flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    Barang siap diambil di bengkel
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/></svg>
+                    Barang siap diambil! Silakan datang ke bengkel dan lakukan pembayaran.
                 </div>
                 @elseif($order->status === 'done')
                 <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-xs text-gray-600 font-bold flex items-center gap-2">
                     <svg class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Pesanan Selesai
+                    Pesanan Selesai · Bayar via {{ $order->payment_method === 'cash' ? 'Tunai' : 'Transfer' }}
                 </div>
                 @endif
             </div>
