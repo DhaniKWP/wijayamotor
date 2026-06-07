@@ -117,24 +117,24 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div class="bg-white group cursor-pointer">
         <div class="overflow-hidden rounded-xl shadow-sm border border-gray-200 mb-4">
-          <img src="https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800&q=80" alt="Promo" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
+          <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=800&q=80" alt="Promo" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
         </div>
-        <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition">Promo Spesial: Booking Fee Pakai E-Wallet Dapat Cashback!</h3>
-        <p class="text-sm text-gray-500 mt-2">1 Jun 2026 - 30 Jul 2026</p>
+        <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition">Diskon Servis 20% Khusus Booking via Website!</h3>
+        <p class="text-sm text-gray-500 mt-2">Daftar akun & buat jadwal servis langsung dari HP Anda. Praktis dan lebih hemat!</p>
       </div>
       <div class="bg-white group cursor-pointer">
         <div class="overflow-hidden rounded-xl shadow-sm border border-gray-200 mb-4">
           <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" alt="Promo" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
         </div>
-        <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition">Service Berkala Lewat Website, Dapatkan Point Rewards!</h3>
-        <p class="text-sm text-gray-500 mt-2">15 Mei 2026 - 31 Des 2026</p>
+        <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition">Gratis Cek Mesin 20 Titik Setiap Ganti Oli</h3>
+        <p class="text-sm text-gray-500 mt-2">Beli oli & filter di Wijaya Motor, nikmati layanan gratis inspeksi kelistrikan dan kaki-kaki.</p>
       </div>
       <div class="bg-white group cursor-pointer hidden md:block">
         <div class="overflow-hidden rounded-xl shadow-sm border border-gray-200 mb-4">
-          <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=800&q=80" alt="Promo" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
+          <img src="https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800&q=80" alt="Promo" class="w-full h-48 object-cover group-hover:scale-105 transition duration-500">
         </div>
-        <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition">Ganti Oli Paket Lengkap: Gratis Filter & Pengecekan 20 Titik</h3>
-        <p class="text-sm text-gray-500 mt-2">Sepanjang Tahun 2026</p>
+        <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition">Kini Hadir Layanan Wijaya Home Service!</h3>
+        <p class="text-sm text-gray-500 mt-2">Mobil mogok di rumah? Mekanik handal kami siap datang ke garasi Anda.</p>
       </div>
     </div>
   </div>
@@ -232,24 +232,24 @@
         <img src="https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
         <div class="p-5">
           <p class="text-xs text-brand font-bold mb-2">TIPS PERAWATAN</p>
-          <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">Tanda-tanda Kampas Rem Mobil Anda Harus Segera Diganti</h3>
-          <p class="text-sm text-gray-500 line-clamp-2">Jangan abaikan bunyi berdecit saat mengerem, bisa jadi itu tanda kampas rem Anda sudah menipis dan berbahaya.</p>
+          <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">5 Tanda Kampas Rem Mobil Anda Harus Segera Diganti</h3>
+          <p class="text-sm text-gray-500 line-clamp-2">Jangan abaikan bunyi berdecit saat mengerem, bisa jadi itu tanda kampas rem Anda sudah menipis dan berbahaya bagi keselamatan.</p>
         </div>
       </div>
       <div class="bg-white border border-gray-200 rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition">
         <img src="https://images.unsplash.com/photo-1518985289524-118c7bc701f5?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
         <div class="p-5">
-          <p class="text-xs text-brand font-bold mb-2">BERITA</p>
-          <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">Kenapa Ganti Oli Mesin Wajib Dilakukan Tepat Waktu?</h3>
-          <p class="text-sm text-gray-500 line-clamp-2">Oli berfungsi sebagai pelumas dan pendingin. Telat ganti oli bisa menyebabkan kerusakan fatal pada komponen mesin dalam.</p>
+          <p class="text-xs text-brand font-bold mb-2">TIPS PERAWATAN</p>
+          <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">Kapan Waktu yang Tepat Mengganti Oli Gardan & Transmisi?</h3>
+          <p class="text-sm text-gray-500 line-clamp-2">Banyak pemilik mobil lupa mengganti oli gardan. Padahal, telat mengganti bisa membuat gigi gardan rontok dan biaya perbaikannya sangat mahal.</p>
         </div>
       </div>
       <div class="bg-white border border-gray-200 rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition hidden md:block">
         <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
         <div class="p-5">
-          <p class="text-xs text-brand font-bold mb-2">TIPS PERJALANAN</p>
-          <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">Persiapan Wajib Kendaraan Sebelum Perjalanan Jauh Mudik</h3>
-          <p class="text-sm text-gray-500 line-clamp-2">Cek 5 titik krusial ini sebelum Anda bepergian jauh untuk memastikan perjalanan aman dan nyaman bersama keluarga.</p>
+          <p class="text-xs text-brand font-bold mb-2">BERITA BENGKEL</p>
+          <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">Wijaya Motor Kini Melayani Spooring & Balancing 3D!</h3>
+          <p class="text-sm text-gray-500 line-clamp-2">Kami baru saja mendatangkan mesin Spooring 3D generasi terbaru untuk memastikan kaki-kaki mobil Anda lurus sempurna.</p>
         </div>
       </div>
     </div>
