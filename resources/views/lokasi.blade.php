@@ -141,7 +141,7 @@
                     </a>
                 </div>
                 <iframe
-                    src="https://maps.google.com/maps?q=Jl.+Aria+Wangsakara,+Bugel,+Kec.+Karawaci,+Kota+Tangerang&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d48306.16760168223!2d106.6102302926478!3d-6.157260263648726!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69ff1392c7c165%3A0x92463838076380d1!2sBengkel%20Mobil%20WIJAYA%20MOTOR!5e1!3m2!1sen!2sid!4v1780859758029!5m2!1sen!2sid"
                     width="100%"
                     height="100%"
                     style="border:0; min-height: 440px; display: block;"
