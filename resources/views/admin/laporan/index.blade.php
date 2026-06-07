@@ -50,6 +50,9 @@
     <a href="{{ request()->fullUrlWithQuery(['tab' => 'sparepart']) }}" class="py-3 px-6 font-bold text-sm border-b-2 transition-colors {{ $tab === 'sparepart' ? 'border-brand text-brand' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300' }}">
         Laporan Sparepart
     </a>
+    <a href="{{ request()->fullUrlWithQuery(['tab' => 'stock']) }}" class="py-3 px-6 font-bold text-sm border-b-2 transition-colors {{ $tab === 'stock' ? 'border-brand text-brand' : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300' }}">
+        Laporan Stok & Aset
+    </a>
 </div>
 
 {{-- SUMMARY CARDS (DYNAMIC BASED ON TAB) --}}
@@ -69,7 +72,7 @@
         </div>
     </div>
 </div>
-@else
+@elseif($tab === 'sparepart')
 <div class="mb-8">
     <div class="bg-gradient-to-br from-amber-600 to-amber-700 rounded-xl p-6 shadow-md flex items-center justify-between relative overflow-hidden">
         <div class="absolute right-0 top-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
@@ -82,6 +85,33 @@
         </div>
         <div class="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center shrink-0 relative z-10 border border-white/20">
             <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        </div>
+    </div>
+</div>
+@elseif($tab === 'stock')
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-xl p-6 shadow-md flex items-center justify-between relative overflow-hidden">
+        <div class="absolute right-0 top-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
+            <svg class="w-32 h-32 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        </div>
+        <div class="relative z-10">
+            <p class="text-xs font-black text-white/80 uppercase tracking-widest mb-1">Total Nilai Aset Gudang</p>
+            <h3 class="text-3xl font-black text-white">Rp {{ number_format($totalAssetValue, 0, ',', '.') }}</h3>
+            <p class="text-xs text-white/80 font-medium mt-1">Estimasi nilai modal sparepart saat ini</p>
+        </div>
+        <div class="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center shrink-0 relative z-10 border border-white/20">
+            <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-xl p-6 border border-slate-200/60 shadow-sm flex items-center justify-between relative overflow-hidden">
+        <div class="relative z-10">
+            <p class="text-xs font-black text-rose-500 uppercase tracking-widest mb-1">Peringatan Stok Tipis (<= 3)</p>
+            <h3 class="text-3xl font-black text-slate-800">{{ $lowStockCount }} Item</h3>
+            <p class="text-xs text-slate-500 font-medium mt-1">Segera lakukan pemesanan ke Supplier</p>
+        </div>
+        <div class="w-14 h-14 bg-rose-50 rounded-xl flex items-center justify-center shrink-0 relative z-10 border border-rose-100">
+            <svg class="w-7 h-7 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
         </div>
     </div>
 </div>
@@ -133,7 +163,7 @@
             </table>
         </div>
     </div>
-    @else
+    @elseif($tab === 'sparepart')
     {{-- TABLE: Direct Sparepart Orders --}}
     <div class="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
         <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
@@ -170,7 +200,57 @@
                     <tr>
                         <td colspan="3" class="px-5 py-8 text-center">
                             <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                            <p class="text-sm text-slate-500 font-medium">Belum ada pesanan sparepart di periode ini.</p>
+                            <p class="text-sm text-slate-500 font-medium">Belum ada penjualan langsung di periode ini.</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @elseif($tab === 'stock')
+    {{-- TABLE: Stock Assets --}}
+    <div class="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <h3 class="text-sm font-extrabold text-slate-800 tracking-tight uppercase flex items-center gap-2">
+                <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                Daftar Aset Sparepart
+            </h3>
+        </div>
+        <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
+            <table class="min-w-full divide-y divide-slate-100">
+                <thead class="bg-slate-50/50 sticky top-0 z-10">
+                    <tr>
+                        <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Nama Barang</th>
+                        <th class="px-5 py-3 text-right text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Harga Satuan</th>
+                        <th class="px-5 py-3 text-center text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Sisa Stok</th>
+                        <th class="px-5 py-3 text-right text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Total Nilai (Aset)</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-50">
+                    @forelse($spareparts as $item)
+                    <tr class="hover:bg-slate-50/50 transition-colors {{ $item->stock <= 3 ? 'bg-rose-50/30' : '' }}">
+                        <td class="px-5 py-3">
+                            <div class="text-xs font-bold text-slate-800">{{ $item->name }}</div>
+                            @if($item->stock <= 3)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-rose-100 text-rose-800 mt-1">Stok Tipis</span>
+                            @endif
+                        </td>
+                        <td class="px-5 py-3 text-right">
+                            <div class="text-xs font-medium text-slate-600">Rp {{ number_format($item->price, 0, ',', '.') }}</div>
+                        </td>
+                        <td class="px-5 py-3 text-center">
+                            <div class="text-sm font-black {{ $item->stock <= 3 ? 'text-rose-600' : 'text-slate-800' }}">{{ $item->stock }}</div>
+                        </td>
+                        <td class="px-5 py-3 text-right">
+                            <div class="text-sm font-black text-slate-800">Rp {{ number_format($item->price * $item->stock, 0, ',', '.') }}</div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-5 py-8 text-center">
+                            <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                            <p class="text-sm text-slate-500 font-medium">Belum ada data sparepart di gudang.</p>
                         </td>
                     </tr>
                     @endforelse

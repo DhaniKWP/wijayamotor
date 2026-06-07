@@ -15,7 +15,7 @@ class ReportController extends Controller
         // 1. Get filter params (format: YYYY-MM)
         $start_month = $request->input('start_month', Carbon::now()->format('Y-m'));
         $end_month = $request->input('end_month', Carbon::now()->format('Y-m'));
-        $tab = $request->input('tab', 'service'); // 'service' or 'sparepart'
+        $tab = $request->input('tab', 'service'); // 'service', 'sparepart', or 'stock'
 
         // Parse to Carbon instances
         $startDate = Carbon::createFromFormat('Y-m', $start_month)->startOfMonth();
@@ -25,6 +25,9 @@ class ReportController extends Controller
         $totalServiceIncome = 0;
         $orders = collect();
         $totalOrderIncome = 0;
+        $spareparts = collect();
+        $totalAssetValue = 0;
+        $lowStockCount = 0;
 
         if ($tab === 'service') {
             $serviceQuery = ServiceTransaction::with(['booking', 'booking.user'])
@@ -33,13 +36,19 @@ class ReportController extends Controller
 
             $services = $serviceQuery->latest()->get();
             $totalServiceIncome = $services->sum('total_cost');
-        } else {
+        } elseif ($tab === 'sparepart') {
             $orderQuery = Order::with(['user', 'items.sparepart'])
                 ->where('status', 'done')
                 ->whereBetween('created_at', [$startDate, $endDate]);
 
             $orders = $orderQuery->latest()->get();
             $totalOrderIncome = $orders->sum('total_price');
+        } elseif ($tab === 'stock') {
+            $spareparts = \App\Models\Sparepart::orderBy('name', 'asc')->get();
+            $totalAssetValue = $spareparts->sum(function($item) {
+                return $item->stock * $item->price;
+            });
+            $lowStockCount = $spareparts->where('stock', '<=', 3)->count();
         }
 
         return view('admin.laporan.index', compact(
@@ -47,6 +56,9 @@ class ReportController extends Controller
             'totalServiceIncome',
             'orders',
             'totalOrderIncome',
+            'spareparts',
+            'totalAssetValue',
+            'lowStockCount',
             'start_month',
             'end_month',
             'tab'
@@ -65,9 +77,12 @@ class ReportController extends Controller
         if ($tab === 'service') {
             $fileName = 'Laporan_Servis_Wijaya_Motor_' . $start_month . '_sd_' . $end_month . '.xlsx';
             return \Excel::download(new \App\Exports\ServiceIncomeSheet($startDate, $endDate), $fileName);
-        } else {
+        } elseif ($tab === 'sparepart') {
             $fileName = 'Laporan_Sparepart_Wijaya_Motor_' . $start_month . '_sd_' . $end_month . '.xlsx';
             return \Excel::download(new \App\Exports\SparepartIncomeSheet($startDate, $endDate), $fileName);
+        } else {
+            $fileName = 'Lembar_Stock_Opname_Wijaya_Motor_' . date('Y-m-d') . '.xlsx';
+            return \Excel::download(new \App\Exports\StockOpnameSheet(), $fileName);
         }
     }
 
@@ -84,6 +99,13 @@ class ReportController extends Controller
         $totalServiceIncome = 0;
         $orders = collect();
         $totalOrderIncome = 0;
+
+        if ($tab === 'stock') {
+            $spareparts = \App\Models\Sparepart::orderBy('name', 'asc')->get();
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.laporan.pdf-stock', compact('spareparts'));
+            $pdf->setPaper('A4', 'portrait');
+            return $pdf->stream('Lembar_Stock_Opname_Wijaya_Motor_' . date('Y-m-d') . '.pdf');
+        }
 
         if ($tab === 'service') {
             $services = ServiceTransaction::with(['booking', 'booking.user', 'booking.vehicle'])
