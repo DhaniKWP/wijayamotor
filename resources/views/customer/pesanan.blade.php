@@ -267,11 +267,60 @@
                     </div>
                     @else
                     <div class="mt-5 pt-5 border-t border-gray-100">
-                        <div class="bg-gray-50 border border-gray-200 rounded-lg px-5 py-3.5 flex items-center gap-3">
-                            <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <div>
-                                <p class="text-sm font-bold text-gray-900">Pembayaran Lunas</p>
-                                <p class="text-xs text-gray-500">Total: Rp {{ number_format($booking->transaction->total_cost, 0, ',', '.') }} &bull; Via {{ $booking->transaction->payment_method === 'cash' ? 'Tunai' : 'Transfer' }}</p>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="bg-green-50 border border-green-200 rounded-lg px-5 py-3.5 flex items-center gap-3 flex-1 w-full">
+                                <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <div>
+                                    <p class="text-sm font-bold text-gray-900">Pembayaran Lunas</p>
+                                    <p class="text-xs text-gray-500">Total: Rp {{ number_format($booking->transaction->total_cost, 0, ',', '.') }} &bull; Via {{ $booking->transaction->payment_method === 'cash' ? 'Tunai' : 'Transfer' }}</p>
+                                </div>
+                            </div>
+                            <button @click="billOpen = !billOpen" class="w-full sm:w-auto flex items-center justify-center gap-2 text-xs font-bold text-ink border border-gray-200 rounded-lg px-5 py-3.5 hover:bg-gray-50 transition uppercase tracking-wider shrink-0">
+                                <span class="flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    Lihat Invoice
+                                </span>
+                                <svg class="w-4 h-4 transition-transform duration-200" :class="billOpen ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                        </div>
+                        
+                        <div x-show="billOpen" x-collapse x-cloak class="mt-4 space-y-4">
+                            <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                                <table class="w-full text-xs">
+                                    <thead class="bg-gray-50 border-b border-gray-200">
+                                        <tr>
+                                            <th class="text-left px-5 py-3 text-[9px] font-bold text-gray-500 uppercase tracking-wider">Item / Pekerjaan</th>
+                                            <th class="text-center px-5 py-3 text-[9px] font-bold text-gray-500 uppercase tracking-wider w-12">Qty</th>
+                                            <th class="text-right px-5 py-3 text-[9px] font-bold text-gray-500 uppercase tracking-wider w-32">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100">
+                                        <tr>
+                                            <td class="px-5 py-3">
+                                                <p class="font-bold text-gray-900">{{ $booking->service->name }}</p>
+                                                <p class="text-[10px] text-gray-500">Layanan Dasar</p>
+                                            </td>
+                                            <td class="px-5 py-3 text-center text-gray-600 font-bold">1</td>
+                                            <td class="px-5 py-3 text-right font-bold text-gray-900">Rp {{ number_format($booking->estimasi_harga, 0, ',', '.') }}</td>
+                                        </tr>
+                                        @foreach($booking->transaction->items as $item)
+                                        <tr>
+                                            <td class="px-5 py-3">
+                                                <p class="font-bold text-gray-900">{{ $item->display_name }}</p>
+                                                <p class="text-[10px] text-gray-500">{{ $item->item_type === 'sparepart' ? 'Sparepart' : 'Jasa Tambahan' }}</p>
+                                            </td>
+                                            <td class="px-5 py-3 text-center text-gray-600 font-bold">{{ $item->qty }}</td>
+                                            <td class="px-5 py-3 text-right font-bold text-gray-900">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot class="border-t-2 border-gray-200 bg-gray-50">
+                                        <tr>
+                                            <td colspan="2" class="px-5 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Total Tagihan</td>
+                                            <td class="px-5 py-4 text-right font-black text-danger text-base">Rp {{ number_format($booking->transaction->total_cost, 0, ',', '.') }}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
                     </div>

@@ -65,10 +65,7 @@ class ServiceTransaction extends Model
     }
 
     /** Pembayaran terkait */
-    public function payments()
-    {
-        return $this->hasMany(Payment::class, 'booking_id', 'booking_id');
-    }
+
 
     // =========================
     // HELPER (STATUS)

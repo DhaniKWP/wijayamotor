@@ -80,8 +80,5 @@ class User extends Authenticatable
     }
 
     // User punya banyak pembayaran
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
+
 }

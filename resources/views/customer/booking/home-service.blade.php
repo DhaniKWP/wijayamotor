@@ -139,6 +139,7 @@
               } else {
                   this.generalRepairs.forEach(key => { total += this.repairOptions[key].price; });
               }
+              total += this.transportFee;
               return total;
           },
           get formattedPrice() {
@@ -154,6 +155,34 @@
           quota: {
               pagi: { count: 0, is_full: false, label: 'Sesi Pagi (08:00 - 12:00)' },
               siang: { count: 0, is_full: false, label: 'Sesi Siang (13:00 - 16:00)' }
+          },
+          
+          distanceKm: 0,
+          transportFee: 0,
+          maxDistanceWarning: false,
+
+          calculateDistance(lat, lng) {
+              const workshopLat = -6.1947231;
+              const workshopLng = 106.6214341;
+              const R = 6371; // Radius of earth in km
+              const dLat = (lat - workshopLat) * Math.PI / 180;
+              const dLon = (lng - workshopLng) * Math.PI / 180;
+              const a = 0.5 - Math.cos(dLat)/2 + Math.cos(workshopLat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * (1 - Math.cos(dLon))/2;
+              this.distanceKm = R * 2 * Math.asin(Math.sqrt(a));
+              
+              if (this.distanceKm <= 5) {
+                  this.transportFee = 25000;
+                  this.maxDistanceWarning = false;
+              } else if (this.distanceKm <= 10) {
+                  this.transportFee = 50000;
+                  this.maxDistanceWarning = false;
+              } else if (this.distanceKm <= 15) {
+                  this.transportFee = 75000;
+                  this.maxDistanceWarning = false;
+              } else {
+                  this.transportFee = 0;
+                  this.maxDistanceWarning = true;
+              }
           },
           
           map: null,
@@ -237,6 +266,7 @@
 
           async getAddressFromCoords(lat, lng) {
               this.tempAddress = 'Mengambil alamat...';
+              this.calculateDistance(lat, lng);
               try {
                   const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
                   const data = await res.json();
@@ -273,6 +303,7 @@
               this.map.setView(newLatLng, 17);
               this.marker.setLatLng(newLatLng);
               this.tempAddress = item.display_name;
+              this.calculateDistance(lat, lon);
               
               this.searchQuery = '';
               this.searchResults = [];
@@ -546,15 +577,27 @@
                     </ul>
                 </div>
 
-                <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                <div class="border-t border-gray-100 pt-4 mb-6 text-sm" x-show="transportFee > 0">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-500">Biaya Kunjungan (<span x-text="distanceKm.toFixed(1)"></span> KM)</span>
+                        <span class="font-bold text-ink" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(transportFee)"></span>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 rounded-xl p-4 mb-6 border border-red-100" x-show="maxDistanceWarning">
+                    <p class="text-xs font-bold text-red-700 uppercase tracking-wider mb-1">Di Luar Jangkauan</p>
+                    <p class="text-xs text-red-600 leading-tight">Jarak lokasi Anda (<span x-text="distanceKm.toFixed(1)"></span> KM) melebihi batas maksimal layanan kami (15 KM).</p>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-4 mb-6" x-show="!maxDistanceWarning">
                     <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Estimasi Biaya</p>
                     <p class="text-2xl font-black text-ink" x-text="formattedPrice"></p>
-                    <p class="text-[10px] text-gray-400 mt-2 leading-tight">*Belum termasuk biaya kunjungan teknisi dan part tambahan sesuai kondisi real.</p>
+                    <p class="text-[10px] text-gray-400 mt-2 leading-tight">*Belum termasuk part tambahan sesuai kondisi real.</p>
                 </div>
 
                 <button type="button" @click="document.getElementById('homeServiceForm').submit()" 
-                        :disabled="!address || !date || !sesi || !vehicleSelected"
-                        :class="(!address || !date || !sesi || !vehicleSelected) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink hover:bg-ink-light text-white shadow-lg'" 
+                        :disabled="!address || !date || !sesi || !vehicleSelected || maxDistanceWarning"
+                        :class="(!address || !date || !sesi || !vehicleSelected || maxDistanceWarning) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink hover:bg-ink-light text-white shadow-lg'" 
                         class="w-full font-bold py-4 rounded-xl transition-all flex items-center justify-center group">
                     KONFIRMASI SEKARANG
                     <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -566,11 +609,11 @@
     <div class="lg:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-30 p-4 flex justify-between items-center" x-show="vehicleSelected" x-transition.opacity>
         <div>
             <p class="text-xs font-bold text-gray-500">Estimasi Biaya</p>
-            <p class="text-lg font-black text-ink" x-text="formattedPrice"></p>
+            <p class="text-lg font-black text-ink" x-text="maxDistanceWarning ? '-' : formattedPrice"></p>
         </div>
         <button type="button" @click="document.getElementById('homeServiceForm').submit()" 
-                :disabled="!address || !date || !sesi"
-                :class="(!address || !date || !sesi) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink text-white'" 
+                :disabled="!address || !date || !sesi || maxDistanceWarning"
+                :class="(!address || !date || !sesi || maxDistanceWarning) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink text-white'" 
                 class="font-bold px-6 py-3 rounded-xl text-sm">
             Lanjut
         </button>
@@ -635,9 +678,10 @@
                     <input type="text" x-model="addressDetail" placeholder="Detail lainnya (cth: Blok / Unit No, patokan)" class="w-full border-b border-gray-300 py-2 text-sm focus:outline-none focus:border-brand">
                 </div>
                 
-                <button type="button" @click="address = tempAddress; showMapModal = false" :disabled="!tempAddress || !addressDetail" :class="(!tempAddress || !addressDetail) ? 'bg-gray-300 text-gray-500' : 'bg-gray-200 text-ink hover:bg-gray-300'" class="w-full py-3 rounded-lg text-sm font-black tracking-wide transition">
-                    GUNAKAN ALAMAT
+                <button type="button" @click="address = tempAddress; showMapModal = false" :disabled="!tempAddress || !addressDetail || maxDistanceWarning" :class="(!tempAddress || !addressDetail || maxDistanceWarning) ? 'bg-gray-300 text-gray-500' : 'bg-gray-200 text-ink hover:bg-gray-300'" class="w-full py-3 rounded-lg text-sm font-black tracking-wide transition">
+                    GUNAKAN ALAMAT INI
                 </button>
+                <p x-show="maxDistanceWarning" class="text-center text-xs text-red-500 font-bold mt-2">Area ini di luar jangkauan (maks. 15 KM)</p>
             </div>
         </div>
     </div>

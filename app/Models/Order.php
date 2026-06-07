@@ -47,10 +47,7 @@ class Order extends Model
     }
 
     // Order punya pembayaran
-    public function payments()
-    {
-        return $this->hasMany(Payment::class);
-    }
+
 
     // =========================
     // HELPER STATUS 🔥
