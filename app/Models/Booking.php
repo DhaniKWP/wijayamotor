@@ -32,6 +32,7 @@ class Booking extends Model
         'estimasi_harga',
         'tanggal',
         'jam',
+        'sesi',
         'keluhan',
         'status',
     ];

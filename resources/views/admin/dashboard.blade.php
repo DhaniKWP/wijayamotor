@@ -114,7 +114,7 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-semibold text-slate-700">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('d M Y') }}</div>
-                        <div class="text-xs text-slate-400 font-bold tracking-wider mt-1 uppercase">{{ \Carbon\Carbon::parse($booking->jam)->format('H:i') }} WIB</div>
+                        <div class="text-xs text-slate-400 font-bold tracking-wider mt-1 uppercase">Sesi {{ ucfirst($booking->sesi) }}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         @if($booking->status == 'pending')

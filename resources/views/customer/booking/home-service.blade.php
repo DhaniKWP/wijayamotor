@@ -150,7 +150,11 @@
           addressDetail: '', 
           showMapModal: false,
           date: '',
-          time: '',
+          sesi: '',
+          quota: {
+              pagi: { count: 0, is_full: false, label: 'Sesi Pagi (08:00 - 12:00)' },
+              siang: { count: 0, is_full: false, label: 'Sesi Siang (13:00 - 16:00)' }
+          },
           
           map: null,
           marker: null,
@@ -174,6 +178,20 @@
                       setTimeout(() => { this.initMap(); }, 200);
                   }
               });
+          },
+
+          checkQuota() {
+              if (!this.date) return;
+              fetch(`/api/check-quota?date=${this.date}`)
+                  .then(res => res.json())
+                  .then(data => {
+                      if (data.pagi) {
+                          this.quota = data;
+                          if (this.quota.pagi.is_full && this.sesi === 'pagi') this.sesi = '';
+                          if (this.quota.siang.is_full && this.sesi === 'siang') this.sesi = '';
+                      }
+                  })
+                  .catch(err => console.error('Error fetching quota:', err));
           },
 
           initMap() {
@@ -447,20 +465,39 @@
                             </button>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tanggal</label>
-                                <input type="date" name="date" x-model="date" required :disabled="!vehicleSelected" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-bold text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:bg-gray-100 disabled:cursor-not-allowed">
+                                <input type="date" name="date" x-model="date" @change="checkQuota" :min="new Date().toISOString().split('T')[0]" required :disabled="!vehicleSelected" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-bold text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:bg-gray-100 disabled:cursor-not-allowed">
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Jam</label>
-                                <select name="time" x-model="time" required :disabled="!vehicleSelected" class="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-sm font-bold text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink disabled:bg-gray-100 disabled:cursor-not-allowed">
-                                    <option value="" disabled selected>-- Pilih Waktu --</option>
-                                    <option value="09:00">09:00 WIB</option>
-                                    <option value="11:00">11:00 WIB</option>
-                                    <option value="14:00">14:00 WIB</option>
-                                    <option value="16:00">16:00 WIB</option>
-                                </select>
+                            <div class="mt-2" x-show="date">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Sesi Kedatangan</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <label class="relative cursor-pointer" :class="(quota.pagi.is_full || !vehicleSelected) ? 'opacity-50' : ''">
+                                        <input type="radio" name="sesi" value="pagi" class="peer sr-only" x-model="sesi" :disabled="quota.pagi.is_full || !vehicleSelected" required>
+                                        <div class="border-2 border-gray-100 rounded-xl p-4 transition-all" :class="(quota.pagi.is_full || !vehicleSelected) ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:border-brand peer-checked:border-brand peer-checked:bg-brand/5'">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <h4 class="font-bold text-ink" x-text="quota.pagi.label"></h4>
+                                                <span x-show="quota.pagi.is_full" class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded font-bold uppercase">Penuh</span>
+                                            </div>
+                                            <p class="text-xs text-gray-500">Kuota Terisi: <span x-text="quota.pagi.count"></span>/4 Mobil</p>
+                                        </div>
+                                    </label>
+                                    <label class="relative cursor-pointer" :class="(quota.siang.is_full || !vehicleSelected) ? 'opacity-50' : ''">
+                                        <input type="radio" name="sesi" value="siang" class="peer sr-only" x-model="sesi" :disabled="quota.siang.is_full || !vehicleSelected" required>
+                                        <div class="border-2 border-gray-100 rounded-xl p-4 transition-all" :class="(quota.siang.is_full || !vehicleSelected) ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:border-brand peer-checked:border-brand peer-checked:bg-brand/5'">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <h4 class="font-bold text-ink" x-text="quota.siang.label"></h4>
+                                                <span x-show="quota.siang.is_full" class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded font-bold uppercase">Penuh</span>
+                                            </div>
+                                            <p class="text-xs text-gray-500">Kuota Terisi: <span x-text="quota.siang.count"></span>/4 Mobil</p>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start">
+                                    <svg class="w-5 h-5 text-blue-500 mr-2 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <p class="text-xs text-blue-700 leading-relaxed"><strong>Estimasi Pengerjaan: Sesuai antrean fisik.</strong><br>Sistem Sesi memastikan Anda datang di rentang waktu yang tidak padat. Waktu mulai dan selesai pengerjaan menyesuaikan hasil pengecekan mekanik di lokasi.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -485,7 +522,7 @@
 
                     <div class="flex justify-between items-start text-sm">
                         <span class="text-gray-500">Jadwal</span>
-                        <span class="font-bold text-ink text-right" x-text="(date ? date : '-') + ' / ' + (time ? time : '-')"></span>
+                        <span class="font-bold text-ink text-right" x-text="(date ? date : '-') + ' / Sesi ' + (sesi ? (sesi === 'pagi' ? 'Pagi' : 'Siang') : '-')"></span>
                     </div>
                 </div>
 
@@ -516,8 +553,8 @@
                 </div>
 
                 <button type="button" @click="document.getElementById('homeServiceForm').submit()" 
-                        :disabled="!address || !date || !time || !vehicleSelected"
-                        :class="(!address || !date || !time || !vehicleSelected) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink hover:bg-ink-light text-white shadow-lg'" 
+                        :disabled="!address || !date || !sesi || !vehicleSelected"
+                        :class="(!address || !date || !sesi || !vehicleSelected) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink hover:bg-ink-light text-white shadow-lg'" 
                         class="w-full font-bold py-4 rounded-xl transition-all flex items-center justify-center group">
                     KONFIRMASI SEKARANG
                     <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -532,8 +569,8 @@
             <p class="text-lg font-black text-ink" x-text="formattedPrice"></p>
         </div>
         <button type="button" @click="document.getElementById('homeServiceForm').submit()" 
-                :disabled="!address || !date || !time"
-                :class="(!address || !date || !time) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink text-white'" 
+                :disabled="!address || !date || !sesi"
+                :class="(!address || !date || !sesi) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink text-white'" 
                 class="font-bold px-6 py-3 rounded-xl text-sm">
             Lanjut
         </button>

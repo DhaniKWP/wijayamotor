@@ -45,7 +45,7 @@
                 <tr class="hover:bg-slate-50/50 transition-colors">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm font-bold text-slate-800">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('d M Y') }}</div>
-                        <div class="text-xs text-slate-400 font-bold tracking-wider mt-1 uppercase">{{ \Carbon\Carbon::parse($booking->jam)->format('H:i') }} WIB</div>
+                        <div class="text-xs text-slate-400 font-bold tracking-wider mt-1 uppercase">Sesi {{ ucfirst($booking->sesi) }}</div>
                         <div class="mt-2 flex items-center gap-1.5">
                             @if($booking->tipe_booking === 'home_service')
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
@@ -250,6 +250,10 @@
                             <span class="font-extrabold text-slate-800" id="modalService">-</span>
                         </li>
                         <li>
+                            <span class="text-slate-400 block text-[9px] font-extrabold uppercase tracking-widest">Jadwal</span> 
+                            <span class="font-extrabold text-slate-800" id="modalJadwal">-</span>
+                        </li>
+                        <li>
                             <span class="text-slate-400 block text-[9px] font-extrabold uppercase tracking-widest mb-1">Jarak Tempuh</span> 
                             <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-black bg-brand/10 text-brand border border-brand/20" id="modalKm">-</span>
                         </li>
@@ -360,6 +364,8 @@
         document.getElementById('modalMerek').innerText = data.vehicle ? (data.vehicle.merek || data.vehicle.merek_kendaraan || data.vehicle.brand || data.vehicle.name || '-') : '-';
         document.getElementById('modalService').innerText = data.service ? data.service.name : 'Servis Umum';
         document.getElementById('modalKm').innerText = data.kilometer ? data.kilometer.toLocaleString('id-ID') + ' KM' : '-';
+        let sesi = data.sesi ? data.sesi.charAt(0).toUpperCase() + data.sesi.slice(1) : '-';
+        document.getElementById('modalJadwal').innerText = data.tanggal + ' / Sesi ' + sesi;
         
         let harga = data.estimasi_harga ? parseFloat(data.estimasi_harga) : 0;
         document.getElementById('modalHarga').innerText = 'Rp ' + harga.toLocaleString('id-ID');

@@ -60,7 +60,7 @@ class BookingController extends Controller
             'vehicle_id'       => 'required|exists:vehicles,id',
             'service_category' => 'required|in:berkala,lainnya,umum',
             'date'             => 'required|date',
-            'time'             => 'required|string',
+            'sesi'             => 'required|in:pagi,siang',
             'estimasi_harga'   => 'required|numeric',
             'branch'           => 'required',
         ];
@@ -79,6 +79,19 @@ class BookingController extends Controller
             session(['pending_booking' => $request->all()]);
             return redirect()->route('register')
                 ->withErrors(['email' => 'Silakan buat akun atau login untuk mengonfirmasi jadwal servis.']);
+        }
+
+        // ==========================================
+        // PENGECEKAN KUOTA DI BACKEND
+        // ==========================================
+        $currentCount = Booking::where('tanggal', $request->date)
+                            ->where('sesi', $request->sesi)
+                            ->where('status', '!=', 'cancelled')
+                            ->count();
+        
+        $maxQuota = 4;
+        if ($currentCount >= $maxQuota) {
+            return back()->withErrors(['sesi' => 'Maaf, Sesi ' . ucfirst($request->sesi) . ' di tanggal tersebut sudah penuh. Silakan pilih sesi atau tanggal lain.'])->withInput();
         }
 
         // 4. Siapkan data Addons / Perbaikan Umum untuk disimpan jadi JSON
@@ -126,11 +139,51 @@ class BookingController extends Controller
             
             // Jadwal & Lainnya
             'tanggal'        => $request->date,
-            'jam'            => $request->time,
+            'jam'            => null, // Jam diganti sesi
+            'sesi'           => $request->sesi,
             'keluhan'        => $request->service_category === 'lainnya' ? $request->custom_complaint : '-',
             'status'         => 'pending',
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Booking berhasil dibuat!');
+    }
+
+    /**
+     * API untuk cek ketersediaan kuota berdasarkan tanggal
+     */
+    public function checkQuota(Request $request)
+    {
+        $date = $request->query('date');
+        
+        if (!$date) {
+            return response()->json(['error' => 'Date is required'], 400);
+        }
+
+        // Hitung booking yang ada di tanggal tersebut dan statusnya bukan cancelled
+        $pagiCount = Booking::where('tanggal', $date)
+                            ->where('sesi', 'pagi')
+                            ->where('status', '!=', 'cancelled')
+                            ->count();
+                            
+        $siangCount = Booking::where('tanggal', $date)
+                             ->where('sesi', 'siang')
+                             ->where('status', '!=', 'cancelled')
+                             ->count();
+
+        // Asumsi kuota aman adalah 4 per sesi (Total 8 per hari)
+        $maxQuota = 4;
+
+        return response()->json([
+            'pagi' => [
+                'count' => $pagiCount,
+                'is_full' => $pagiCount >= $maxQuota,
+                'label' => 'Sesi Pagi (08:00 - 12:00)'
+            ],
+            'siang' => [
+                'count' => $siangCount,
+                'is_full' => $siangCount >= $maxQuota,
+                'label' => 'Sesi Siang (13:00 - 16:00)'
+            ]
+        ]);
     }
 }

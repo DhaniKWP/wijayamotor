@@ -39,6 +39,7 @@ Route::get('/booking', [CustomerBookingController::class, 'index'])->name('booki
 Route::get('/booking/create', [CustomerBookingController::class, 'create'])->name('booking.create');
 Route::get('/home-service', [CustomerBookingController::class, 'createHomeService'])->name('booking.homeservice');
 Route::post('/booking', [CustomerBookingController::class, 'store'])->name('booking.store');
+Route::get('/api/check-quota', [CustomerBookingController::class, 'checkQuota'])->name('api.check_quota');
 
 // ROUTE AKSESORIS PAKE CONTROLLER CUSTOMER
 Route::get('/aksesoris', [CustomerSparepartController::class, 'index'])->name('sparepart.index');
