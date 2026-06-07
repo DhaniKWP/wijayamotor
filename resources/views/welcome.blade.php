@@ -155,7 +155,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col md:flex-row gap-6 items-center">
       <img src="https://images.unsplash.com/photo-1598558543997-cd2a5d528b71?auto=format&fit=crop&w=400&q=80" alt="Bengkel" class="w-full md:w-64 h-40 object-cover rounded-lg">
       <div class="flex-1 w-full">
-        <h3 class="text-xl font-bold text-ink mb-2">WIJAYA MOTOR JAKARTA SELATAN</h3>
+        <h3 class="text-xl font-bold text-ink mb-2">WIJAYA MOTOR TANGERANG KOTA</h3>
         <div class="flex items-center text-sm text-gray-600 mb-4">
           <svg class="w-4 h-4 text-brand mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           <a href="#" class="text-blue-600 hover:underline font-semibold mr-2">Petunjuk Arah</a> (2.5 Km)

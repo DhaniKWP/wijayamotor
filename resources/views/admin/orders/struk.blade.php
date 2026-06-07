@@ -104,7 +104,7 @@
         <div class="header">
             <div class="logo">WIJAYA <span>MOTOR</span></div>
             <div class="sub">Bengkel Resmi Wijaya Motor</div>
-            <div class="address">Jl. Bengkel No. 1, Jakarta Selatan<br>Telp: 021-1234-5678</div>
+            <div class="address">Jl. Aria Wangsakara, Tangerang Kota<br>Telp: (021) 765-4321</div>
         </div>
 
         {{-- Info Order --}}

@@ -38,10 +38,10 @@
                     </div>
                     <h2 class="font-black text-gray-900 text-sm uppercase tracking-wider">Alamat</h2>
                 </div>
-                <p class="text-gray-800 font-semibold leading-relaxed">Jl. RS. Fatmawati No.5</p>
-                <p class="text-gray-500 text-sm mt-1">Cilandak Barat, Kec. Cilandak</p>
-                <p class="text-gray-500 text-sm">Jakarta Selatan, DKI Jakarta 12430</p>
-                <a href="https://maps.app.goo.gl/1dweiiuCgH6PBmNJ7" 
+                <p class="text-gray-800 font-semibold leading-relaxed">RJF4+H4W, Jl. Aria Wangsakara, RT.001/RW.001</p>
+                <p class="text-gray-500 text-sm mt-1">Bugel, Kec. Karawaci</p>
+                <p class="text-gray-500 text-sm">Kota Tangerang, Banten 15114</p>
+                <a href="https://maps.google.com/maps?q=Jl.+Aria+Wangsakara,+Bugel,+Kec.+Karawaci,+Kota+Tangerang" 
                    target="_blank" 
                    rel="noopener noreferrer"
                    class="mt-4 inline-flex items-center text-xs font-bold text-danger hover:text-red-700 transition uppercase tracking-wider">
@@ -128,9 +128,9 @@
                 <div class="p-5 border-b border-gray-100 flex items-center justify-between">
                     <div>
                         <h2 class="font-black text-gray-900 text-sm uppercase tracking-wider">Wijaya Motor</h2>
-                        <p class="text-xs text-gray-500 mt-0.5">Jl. RS. Fatmawati, Cilandak, Jakarta Selatan</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Jl. Aria Wangsakara, Bugel, Kec. Karawaci, Kota Tangerang</p>
                     </div>
-                    <a href="https://maps.app.goo.gl/1dweiiuCgH6PBmNJ7"
+                    <a href="https://maps.google.com/maps?q=Jl.+Aria+Wangsakara,+Bugel,+Kec.+Karawaci,+Kota+Tangerang"
                        target="_blank"
                        rel="noopener noreferrer"
                        class="flex items-center text-xs font-bold text-danger hover:text-red-700 transition uppercase tracking-wider border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-50">
@@ -141,7 +141,7 @@
                     </a>
                 </div>
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.7461013984296!2d106.79479957460836!3d-6.290879993710856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f163591aabcb%3A0x30e95e0f19484d30!2sJl.%20RS.%20Fatmawati%2C%20Cilandak%20Bar.%2C%20Kec.%20Cilandak%2C%20Kota%20Jakarta%20Selatan%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1717557600000!5m2!1sid!2sid"
+                    src="https://maps.google.com/maps?q=Jl.+Aria+Wangsakara,+Bugel,+Kec.+Karawaci,+Kota+Tangerang&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     width="100%"
                     height="100%"
                     style="border:0; min-height: 440px; display: block;"
@@ -173,7 +173,7 @@
                 </div>
                 <div>
                     <p class="font-bold text-gray-900 text-sm">Kendaraan Pribadi</p>
-                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">Dari TB Simatupang, masuk ke Jl. RS. Fatmawati arah Blok M. Bengkel ada di sisi kiri jalan setelah RS. Fatmawati.</p>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">Akses mudah melalui Jl. Imam Bonjol atau Jl. Merdeka, lalu arahkan kendaraan menuju Bugel, Karawaci. Bengkel berada di sisi jalan utama Aria Wangsakara.</p>
                 </div>
             </div>
             <div class="flex items-start space-x-3">
@@ -184,7 +184,7 @@
                 </div>
                 <div>
                     <p class="font-bold text-gray-900 text-sm">Transportasi Umum</p>
-                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">Gunakan MRT Jalur Lebak Bulus kemudian sambung ojek online. Atau naik Transjakarta koridor 8 turun di halte RS. Fatmawati.</p>
+                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">Dapat diakses menggunakan angkutan umum rute Karawaci atau transportasi online (Gojek/Grab) langsung ke lokasi.</p>
                 </div>
             </div>
             <div class="flex items-start space-x-3">
