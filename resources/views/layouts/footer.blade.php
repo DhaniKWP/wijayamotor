@@ -43,13 +43,8 @@
 </footer>
 
 <div class="fixed bottom-6 right-6 z-50 flex items-center gap-3">
-  <!-- Tanya AI Assistant -->
-  <a href="#" class="flex items-center gap-3 bg-white border border-gray-200 px-4 py-2.5 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all group">
-    <span class="font-bold text-sm text-ink group-hover:text-brand transition">Tanya AI Assistant</span>
-    <div class="w-10 h-10 bg-brand rounded-full flex items-center justify-center text-white shadow-inner">
-      <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-    </div>
-  </a>
+  <!-- WIRA AI Assistant -->
+  @include('components.chatbot')
 
   <!-- WhatsApp Button -->
   <a href="https://wa.me/62895321813103" target="_blank" rel="noopener noreferrer" 

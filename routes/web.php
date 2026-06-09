@@ -141,4 +141,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// =========================================
+// ROUTE CHATBOT WIRA (PUBLIC)
+// =========================================
+use App\Http\Controllers\ChatbotController;
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
+
 require __DIR__.'/auth.php';
