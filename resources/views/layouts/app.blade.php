@@ -25,10 +25,9 @@
         }
       }
     </script>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <style>
       body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
-      .hide-scrollbar::-webkit-scrollbar { display: none; }
-      .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       [x-cloak] { display: none !important; }
     </style>
     @stack('styles')
@@ -43,6 +42,7 @@
 
     @include('layouts.footer')
 
+    <script src="{{ asset('js/app.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

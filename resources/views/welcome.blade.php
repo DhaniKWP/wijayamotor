@@ -4,36 +4,106 @@
 
 @section('content')
 
-<style>
-    .hide-scrollbar::-webkit-scrollbar { display: none; }
-    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-</style>
+<section id="hero-carousel"
+         class="w-full bg-ink relative overflow-hidden h-[500px] md:h-[550px]"
+         data-testid="hero-carousel">
 
-<section class="w-full bg-ink relative overflow-hidden">
-  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center relative z-10">
-    <div class="p-8 md:p-16 md:w-1/2">
-      <h2 class="text-white font-bold text-xl md:text-2xl mb-2">Servis mobil jadi lebih untung?</h2>
-      <h1 class="text-brand font-black text-4xl md:text-5xl leading-tight mb-4">Booking Lewat<br>Website Wijaya Motor</h1>
-      <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white inline-block px-6 py-3 rounded-r-full font-black text-2xl md:text-3xl mb-4 shadow-lg -ml-8 md:-ml-16 pl-8 md:pl-16 relative">
-        Dapatkan Diskon 20%
-        <div class="absolute right-[-10px] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-blue-400 rotate-45"></div>
+  <div class="carousel-track">
+
+    {{-- ====== SLIDE 1 ====== --}}
+    <div class="carousel-slide opacity-100 transition-opacity duration-1000 ease-in-out"
+         data-index="0" data-testid="carousel-slide-1">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAHrj6xaOGJQYn6C8BP8292pOMO6zXCqxkWBX5mhCb28PGzVaJVkr8TRMoa62l-G-G8kNWdzeEPf3knsAdEBRAbKFhZ1bSVfV_GQmlHyBVFrYMMGJBEj4CrFz-kj6ZtfZA1oY98HvA=s680-w680-h510-rw"
+           alt="Mekanik Wijaya Motor"
+           class="absolute inset-0 w-full h-full object-cover">
+      {{-- Overlay agar teks terbaca --}}
+      <div class="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/75 to-ink/20"></div>
+      <div class="absolute inset-0 bg-black/30 md:hidden"></div>
+
+      <div class="relative z-10 max-w-7xl mx-auto h-full flex items-center">
+        <div class="p-8 md:p-16 md:w-2/3 lg:w-1/2">
+          <h2 class="text-white font-bold text-xl md:text-2xl mb-2 drop-shadow-lg">Servis mobil jadi lebih untung?</h2>
+          <h1 class="text-brand font-black text-4xl md:text-5xl leading-tight mb-4 drop-shadow-lg">Booking Lewat<br>Website Wijaya Motor</h1>
+          <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white inline-block px-6 py-3 rounded-r-full font-black text-2xl md:text-3xl mb-4 shadow-lg -ml-8 md:-ml-16 pl-8 md:pl-16 relative">
+            Dapatkan Diskon 20%
+            <div class="absolute right-[-10px] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-blue-400 rotate-45"></div>
+          </div>
+          <p class="text-white mt-2 font-medium drop-shadow">Setiap servis perdana melalui website kami.</p>
+          <a href="{{ route('booking.create') }}"
+             class="mt-8 inline-block bg-danger hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105"
+             data-testid="booking-btn-slide-1">
+            Booking Sekarang
+          </a>
+        </div>
       </div>
-      <p class="text-white mt-2 font-medium">Setiap servis perdana melalui website kami.</p>
-      <a href="{{ route('booking.create') }}" class="mt-8 inline-block bg-danger hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105">
-        Booking Sekarang
-      </a>
     </div>
-    <div class="md:w-1/2 relative h-64 md:h-[450px] w-full">
-      <img src="https://images.unsplash.com/photo-1632823465306-edeb51a4413a?auto=format&fit=crop&w=800&q=80" alt="Mekanik" class="w-full h-full object-cover rounded-tl-[100px]">
-      <div class="absolute inset-0 bg-gradient-to-r from-ink via-transparent to-transparent"></div>
+
+    {{-- ====== SLIDE 2 ====== --}}
+    <div class="carousel-slide opacity-0 transition-opacity duration-1000 ease-in-out pointer-events-none"
+         data-index="1" data-testid="carousel-slide-2">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAEhRVDFX60B5yrqbKZv8XlVDaHsBeSspJD7omWZ5qDUWChCx5oF-AT-l1ZF2I9BIdfe90UMnwuxTkpQ8ukrmIaF3YTMSiTI3G1kKyT3xBb0a9mKfx2JF2e_R0VRSpSFVs646qPo=s680-w680-h510-rw"
+           alt="Mekanik Wijaya Motor"
+           class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/75 to-ink/20"></div>
+      <div class="absolute inset-0 bg-black/30 md:hidden"></div>
+
+      <div class="relative z-10 max-w-7xl mx-auto h-full flex items-center">
+        <div class="p-8 md:p-16 md:w-2/3 lg:w-1/2">
+          <h2 class="text-white font-bold text-xl md:text-2xl mb-2 drop-shadow-lg">Servis mobil jadi lebih untung?</h2>
+          <h1 class="text-brand font-black text-4xl md:text-5xl leading-tight mb-4 drop-shadow-lg">Booking Lewat<br>Website Wijaya Motor</h1>
+          <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white inline-block px-6 py-3 rounded-r-full font-black text-2xl md:text-3xl mb-4 shadow-lg -ml-8 md:-ml-16 pl-8 md:pl-16 relative">
+            Dapatkan Diskon 20%
+            <div class="absolute right-[-10px] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-blue-400 rotate-45"></div>
+          </div>
+          <p class="text-white mt-2 font-medium drop-shadow">Setiap servis perdana melalui website kami.</p>
+          <a href="{{ route('booking.create') }}"
+             class="mt-8 inline-block bg-danger hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105"
+             data-testid="booking-btn-slide-2">
+            Booking Sekarang
+          </a>
+        </div>
+      </div>
     </div>
+
+    {{-- ====== SLIDE 3 ====== --}}
+    <div class="carousel-slide opacity-0 transition-opacity duration-1000 ease-in-out pointer-events-none"
+         data-index="2" data-testid="carousel-slide-3">
+      <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFEzmkIgAjaN4UHHsjstrZvaKA5vnZWKikaq3mGPc7Gcre5dIFIhTSUw0_t_mPAWB3tpl-bzSL1o5YmNAufz7B17dRQXrl1OirmMfqJzaPxMnxJnqbOr8hFa7pam3Iavi4jqLV_lg=s680-w680-h510-rw"
+           alt="Mekanik Wijaya Motor"
+           class="absolute inset-0 w-full h-full object-cover">
+      <div class="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/75 to-ink/20"></div>
+      <div class="absolute inset-0 bg-black/30 md:hidden"></div>
+
+      <div class="relative z-10 max-w-7xl mx-auto h-full flex items-center">
+        <div class="p-8 md:p-16 md:w-2/3 lg:w-1/2">
+          <h2 class="text-white font-bold text-xl md:text-2xl mb-2 drop-shadow-lg">Servis mobil jadi lebih untung?</h2>
+          <h1 class="text-brand font-black text-4xl md:text-5xl leading-tight mb-4 drop-shadow-lg">Booking Lewat<br>Website Wijaya Motor</h1>
+          <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white inline-block px-6 py-3 rounded-r-full font-black text-2xl md:text-3xl mb-4 shadow-lg -ml-8 md:-ml-16 pl-8 md:pl-16 relative">
+            Dapatkan Diskon 20%
+            <div class="absolute right-[-10px] top-1/2 transform -translate-y-1/2 w-5 h-5 bg-blue-400 rotate-45"></div>
+          </div>
+          <p class="text-white mt-2 font-medium drop-shadow">Setiap servis perdana melalui website kami.</p>
+          <a href="{{ route('booking.create') }}"
+             class="mt-8 inline-block bg-danger hover:bg-red-700 text-white font-bold px-8 py-3 rounded-full shadow-lg transition transform hover:scale-105"
+             data-testid="booking-btn-slide-3">
+            Booking Sekarang
+          </a>
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  {{-- ====== INDICATORS ====== --}}
   <div class="absolute bottom-4 w-full flex justify-center space-x-2 z-20">
-    <div class="w-8 h-2 bg-brand rounded-full"></div>
-    <div class="w-2 h-2 bg-white/50 rounded-full"></div>
-    <div class="w-2 h-2 bg-white/50 rounded-full"></div>
+    <button type="button" class="carousel-dot w-8 h-2 bg-brand rounded-full transition-all duration-300" data-target="0" aria-label="Slide 1" data-testid="carousel-dot-1"></button>
+    <button type="button" class="carousel-dot w-2 h-2 bg-white/50 rounded-full transition-all duration-300 hover:bg-white/80" data-target="1" aria-label="Slide 2" data-testid="carousel-dot-2"></button>
+    <button type="button" class="carousel-dot w-2 h-2 bg-white/50 rounded-full transition-all duration-300 hover:bg-white/80" data-target="2" aria-label="Slide 3" data-testid="carousel-dot-3"></button>
   </div>
 </section>
+
+{{-- ============================ END HERO CAROUSEL ============================ --}}
+
 
 <section class="py-12 bg-white border-b border-gray-100 relative group" 
          x-data="{ 
