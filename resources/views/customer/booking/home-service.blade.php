@@ -318,7 +318,7 @@
             <span>/</span>
             <span class="text-ink">Home Service</span>
         </div>
-    </div>
+    </div><br>
 
     <div class="bg-brand text-white py-12 relative overflow-hidden">
         <div class="absolute right-0 top-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
@@ -328,7 +328,7 @@
             <h1 class="text-3xl md:text-4xl font-black mb-3 tracking-tight">Wijaya Motor Home Service</h1>
             <p class="text-white/90 max-w-2xl text-sm md:text-base leading-relaxed">Bengkel bergerak yang siap melakukan perawatan dan perbaikan kendaraan langsung di garasi rumah atau kantor Anda.</p>
         </div>
-    </div>
+    </div><br>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 relative -mt-8">
         
