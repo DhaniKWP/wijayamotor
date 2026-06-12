@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Customer\DashboardController;
 use App\Http\Controllers\Customer\OrderController;
+use App\Models\Sparepart;
 use App\Http\Controllers\Customer\CartController;
 
 Route::get('/', function () {
@@ -29,7 +30,13 @@ Route::get('/', function () {
             return redirect()->route('admin.dashboard');
         }
     }
-    return view('welcome');
+
+    $featuredSpareparts = Sparepart::where('stock', '>', 0)
+                            ->latest()
+                            ->take(8)
+                            ->get();
+
+    return view('welcome', compact('featuredSpareparts'));
 });
 
 Route::get('/verify-otp', [OtpVerificationController::class, 'show'])->name('otp.verify');
