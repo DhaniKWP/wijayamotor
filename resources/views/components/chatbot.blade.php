@@ -2,17 +2,18 @@
     
     <!-- Chat Button (Pill Design) -->
     <button 
+        id="wira-ai-trigger"
         @click="toggleChat" 
-        class="flex items-center gap-3 bg-white border border-gray-200 px-4 py-2.5 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all group relative z-10"
+        class="flex items-center justify-center gap-2 bg-white border border-gray-200 md:px-4 px-2 md:py-2.5 py-1.5 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all group relative z-10"
         :class="isOpen ? 'bg-slate-50' : 'bg-white'"
     >
-        <span class="font-bold text-sm text-ink group-hover:text-brand transition">Tanya Wira AI</span>
-        <div class="w-10 h-10 bg-brand rounded-full flex items-center justify-center text-white shadow-inner relative">
+        <span class="font-bold md:text-sm text-xs text-ink group-hover:text-brand transition hidden sm:inline whitespace-nowrap">Tanya Wira AI</span>
+        <div class="md:w-[60px] md:h-[60px] w-[44px] h-[44px] bg-brand rounded-full flex items-center justify-center text-white shadow-inner relative shrink-0">
             <!-- Sparkles/AI Icon -->
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.608 22.404a1.442 1.442 0 01-1.216 0c-.394-.183-5.59-2.716-6.195-8.47-.076-.723-.114-1.464-.114-2.222V5.13a1.441 1.441 0 01.954-1.357c3.159-1.042 6.13-2.19 6.845-2.47a1.439 1.439 0 011.036 0c.715.28 3.686 1.428 6.845 2.47a1.441 1.441 0 01.954 1.357v6.582c0 .758-.038 1.499-.114 2.222-.605 5.754-5.801 8.287-6.195 8.47zM11 16l6-6-1.414-1.414L11 13.172l-2.586-2.586L7 12l4 4z"/></svg>
-            <span class="absolute top-0 right-0 flex h-3.5 w-3.5" x-show="!isOpen">
+            <svg class="md:w-8 md:h-8 w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.608 22.404a1.442 1.442 0 01-1.216 0c-.394-.183-5.59-2.716-6.195-8.47-.076-.723-.114-1.464-.114-2.222V5.13a1.441 1.441 0 01.954-1.357c3.159-1.042 6.13-2.19 6.845-2.47a1.439 1.439 0 011.036 0c.715.28 3.686 1.428 6.845 2.47a1.441 1.441 0 01.954 1.357v6.582c0 .758-.038 1.499-.114 2.222-.605 5.754-5.801 8.287-6.195 8.47zM11 16l6-6-1.414-1.414L11 13.172l-2.586-2.586L7 12l4 4z"/></svg>
+            <span class="absolute top-0 right-0 flex md:h-3.5 md:w-3.5 h-3 w-3" x-show="!isOpen">
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 border-2 border-white"></span>
+                <span class="relative inline-flex rounded-full md:h-3.5 md:w-3.5 h-3 w-3 bg-red-500 border-2 border-white"></span>
             </span>
         </div>
     </button>
@@ -26,8 +27,8 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
         x-transition:leave-end="opacity-0 translate-y-4 scale-95"
-        class="absolute bottom-full right-0 mb-4 w-[350px] max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 origin-bottom-right z-20"
-        style="height: 500px; max-height: calc(100vh - 6rem);"
+        class="fixed inset-x-4 bottom-24 sm:absolute sm:inset-x-auto sm:bottom-full sm:right-0 sm:mb-4 w-auto sm:w-[350px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 z-20"
+        style="height: 500px; max-height: calc(100vh - 10rem);"
         x-cloak
     >
         <!-- Header -->
@@ -35,7 +36,7 @@
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                     <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                     </svg>
                 </div>
                 <div>

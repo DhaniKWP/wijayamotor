@@ -19,37 +19,44 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         
-        <form action="{{ request()->url() }}" method="GET" class="space-y-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm lg:col-span-1">
+        <form action="{{ request()->url() }}" method="GET" class="space-y-5 bg-white p-5 rounded-xl border border-gray-200 shadow-sm lg:col-span-1">
             
+            {{-- Cari Produk --}}
             <div>
                 <label class="block text-xs font-black uppercase tracking-wider text-gray-700 mb-2">Cari Produk</label>
                 <div class="relative">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari oli, aki, ban..." 
-                           class="w-full text-sm border-gray-300 rounded-lg focus:ring-danger focus:border-danger placeholder-gray-400">
+                           class="w-full text-sm border-gray-200 rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:border-danger focus:ring-2 focus:ring-danger/10 placeholder-gray-400 transition-all bg-white">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
             </div>
 
+            {{-- Urutkan --}}
             <div>
                 <label class="block text-xs font-black uppercase tracking-wider text-gray-700 mb-2">Urutkan</label>
-                <select name="sort" class="w-full text-sm border-gray-300 rounded-lg focus:ring-danger focus:border-danger">
-                    <option value="">Terbaru</option>
-                    <option value="az" {{ request('sort') == 'az' ? 'selected' : '' }}>Nama: A - Z</option>
-                    <option value="za" {{ request('sort') == 'za' ? 'selected' : '' }}>Nama: Z - A</option>
-                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Harga: Terendah - Tertinggi</option>
-                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Harga: Tertinggi - Terendah</option>
-                </select>
+                <div class="relative">
+                    <select name="sort" class="w-full text-sm border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-danger focus:ring-2 focus:ring-danger/10 transition-all bg-white appearance-none cursor-pointer">
+                        <option value="">Terbaru</option>
+                        <option value="az" {{ request('sort') == 'az' ? 'selected' : '' }}>Nama: A - Z</option>
+                        <option value="za" {{ request('sort') == 'za' ? 'selected' : '' }}>Nama: Z - A</option>
+                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Harga: Rendah - Tinggi</option>
+                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Harga: Tinggi - Rendah</option>
+                    </select>
+                    <svg class="w-4 h-4 text-gray-400 absolute right-3 top-3.5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
             </div>
 
+            {{-- Kategori --}}
             <div>
                 <label class="block text-xs font-black uppercase tracking-wider text-gray-700 mb-2">Kategori</label>
-                <div class="flex flex-wrap gap-2">
+                <div class="flex flex-wrap gap-1.5">
                     <a href="{{ request()->fullUrlWithQuery(['category' => null]) }}" 
-                       class="px-3 py-1.5 text-xs font-bold rounded-full border transition {{ !request('category') ? 'bg-danger border-danger text-white' : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-400' }}">
+                       class="px-3 py-1.5 text-xs font-bold rounded-lg border transition-all {{ !request('category') ? 'bg-danger border-danger text-white shadow-sm' : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-400 hover:bg-gray-100' }}">
                         Semua
                     </a>
                     @foreach($categories as $cat)
                         <a href="{{ request()->fullUrlWithQuery(['category' => $cat]) }}" 
-                           class="px-3 py-1.5 text-xs font-bold rounded-full border transition {{ request('category') == $cat ? 'bg-danger border-danger text-white' : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-400' }}">
+                           class="px-3 py-1.5 text-xs font-bold rounded-lg border transition-all {{ request('category') == $cat ? 'bg-danger border-danger text-white shadow-sm' : 'bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-400 hover:bg-gray-100' }}">
                             {{ $cat }}
                         </a>
                     @endforeach
@@ -59,22 +66,25 @@
                 </div>
             </div>
 
+            {{-- Kisaran Harga --}}
             <div>
                 <label class="block text-xs font-black uppercase tracking-wider text-gray-700 mb-2">Kisaran Harga (Rp)</label>
-                <div class="space-y-2">
-                    <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Harga Minimum" 
-                           class="w-full text-sm border-gray-300 rounded-lg focus:ring-danger focus:border-danger placeholder-gray-400">
-                    <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Harga Maksimum" 
-                           class="w-full text-sm border-gray-300 rounded-lg focus:ring-danger focus:border-danger placeholder-gray-400">
+                <div class="flex items-center gap-2">
+                    <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Min" 
+                           class="w-full text-sm border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-danger focus:ring-2 focus:ring-danger/10 placeholder-gray-400 transition-all bg-white">
+                    <span class="text-gray-300 text-xs font-bold">—</span>
+                    <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Max" 
+                           class="w-full text-sm border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-danger focus:ring-2 focus:ring-danger/10 placeholder-gray-400 transition-all bg-white">
                 </div>
             </div>
 
-            <div class="pt-2 space-y-2">
-                <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-widest py-3 rounded-lg transition shadow-sm">
+            {{-- Tombol --}}
+            <div class="pt-1 space-y-2">
+                <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white text-xs font-black uppercase tracking-widest py-3 rounded-xl transition shadow-sm hover:shadow-md">
                     Terapkan Filter
                 </button>
                 @if(request()->anyFilled(['search', 'sort', 'category', 'min_price', 'max_price']))
-                    <a href="{{ route('sparepart.index') }}" class="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-black uppercase tracking-widest py-3 rounded-lg transition">
+                    <a href="{{ route('sparepart.index') }}" class="block w-full text-center border border-gray-200 hover:border-gray-300 text-gray-600 hover:text-gray-800 text-xs font-bold uppercase tracking-wider py-3 rounded-xl transition">
                         Reset Filter
                     </a>
                 @endif

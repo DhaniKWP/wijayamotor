@@ -134,13 +134,6 @@
             <span class="font-bold text-gray-900 text-sm text-center group-hover:text-danger transition-colors">Servis Booking</span>
         </a>
 
-        <a href="#promo" class="snap-start shrink-0 w-36 sm:w-44 bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-danger hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
-            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 group-hover:text-danger group-hover:bg-red-50 transition-colors duration-300">
-                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-            </div>
-            <span class="font-bold text-gray-900 text-sm text-center group-hover:text-danger transition-colors">Kupon Servis</span>
-        </a>
-
         <a href="{{ route('sparepart.index') }}" class="snap-start shrink-0 w-36 sm:w-44 bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-danger hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
             <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 group-hover:text-danger group-hover:bg-red-50 transition-colors duration-300">
                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
@@ -169,6 +162,43 @@
             <span class="font-bold text-gray-900 text-sm text-center group-hover:text-danger transition-colors">Riwayat Servis</span>
         </a>
 
+        <a href="{{ route('artikel.index') }}" class="snap-start shrink-0 w-36 sm:w-44 bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-danger hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
+            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 group-hover:text-danger group-hover:bg-red-50 transition-colors duration-300">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+            </div>
+            <span class="font-bold text-gray-900 text-sm text-center group-hover:text-danger transition-colors">Tips & Berita</span>
+        </a>
+
+        @auth
+          <a href="{{ route('profile.edit') }}" class="snap-start shrink-0 w-36 sm:w-44 bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-danger hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
+              <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 group-hover:text-danger group-hover:bg-red-50 transition-colors duration-300">
+                  <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              </div>
+              <span class="font-bold text-gray-900 text-sm text-center group-hover:text-danger transition-colors">Profile</span>
+          </a>
+        @else
+          <a href="{{ route('login') }}" class="snap-start shrink-0 w-36 sm:w-44 bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-danger hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
+              <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 group-hover:text-danger group-hover:bg-red-50 transition-colors duration-300">
+                  <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+              </div>
+              <span class="font-bold text-gray-900 text-sm text-center group-hover:text-danger transition-colors">Login</span>
+          </a>
+        @endauth
+
+        <a href="{{ route('lokasi') }}" class="snap-start shrink-0 w-36 sm:w-44 bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-danger hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
+            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 group-hover:text-danger group-hover:bg-red-50 transition-colors duration-300">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <span class="font-bold text-gray-900 text-sm text-center group-hover:text-danger transition-colors">Lokasi</span>
+        </a>
+
+        <a href="https://wa.me/62895321813103" target="_blank" class="snap-start shrink-0 w-36 sm:w-44 bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 hover:border-danger hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
+            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 group-hover:text-danger group-hover:bg-red-50 transition-colors duration-300">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            </div>
+            <span class="font-bold text-gray-900 text-sm text-center group-hover:text-danger transition-colors">Hubungi Kami</span>
+        </a>
+
     </div>
   </div>
 </section>
@@ -179,36 +209,36 @@
       <div>
         <h2 class="text-xl font-bold text-ink mb-1">Tips & Berita Otomotif</h2>
       </div>
-      <a href="#" class="text-danger font-bold text-sm hover:underline flex items-center">
+      <a href="{{ route('artikel.index') }}" class="text-danger font-bold text-sm hover:underline flex items-center justify-center">
         LIHAT SEMUA ARTIKEL <svg class="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </a>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition">
-        <img src="https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
+      <a href="{{ route('artikel.kampas-rem') }}" class="bg-white border border-gray-200 rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition">
+        <img src="https://images.unsplash.com/photo-1588017530244-c57df911f73b?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
         <div class="p-5">
           <p class="text-xs text-brand font-bold mb-2">TIPS PERAWATAN</p>
           <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">5 Tanda Kampas Rem Mobil Anda Harus Segera Diganti</h3>
           <p class="text-sm text-gray-500 line-clamp-2">Jangan abaikan bunyi berdecit saat mengerem, bisa jadi itu tanda kampas rem Anda sudah menipis dan berbahaya bagi keselamatan.</p>
         </div>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition">
-        <img src="https://images.unsplash.com/photo-1518985289524-118c7bc701f5?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
+      </a>
+      <a href="{{ route('artikel.oli-gardan-transmisi') }}" class="bg-white border border-gray-200 rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition">
+        <img src="https://images.unsplash.com/photo-1711199694531-e982a79ea381?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
         <div class="p-5">
           <p class="text-xs text-brand font-bold mb-2">TIPS PERAWATAN</p>
           <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">Kapan Waktu yang Tepat Mengganti Oli Gardan & Transmisi?</h3>
           <p class="text-sm text-gray-500 line-clamp-2">Banyak pemilik mobil lupa mengganti oli gardan. Padahal, telat mengganti bisa membuat gigi gardan rontok dan biaya perbaikannya sangat mahal.</p>
         </div>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition hidden md:block">
-        <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
+      </a>
+      <a href="{{ route('artikel.scan-kendaraan') }}" class="bg-white border border-gray-200 rounded-xl overflow-hidden group cursor-pointer hover:shadow-md transition hidden md:block">
+        <img src="https://images.unsplash.com/photo-1623682783900-fea916dcba74?auto=format&fit=crop&w=800&q=80" alt="Tips" class="w-full h-48 object-cover">
         <div class="p-5">
           <p class="text-xs text-brand font-bold mb-2">BERITA BENGKEL</p>
-          <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">Wijaya Motor Kini Melayani Spooring & Balancing 3D!</h3>
-          <p class="text-sm text-gray-500 line-clamp-2">Kami baru saja mendatangkan mesin Spooring 3D generasi terbaru untuk memastikan kaki-kaki mobil Anda lurus sempurna.</p>
+          <h3 class="font-bold text-ink text-lg leading-snug group-hover:text-brand transition mb-2">Kini di Wijaya Motor: Scan Kendaraan Cepat & Akurat!</h3>
+          <p class="text-sm text-gray-500 line-clamp-2">Temukan masalah pada mobil Anda sebelum menjadi kerusakan yang lebih besar.</p>
         </div>
-      </div>
+      </a>
     </div>
   </div>
 </section>
@@ -333,7 +363,7 @@
               <h3 class="font-black text-gray-900 text-xs uppercase tracking-wider">Wijaya Motor</h3>
               <p class="text-xs text-gray-500 mt-0.5">Jl. Aria Wangsakara, Bugel, Kec. Karawaci, Kota Tangerang</p>
             </div>
-            <a href="https://maps.google.com/maps?q=Jl.+Aria+Wangsakara,+Bugel,+Kec.+Karawaci,+Kota+Tangerang"
+            <a href="https://maps.app.goo.gl/jmZuadRSjWc7xmz98"
                target="_blank" rel="noopener noreferrer"
                class="flex items-center text-xs font-bold text-danger hover:text-red-700 transition uppercase tracking-wider border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-50">
               <svg class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

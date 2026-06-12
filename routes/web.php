@@ -58,6 +58,23 @@ Route::get('/lokasi', function () {
     return view('lokasi');
 })->name('lokasi');
 
+// ROUTE ARTIKEL TIPS & BERITA
+Route::get('/artikel/kampas-rem', function () {
+    return view('artikel.kampas-rem');
+})->name('artikel.kampas-rem');
+
+Route::get('/artikel/oli-gardan-transmisi', function () {
+    return view('artikel.oli-gardan-transmisi');
+})->name('artikel.oli-gardan-transmisi');
+
+Route::get('/artikel/scan-kendaraan', function () {
+    return view('artikel.scan-kendaraan');
+})->name('artikel.scan-kendaraan');
+
+Route::get('/artikel', function () {
+    return view('artikel.index');
+})->name('artikel.index');
+
 // =========================================
 // ROUTE KHUSUS CUSTOMER
 // =========================================
