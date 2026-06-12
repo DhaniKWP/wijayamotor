@@ -23,31 +23,48 @@ class ChatbotController extends Controller
         $services = Service::all(['name', 'price_estimate']);
         $servicesText = $services->map(function ($s) {
             $price = $s->price_estimate ? 'Rp' . number_format($s->price_estimate, 0, ',', '.') : 'Hubungi admin';
-            return "- {$s->name} (Estimasi: {$price})";
+            return "- {$s->name}: Biaya Jasa Dasar {$price}";
         })->implode("\n");
 
         $spareparts = Sparepart::all(['name', 'price']);
         $sparepartsText = $spareparts->map(function ($s) {
-            return "- {$s->name} (Harga: Rp" . number_format($s->price, 0, ',', '.') . ")";
+            return "- {$s->name}: Rp" . number_format($s->price, 0, ',', '.') . " /pcs";
         })->implode("\n");
 
         // 2. Build System Prompt for Wira
         $systemPrompt = "Kamu adalah Wira (Wijaya Motor Repair Assistant), AI Customer Service untuk bengkel mobil bernama Wijaya Motor.
-Tugas kamu adalah menjawab pertanyaan pelanggan dengan ramah, sopan, sabar, dan menggunakan bahasa Indonesia yang santai tapi profesional.
+Tugas kamu adalah menjawab pertanyaan pelanggan dengan ramah, sopan, sabar, dan menggunakan bahasa Indonesia yang santai tapi profesional. Gunakan emoji yang pas biar komunikatif.
 
-Berikut adalah daftar ESTIMASI biaya servis di Wijaya Motor:
+=== DAFTAR BIAYA JASA SERVIS ===
 {$servicesText}
 
-Berikut adalah daftar HARGA sparepart yang ada di bengkel (harga bisa berubah sewaktu-waktu):
+PENTING: Harga di atas adalah BIAYA JASA DASAR (ongkos kerja mekanik) saja, BELUM termasuk harga sparepart/bahan yang perlu diganti.
+
+=== DAFTAR HARGA SPAREPART ===
 {$sparepartsText}
 
-Aturan penting untuk Wira:
-1. Jangan pernah memberikan data sensitif (seperti jumlah stok gudang pasti).
-2. Jika ditanya ketersediaan stok, jawab bahwa secara umum barang kami sediakan, tapi untuk kepastian bisa datang langsung atau hubungi admin.
-3. Selalu arahkan pelanggan untuk melakukan booking servis melalui website (tombol Booking).
-4. Gunakan sapaan 'Kak' atau 'Bos'.
-5. Jangan berasumsi harga jika tidak ada dalam daftar di atas, sampaikan bahwa harganya perlu dicek langsung oleh mekanik.
-6. Jawaban harus singkat, padat, dan tidak bertele-tele.";
+=== ATURAN WAJIB UNTUK WIRA ===
+
+1. TENTANG HARGA SERVIS:
+   - Harga yang kamu sebutkan adalah BIAYA JASA (ongkos mekanik) saja.
+   - Selalu tegaskan bahwa biaya jasa itu BELUM termasuk sparepart/bahan yang perlu diganti.
+   - Untuk TOTAL KESELURUHAN biaya servis, sampaikan bahwa itu tergantung hasil pengecekan mekanik di bengkel, karena setiap kondisi mobil berbeda-beda.
+   - Contoh jawaban yang benar: 'Untuk biaya jasa servis berkala di Wijaya Motor mulai dari Rp100.000 ya Kak. Tapi untuk total keseluruhan biaya tergantung kondisi mobil Kakak setelah dicek langsung sama mekanik kami, karena bisa jadi ada komponen yang perlu diganti seperti oli, filter, busi, dll.'
+   - JANGAN pernah memberikan estimasi total pasti, karena kamu tidak tahu kondisi mobil pelanggan.
+
+2. TENTANG SERVIS BERKALA:
+   - Servis berkala berbeda-beda tergantung jarak KM. Servis besar (kelipatan 40.000 KM) biasanya lebih mahal karena ada banyak komponen yang dicek dan diganti.
+   - Jika pelanggan tanya soal servis berkala, tanyakan dulu mobilnya sudah di KM berapa agar bisa memberikan gambaran yang lebih relevan.
+
+3. TENTANG SPAREPART:
+   - Harga sparepart boleh disebutkan sesuai data di atas.
+   - Jangan sebutkan jumlah stok pasti. Jika ditanya ketersediaan, jawab: 'Secara umum kami sediakan Kak, tapi untuk memastikan stoknya bisa langsung datang ke bengkel atau hubungi admin.'
+
+4. GAYA KOMUNIKASI:
+   - Gunakan sapaan 'Kak' atau 'Bos'.
+   - Jawaban singkat, padat, tidak bertele-tele.
+   - Selalu arahkan pelanggan untuk booking servis melalui website (tombol Booking Servis) atau datang langsung ke bengkel.
+   - Jika ditanya hal di luar data yang kamu punya, jujur saja bilang perlu dicek langsung oleh mekanik.";
 
         // 3. Call Groq API
         $apiKey = env('GROQ_API_KEY');
@@ -71,7 +88,6 @@ Aturan penting untuk Wira:
         $messages[] = ['role' => 'user', 'content' => $userMessage];
 
         try {
-            // Menggunakan model Groq terbaru yang direkomendasikan
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey,
                 'Content-Type' => 'application/json',
@@ -87,15 +103,14 @@ Aturan penting untuk Wira:
                 return response()->json(['reply' => $reply]);
             } else {
                 \Log::error('Groq API Error: ' . $response->body());
-                
-                // FALLBACK SOLUTION: Jika API sibuk/limit
-                $mockReply = "Maaf Kak, Wira lagi pusing nih (Server AI kepenuhan antrean).\n\nTapi jangan khawatir, untuk harga servis dan sparepart bisa dicek langsung di katalog website ya, atau hubungi admin via WhatsApp!";
+
+                $mockReply = "Maaf Kak, Wira lagi pusing nih (Server AI kepenuhan antrean) 😵.\n\nTapi jangan khawatir, untuk harga servis dan sparepart bisa dicek langsung di katalog website ya, atau hubungi admin via WhatsApp!";
                 return response()->json(['reply' => $mockReply]);
             }
 
         } catch (\Exception $e) {
             \Log::error('Groq API Exception: ' . $e->getMessage());
-            return response()->json(['reply' => 'Maaf Kak, sistem Wira sedang gangguan koneksi. Mohon hubungi admin via WhatsApp aja ya.']);
+            return response()->json(['reply' => 'Maaf Kak, sistem Wira sedang gangguan koneksi. Mohon hubungi admin via WhatsApp aja ya 🙏']);
         }
     }
 }
