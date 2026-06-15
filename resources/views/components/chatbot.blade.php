@@ -40,69 +40,52 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="flex items-center gap-2">
-                        <h3 class="font-extrabold text-sm leading-none tracking-wide">WIRA</h3>
-                        <span class="bg-white/20 text-[9px] font-bold px-1.5 py-0.5 rounded-md uppercase tracking-wider">AI</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 mt-1">
-                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                        <p class="text-[11px] text-red-100 font-medium">Online · Asisten Wijaya Motor</p>
-                    </div>
+                    <h3 class="font-bold text-sm leading-none">WIRA</h3>
+                    <p class="text-xs text-red-100 mt-1">Asisten Wijaya Motor</p>
                 </div>
             </div>
-            <button @click="toggleChat" class="text-white/70 hover:text-white hover:bg-white/10 rounded-lg p-1.5 transition relative z-10">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <button @click="toggleChat" class="text-white/80 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
 
         <!-- Chat History -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chatbot-messages" style="background: linear-gradient(180deg, #fef2f2 0%, #fff5f5 30%, #fafafa 100%);">
-            
+        <div class="flex-1 overflow-y-auto p-4 bg-slate-50 space-y-4" id="chatbot-messages">
             <!-- Welcome Message -->
-            <div class="flex items-end gap-2">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shrink-0 shadow-sm">
-                    <svg class="w-4.5 h-4.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1.07A7 7 0 0113 21h-2a7 7 0 01-6.93-6H3a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2zm-1 9H9v2h2v-2zm4 0h-2v2h2v-2zm-5 4v1a1 1 0 001 1h2a1 1 0 001-1v-1h-4z"/></svg>
+            <div class="flex items-start gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center shrink-0">
+                    <span class="text-white text-xs font-bold">W</span>
                 </div>
-                <div class="bg-white p-3.5 rounded-2xl rounded-bl-md shadow-sm border border-red-100/60 text-[13px] text-gray-700 max-w-[82%] leading-relaxed">
-                    Halo Bos! 👋 Saya <strong>Wira</strong>, Asisten AI Wijaya Motor 🔧. Ada yang bisa saya bantu soal servis atau suku cadang hari ini?
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="flex flex-wrap gap-2 pl-10">
-                <button @click="input = 'Berapa biaya servis berkala?'; sendMessage()" class="text-[11px] font-semibold bg-white border border-red-200 text-red-600 px-3 py-1.5 rounded-full hover:bg-red-50 transition shadow-sm">🔧 Biaya Servis</button>
-                <button @click="input = 'Ada sparepart apa aja?'; sendMessage()" class="text-[11px] font-semibold bg-white border border-red-200 text-red-600 px-3 py-1.5 rounded-full hover:bg-red-50 transition shadow-sm">🛒 Sparepart</button>
-                <button @click="input = 'Cara booking servis gimana?'; sendMessage()" class="text-[11px] font-semibold bg-white border border-red-200 text-red-600 px-3 py-1.5 rounded-full hover:bg-red-50 transition shadow-sm">📅 Booking</button>
+                <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 text-sm text-gray-700 max-w-[85%] whitespace-pre-wrap">Halo Bosku! Saya Wira, Asisten Virtual Wijaya Motor 🤖. Ada yang bisa saya bantu soal servis atau suku cadang hari ini?</div>
             </div>
 
             <!-- Dynamic Messages -->
             <template x-for="(msg, index) in messages" :key="index">
-                <div class="flex items-end gap-2" :class="msg.role === 'user' ? 'flex-row-reverse' : ''">
-                    <!-- Wira Avatar -->
-                    <div x-show="msg.role === 'assistant'" class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shrink-0 shadow-sm">
-                        <svg class="w-4.5 h-4.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1.07A7 7 0 0113 21h-2a7 7 0 01-6.93-6H3a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2zm-1 9H9v2h2v-2zm4 0h-2v2h2v-2zm-5 4v1a1 1 0 001 1h2a1 1 0 001-1v-1h-4z"/></svg>
+                <div class="flex items-start gap-2.5" :class="msg.role === 'user' ? 'flex-row-reverse' : ''">
+                    <div x-show="msg.role === 'assistant'" class="w-8 h-8 rounded-full bg-brand flex items-center justify-center shrink-0">
+                        <span class="text-white text-xs font-bold">W</span>
                     </div>
                     <div 
-                        class="p-3.5 text-[13px] max-w-[82%] whitespace-pre-wrap leading-relaxed"
+                        class="p-3 shadow-sm border text-sm max-w-[85%] whitespace-pre-wrap"
                         :class="msg.role === 'user' 
-                            ? 'bg-gradient-to-br from-red-600 to-red-700 text-white rounded-2xl rounded-br-md shadow-sm' 
-                            : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-sm border border-red-100/60'"
+                            ? 'bg-slate-800 text-white rounded-2xl rounded-tr-none border-slate-700' 
+                            : 'bg-white text-gray-700 rounded-2xl rounded-tl-none border-gray-100'"
                         x-html="formatMessage(msg.content)"
                     ></div>
                 </div>
             </template>
 
             <!-- Typing Indicator -->
-            <div x-show="isLoading" class="flex items-end gap-2">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shrink-0 shadow-sm">
-                    <svg class="w-4.5 h-4.5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1.07A7 7 0 0113 21h-2a7 7 0 01-6.93-6H3a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2zm-1 9H9v2h2v-2zm4 0h-2v2h2v-2zm-5 4v1a1 1 0 001 1h2a1 1 0 001-1v-1h-4z"/></svg>
+            <div x-show="isLoading" class="flex items-start gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center shrink-0">
+                    <span class="text-white text-xs font-bold">W</span>
                 </div>
-                <div class="bg-white p-4 rounded-2xl rounded-bl-md shadow-sm border border-red-100/60 flex items-center gap-1.5">
-                    <div class="w-2 h-2 bg-red-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-                    <div class="w-2 h-2 bg-red-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                    <div class="w-2 h-2 bg-red-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 flex items-center gap-1.5 w-16 h-10">
+                    <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                    <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                    <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
                 </div>
             </div>
         </div>
@@ -114,24 +97,21 @@
                     type="text" 
                     x-model="input" 
                     placeholder="Tanya harga oli, biaya servis..." 
-                    class="flex-1 bg-gray-50 border border-gray-200 focus:border-red-400 focus:ring-1 focus:ring-red-200 rounded-full px-4 py-2.5 text-sm transition placeholder:text-gray-400"
+                    class="flex-1 bg-slate-50 border-transparent focus:border-brand focus:ring-0 rounded-full px-4 py-2 text-sm transition"
                     :disabled="isLoading"
                     required
                 >
                 <button 
                     type="submit" 
-                    class="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shrink-0 hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                    class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center shrink-0 hover:bg-brand-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="isLoading || input.trim() === ''"
                 >
-                    <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                    <svg class="w-4 h-4 transform rotate-90 ml-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
                 </button>
             </form>
-            <div class="flex items-center justify-center gap-1 mt-2">
-                <svg class="w-3 h-3 text-red-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a2 2 0 012 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 017 7h1a1 1 0 011 1v3a1 1 0 01-1 1h-1.07A7 7 0 0113 21h-2a7 7 0 01-6.93-6H3a1 1 0 01-1-1v-3a1 1 0 011-1h1a7 7 0 017-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 012-2zm-1 9H9v2h2v-2zm4 0h-2v2h2v-2zm-5 4v1a1 1 0 001 1h2a1 1 0 001-1v-1h-4z"/></svg>
-                <span class="text-[10px] text-gray-400 font-medium">Wira AI · Harga bersifat estimasi jasa</span>
-            </div>
+            <div class="text-[10px] text-center text-gray-400 mt-2">Powered by AI - Harga bersifat estimasi</div>
         </div>
     </div>
 </div>
@@ -148,6 +128,7 @@ function chatbot() {
             this.isOpen = !this.isOpen;
             if (this.isOpen) {
                 setTimeout(() => {
+                    document.querySelector('#chatbot-messages input')?.focus();
                     this.scrollToBottom();
                 }, 300);
             }
@@ -161,6 +142,7 @@ function chatbot() {
         },
 
         formatMessage(text) {
+            // Simple markdown parsing for bold and linebreaks
             let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             return formatted;
         },
@@ -171,12 +153,15 @@ function chatbot() {
             const userMsg = this.input.trim();
             this.input = '';
             
+            // Add to UI
             this.messages.push({ role: 'user', content: userMsg });
             this.isLoading = true;
             
+            // Scroll down
             setTimeout(() => this.scrollToBottom(), 50);
 
             try {
+                // Determine token based on standard Laravel CSRF
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
                 
                 const response = await fetch('/chatbot/chat', {
@@ -188,6 +173,7 @@ function chatbot() {
                     },
                     body: JSON.stringify({
                         message: userMsg,
+                        // We send the last 5 messages as history to maintain context
                         history: this.messages.slice(-5)
                     })
                 });
@@ -201,7 +187,7 @@ function chatbot() {
                 }
             } catch (error) {
                 console.error('Chatbot error:', error);
-                this.messages.push({ role: 'assistant', content: 'Waduh, koneksi ke server terputus Kak. Mohon coba lagi ya 🙏' });
+                this.messages.push({ role: 'assistant', content: 'Waduh, koneksi ke server terputus Kak. Mohon coba lagi ya.' });
             } finally {
                 this.isLoading = false;
                 setTimeout(() => this.scrollToBottom(), 50);
