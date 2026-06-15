@@ -15,10 +15,12 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\MechanicAssignment;
 
+use Laravel\Sanctum\HasApiTokens;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
