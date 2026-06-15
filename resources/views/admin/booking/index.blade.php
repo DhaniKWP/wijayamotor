@@ -12,15 +12,15 @@
 </div>
 @endif
 
-<div class="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
-    <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
+<div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm">
+    <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h2 class="text-base font-extrabold text-slate-800 tracking-tight uppercase">Daftar Antrean & Persetujuan</h2>
-            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider mt-0.5">Kelola status pesanan masuk dan konfirmasi kehadiran pelanggan</p>
+            <h2 class="text-lg font-black text-slate-800 tracking-tight">Daftar Antrean & Persetujuan</h2>
+            <p class="text-xs text-slate-500 font-medium mt-1">Kelola status pesanan masuk dan konfirmasi kehadiran pelanggan</p>
         </div>
         
         <form action="{{ route('admin.bookings.index') }}" method="GET" class="flex space-x-2 animate-none" id="filterForm">
-            <select name="status" onchange="document.getElementById('filterForm').submit()" class="text-xs border border-slate-200 rounded-lg focus:ring-brand/50 focus:border-brand py-2.5 pl-3 pr-10 text-slate-600 font-extrabold bg-white shadow-sm transition-all cursor-pointer">
+            <select name="status" onchange="document.getElementById('filterForm').submit()" class="text-xs border border-slate-200 rounded-xl focus:ring-red-500/30 focus:border-red-500 py-2.5 pl-4 pr-10 text-slate-700 font-bold bg-slate-50 shadow-sm transition-all cursor-pointer hover:bg-slate-100 outline-none">
                 <option value="">Semua Status</option>
                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu Persetujuan</option>
                 <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Disetujui / Terjadwal</option>
@@ -32,98 +32,110 @@
 
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-slate-100">
-            <thead class="bg-slate-50/20">
+            <thead class="bg-slate-50/50">
                 <tr>
-                    <th class="px-6 py-4 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Jadwal & Tipe</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Pelanggan & Kendaraan</th>
-                    <th class="px-6 py-4 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-4 text-right text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Aksi</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Jadwal & Tipe</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Pelanggan & Kendaraan</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                    <th class="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-50">
                 @forelse($bookings as $booking)
-                <tr class="hover:bg-slate-50/50 transition-colors">
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-bold text-slate-800">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('d M Y') }}</div>
-                        <div class="text-xs text-slate-400 font-bold tracking-wider mt-1 uppercase">Sesi {{ ucfirst($booking->sesi) }}</div>
-                        <div class="mt-2 flex items-center gap-1.5">
-                            @if($booking->tipe_booking === 'home_service')
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
-                                    Home Service
-                                </span>
-                            @else
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                    Layanan Bengkel
-                                </span>
-                            @endif
+                <tr class="hover:bg-slate-50/80 transition-colors group">
+                    <td class="px-6 py-5 whitespace-nowrap">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-100 flex flex-col items-center justify-center shrink-0">
+                                <span class="text-[10px] font-extrabold uppercase leading-none">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('M') }}</span>
+                                <span class="text-sm font-black leading-none mt-0.5">{{ \Carbon\Carbon::parse($booking->tanggal)->format('d') }}</span>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-800">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('l, Y') }}</div>
+                                <div class="text-[10px] text-slate-400 font-extrabold tracking-wider mt-0.5 uppercase">Sesi {{ ucfirst($booking->sesi) }}</div>
+                                <div class="mt-2 flex items-center gap-1.5">
+                                    @if($booking->tipe_booking === 'home_service')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-extrabold bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-wider">
+                                            Home Service
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-extrabold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wider">
+                                            Bengkel
+                                        </span>
+                                    @endif
 
-                            @if($booking->kilometer)
-                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-brand/10 text-brand">
-                                    {{ number_format($booking->kilometer, 0, ',', '.') }} KM
-                                </span>
-                            @endif
+                                    @if($booking->kilometer)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-extrabold bg-red-50 text-red-600 border border-red-100 uppercase tracking-wider">
+                                            {{ number_format($booking->kilometer, 0, ',', '.') }} KM
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        <div class="text-sm font-bold text-slate-800">{{ $booking->user->name ?? $booking->user->username ?? 'Pelanggan' }}</div>
-                        <div class="flex items-center gap-2 mt-1.5 flex-wrap">
-                            <span class="inline-block text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded tracking-wide uppercase">
+                    <td class="px-6 py-5">
+                        <div class="text-sm font-extrabold text-slate-800 flex items-center gap-2">
+                            {{ $booking->user->name ?? $booking->user->username ?? 'Pelanggan' }}
+                        </div>
+                        <div class="flex items-center gap-2 mt-2 flex-wrap">
+                            <span class="inline-flex text-[10px] font-bold bg-slate-800 text-white border-2 border-slate-700 px-2.5 py-0.5 rounded shadow-sm tracking-widest uppercase font-mono">
                                 {{ $booking->vehicle->plat_nomor ?? $booking->vehicle->plate_number ?? '-' }}
                             </span>
-                            <span class="text-xs text-slate-500 font-medium">
+                            <span class="text-[11px] text-slate-500 font-semibold bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
                                 {{ $booking->vehicle->name ?? '-' }}
                             </span>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-6 py-5 whitespace-nowrap">
                         @if($booking->status == 'pending')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100">Pending</span>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800">Menunggu</span>
                         @elseif($booking->status == 'confirmed')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Disetujui</span>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-blue-100 text-blue-800">Disetujui</span>
                         @elseif($booking->status == 'process')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 gap-1">
-                                <span class="relative flex h-2 w-2">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-orange-100 text-orange-800 gap-1.5">
+                                <span class="relative flex h-1.5 w-1.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500"></span>
                                 </span>
                                 Dikerjakan
                             </span>
                         @elseif($booking->status == 'done')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-100">Selesai</span>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800">Selesai</span>
                         @elseif($booking->status == 'cancelled')
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-100">Ditolak</span>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-red-100 text-red-800">Ditolak</span>
                         @endif
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                        <button type="button" data-id="{{ $booking->id }}" onclick="openDetailModal(this.getAttribute('data-id'))" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 inline-flex items-center gap-1 shadow-sm focus:outline-none">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            Detail
-                        </button>   
-                        @if($booking->status == 'pending')
-                            <form action="{{ route('admin.bookings.accept', $booking->id) }}" method="POST" class="inline-block">
-                                @csrf
-                                <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none">Terima</button>
-                            </form>
-                            <form action="{{ route('admin.bookings.reject', $booking->id) }}" method="POST" class="inline-block">
-                                @csrf
-                                <button type="submit" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none">Tolak</button>
-                            </form>
-                        @elseif($booking->status == 'confirmed')
-                            <form action="{{ route('admin.bookings.process', $booking->id) }}" method="POST" class="inline-block">
-                                @csrf
-                                <button type="submit" class="bg-ink hover:bg-ink-light text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none">Mulai Kerjakan</button>
-                            </form>
-                        @elseif($booking->status == 'process')
-                            <a href="{{ route('admin.bookings.complete.form', $booking->id) }}" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                Selesaikan Servis
-                            </a>
-                        @elseif($booking->status == 'done')
-                            <a href="{{ route('admin.bookings.invoice', $booking->id) }}" class="inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                                Lihat Invoice
-                            </a>
-                        @endif
+                    <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex items-center justify-end gap-2">
+                            <button type="button" data-id="{{ $booking->id }}" onclick="openDetailModal(this.getAttribute('data-id'))" class="bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 inline-flex items-center gap-1.5 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-100">
+                                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                Detail
+                            </button>   
+                            @if($booking->status == 'pending')
+                                <form action="{{ route('admin.bookings.accept', $booking->id) }}" method="POST" class="inline-block">
+                                    @csrf
+                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/30">Terima</button>
+                                </form>
+                                <form action="{{ route('admin.bookings.reject', $booking->id) }}" method="POST" class="inline-block">
+                                    @csrf
+                                    <button type="submit" class="bg-white hover:bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-100">Tolak</button>
+                                </form>
+                            @elseif($booking->status == 'confirmed')
+                                <form action="{{ route('admin.bookings.process', $booking->id) }}" method="POST" class="inline-block">
+                                    @csrf
+                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/30">Mulai Kerja</button>
+                                </form>
+                            @elseif($booking->status == 'process')
+                                <a href="{{ route('admin.bookings.complete.form', $booking->id) }}" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                    Selesai
+                                </a>
+                            @elseif($booking->status == 'done')
+                                <a href="{{ route('admin.bookings.invoice', $booking->id) }}" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500/30">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                    Invoice
+                                </a>
+                            @endif
+                        </div>
                     </td>
                 </tr>
                 @empty
@@ -132,30 +144,31 @@
                         <div class="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 border border-slate-100">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                         </div>
-                        <p class="text-slate-400 text-sm font-semibold">Tidak ada data booking dengan status tersebut.</p>
+                        <p class="text-slate-500 text-sm font-bold">Tidak ada antrean pesanan.</p>
+                        <p class="text-slate-400 text-xs mt-1">Gunakan filter status untuk mencari data.</p>
                     </td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
-    <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50">
+    <div class="px-6 py-4 border-t border-slate-100 bg-white">
         {{ $bookings->links() }}
     </div>
 </div>
 
 <div id="modalDetail" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm overflow-hidden h-full w-full flex items-center justify-center p-4">
-    <div class="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         <!-- Modal Header -->
-        <div class="bg-gradient-to-r from-ink to-[#112a4f] text-white px-6 py-5 border-b border-white/5 flex justify-between items-center shrink-0">
+        <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-5 flex justify-between items-center shrink-0">
             <div>
                 <h3 class="text-base font-extrabold text-white tracking-tight uppercase flex items-center gap-2">
-                    <svg class="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                     Detail Booking Servis
                 </h3>
-                <p class="text-[10px] text-slate-300 font-bold uppercase tracking-wider mt-1">Kode Transaksi: <span class="text-brand font-black" id="modalId"></span></p>
+                <p class="text-[10px] text-slate-300 font-bold uppercase tracking-wider mt-1">Kode Transaksi: <span class="text-red-400 font-black" id="modalId"></span></p>
             </div>
             <button onclick="closeModal()" class="text-slate-400 hover:text-white hover:bg-white/10 transition-all duration-200 rounded-full p-2">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -163,13 +176,13 @@
         </div>
         
         <!-- Modal Body -->
-        <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-slate-50/30">
+        <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-slate-50/50">
             
             <!-- Status & Method Banner -->
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-white border border-slate-200/60 rounded-xl shadow-sm">
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-slate-50 rounded-lg border border-slate-200/50 text-slate-400">
-                        <svg class="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
@@ -180,22 +193,22 @@
                 </div>
                 <div class="flex items-center gap-3 sm:text-right sm:flex-row-reverse">
                     <div class="p-2 bg-slate-50 rounded-lg border border-slate-200/50 text-slate-400">
-                        <svg class="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
                         </svg>
                     </div>
                     <div class="text-left sm:text-right">
                         <span class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider block mb-0.5">Metode Servis</span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black bg-ink text-white border border-white/10 shadow-sm" id="modalTipe">-</span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black bg-slate-800 text-white shadow-sm" id="modalTipe">-</span>
                     </div>
                 </div>
             </div>
 
             <!-- Customer & Vehicle Info Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-gradient-to-br from-slate-50/50 to-white border border-slate-200/60 rounded-xl p-5 shadow-sm hover:border-slate-355/70 transition-colors duration-300">
+                <div class="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm">
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 pb-2.5 mb-3.5 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-brand shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
                         Informasi Pelanggan
@@ -212,9 +225,9 @@
                     </ul>
                 </div>
                 
-                <div class="bg-gradient-to-br from-slate-50/50 to-white border border-slate-200/60 rounded-xl p-5 shadow-sm hover:border-slate-355/70 transition-colors duration-300">
+                <div class="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm">
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 pb-2.5 mb-3.5 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-brand shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 16V17C19 18.1046 18.1046 19 17 19H16C14.8954 19 14 18.1046 14 17V16M10 16V17C10 18.1046 9.10457 19 8 19H7C5.89543 19 5 17 5 17V16M3 11L5.3409 6.31819C5.7483 5.5034 6.57793 5 7.4915 5H16.5085C17.4221 5 18.2517 5.5034 18.6591 6.31819L21 11M3 11V16H21V11M3 11H21"/>
                         </svg>
                         Informasi Kendaraan
@@ -223,8 +236,7 @@
                         <li>
                             <span class="text-slate-400 block text-[9px] font-extrabold uppercase tracking-widest mb-1.5">Plat Nomor</span> 
                             <div class="inline-flex items-center gap-2">
-                                <span class="inline-block text-xs font-mono font-bold bg-slate-900 text-white border border-slate-700 px-3 py-1 rounded shadow-sm tracking-widest uppercase" id="modalPlat">-</span>
-                                <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">PLAT INDONESIA</span>
+                                <span class="inline-block text-xs font-mono font-bold bg-slate-900 text-white border-2 border-slate-700 px-3 py-1 rounded shadow-sm tracking-widest uppercase" id="modalPlat">-</span>
                             </div>
                         </li>
                         <li>
@@ -237,9 +249,9 @@
 
             <!-- Service details & location grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-gradient-to-br from-slate-50/50 to-white border border-slate-200/60 rounded-xl p-5 shadow-sm hover:border-slate-355/70 transition-colors duration-300">
+                <div class="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm">
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 pb-2.5 mb-3.5 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-brand shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
                         </svg>
                         Detail Layanan
@@ -255,7 +267,7 @@
                         </li>
                         <li>
                             <span class="text-slate-400 block text-[9px] font-extrabold uppercase tracking-widest mb-1">Jarak Tempuh</span> 
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-black bg-brand/10 text-brand border border-brand/20" id="modalKm">-</span>
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-black bg-red-50 text-red-600" id="modalKm">-</span>
                         </li>
                         <li>
                             <span class="text-slate-400 block text-[9px] font-extrabold uppercase tracking-widest">Estimasi Harga Jasa Dasar</span> 
@@ -264,10 +276,10 @@
                     </ul>
                 </div>
 
-                <div class="bg-gradient-to-br from-slate-50/50 to-white border border-slate-200/60 rounded-xl p-5 shadow-sm hover:border-slate-355/70 transition-colors duration-300 flex flex-col justify-between">
+                <div class="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm flex flex-col justify-between">
                     <div>
                         <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-100 pb-2.5 mb-3.5 flex items-center gap-2">
-                            <svg class="w-4 h-4 text-brand shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
@@ -275,7 +287,7 @@
                         </h4>
                         <div>
                             <span class="text-slate-400 block text-[9px] font-extrabold uppercase tracking-widest mb-2" id="labelLokasi">Lokasi:</span>
-                            <p class="text-xs font-semibold text-slate-700 bg-white p-3 rounded-lg border border-slate-200/60 leading-relaxed shadow-inner" id="modalLokasi">-</p>
+                            <p class="text-xs font-semibold text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200/60 leading-relaxed" id="modalLokasi">-</p>
                         </div>
                     </div>
                     
@@ -289,7 +301,7 @@
             <!-- Catatan/Keluhan Section -->
             <div>
                 <h4 class="text-xs font-bold text-slate-500 uppercase tracking-widest pb-2 mb-3 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-brand shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                     </svg>
                     Keluhan & Catatan Khusus
@@ -301,8 +313,8 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end shrink-0">
-            <button onclick="closeModal()" class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-black transition-all duration-200 shadow-lg shadow-slate-900/20 active:scale-95 focus:outline-none">Tutup Detail</button>
+        <div class="bg-white px-6 py-4 border-t border-slate-100 flex justify-end shrink-0 rounded-b-2xl">
+            <button onclick="closeModal()" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-black transition-all duration-200 focus:outline-none">Tutup</button>
         </div>
     </div>
 </div>
@@ -339,21 +351,21 @@
         let statusBadge = document.getElementById('modalStatusBadge');
         let stat = data.status.toLowerCase();
         if(stat === 'pending') {
-            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-50 text-amber-700 border border-amber-100 shadow-sm">Pending</span>`;
+            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold bg-amber-100 text-amber-800">Menunggu</span>`;
         } else if(stat === 'confirmed') {
-            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm">Disetujui</span>`;
+            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold bg-blue-100 text-blue-800">Disetujui</span>`;
         } else if(stat === 'process') {
-            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-100 gap-1.5 shadow-sm">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold bg-orange-100 text-orange-800 gap-1.5">
+                <span class="relative flex h-1.5 w-1.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500"></span>
                 </span>
                 Dikerjakan
             </span>`;
         } else if(stat === 'done') {
-            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-extrabold bg-teal-50 text-teal-700 border border-teal-100 shadow-sm">Selesai</span>`;
+            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold bg-emerald-100 text-emerald-800">Selesai</span>`;
         } else {
-            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-extrabold bg-rose-50 text-rose-700 border border-rose-100 shadow-sm">Ditolak</span>`;
+            statusBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold bg-red-100 text-red-800">Ditolak</span>`;
         }
 
         let isHomeService = data.tipe_booking && data.tipe_booking.toLowerCase().includes('home');
@@ -383,7 +395,7 @@
         if (data.addons && Array.isArray(data.addons) && data.addons.length > 0) {
             data.addons.forEach(addon => {
                 let text = addonLabels[addon] || addon.charAt(0).toUpperCase() + addon.slice(1);
-                addonsContainer.innerHTML += `<span class="px-2.5 py-1 bg-brand/10 text-brand border border-brand/20 rounded-lg text-xs font-bold shadow-sm">${text}</span>`;
+                addonsContainer.innerHTML += `<span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[10px] font-bold border border-slate-200">${text}</span>`;
             });
         } else {
             addonsContainer.innerHTML = `<span class="text-xs text-slate-400 italic">Tidak ada pekerjaan tambahan</span>`;
@@ -393,11 +405,11 @@
         let keluhanWrapEl = document.getElementById('modalKeluhanWrapper');
         if (keluhan && keluhan !== '') {
             keluhanEl.innerText = keluhan;
-            keluhanWrapEl.className = "bg-amber-50/70 border border-amber-200/70 rounded-2xl p-4 shadow-sm text-amber-900";
+            keluhanWrapEl.className = "bg-amber-50 border border-amber-200/70 rounded-xl p-4 text-amber-900";
             keluhanEl.className = "text-amber-800 text-sm font-semibold leading-relaxed";
         } else {
             keluhanEl.innerText = "Tidak ada keluhan atau catatan khusus yang dicantumkan.";
-            keluhanWrapEl.className = "bg-slate-50/50 border border-slate-200/40 rounded-2xl p-4 shadow-sm text-slate-400";
+            keluhanWrapEl.className = "bg-slate-50 border border-slate-200/60 rounded-xl p-4 text-slate-400";
             keluhanEl.className = "text-slate-400 text-xs italic font-medium leading-relaxed";
         }
         document.getElementById('modalDetail').classList.remove('hidden');
