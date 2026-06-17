@@ -14,7 +14,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        brand: { DEFAULT: '#FF8C00', dark: '#e67e00' },
+                        brand: { DEFAULT: '#dc2626', dark: '#b91c1c' },
                         ink: { DEFAULT: '#0A192F', light: '#112a4f' },
                         danger: '#E11D48',
                     }
