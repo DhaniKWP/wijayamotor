@@ -39,7 +39,7 @@ class TransactionController extends Controller
 
         $request->validate([
             'payment_method'     => 'required|in:cash,transfer',
-            'items'              => 'required|array|min:1',
+            'items'              => 'nullable|array',
             'items.*.item_type'  => 'required|in:sparepart,jasa',
             'items.*.qty'        => 'required|integer|min:1',
             'items.*.price'      => 'required|numeric|min:0',
@@ -68,34 +68,55 @@ class TransactionController extends Controller
             $jasaTotal      = 0;
             $sparepartTotal = 0;
 
-            foreach ($request->items as $item) {
-                $qty      = intval($item['qty']);
-                $price    = floatval($item['price']);
-                $subtotal = $qty * $price;
+            if ($request->has('items') && is_array($request->items)) {
+                foreach ($request->items as $item) {
+                    $qty      = intval($item['qty']);
+                    $price    = floatval($item['price']);
+                    $subtotal = $qty * $price;
 
-                // Validasi item_type-spesifik
-                if ($item['item_type'] === 'sparepart' && empty($item['sparepart_id'])) {
-                    continue; // skip baris tidak valid
-                }
-                if ($item['item_type'] === 'jasa' && empty($item['item_name'])) {
-                    continue;
-                }
+                    // Validasi item_type-spesifik
+                    if ($item['item_type'] === 'sparepart') {
+                        if (empty($item['sparepart_id'])) {
+                            continue; // skip baris tidak valid
+                        }
 
-                ServiceTransactionItem::create([
-                    'transaction_id' => $transaction->id,
-                    'item_type'      => $item['item_type'],
-                    'sparepart_id'   => $item['item_type'] === 'sparepart' ? $item['sparepart_id'] : null,
-                    'item_name'      => $item['item_type'] === 'jasa'      ? $item['item_name']   : null,
-                    'note'           => $item['note'] ?? null,
-                    'qty'            => $qty,
-                    'price'          => $price,
-                    'subtotal'       => $subtotal,
-                ]);
+                        // Cek dan potong stok
+                        $sparepart = Sparepart::find($item['sparepart_id']);
+                        if (!$sparepart) {
+                            continue;
+                        }
 
-                if ($item['item_type'] === 'sparepart') {
-                    $sparepartTotal += $subtotal;
-                } else {
-                    $jasaTotal += $subtotal;
+                        if ($sparepart->stock < $qty) {
+                            // Lempar error jika stok kurang
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'items' => "Stok {$sparepart->name} tidak mencukupi. Sisa stok: {$sparepart->stock}.",
+                            ]);
+                        }
+
+                        // Potong stok
+                        $sparepart->decrement('stock', $qty);
+                    }
+
+                    if ($item['item_type'] === 'jasa' && empty($item['item_name'])) {
+                        continue;
+                    }
+
+                    ServiceTransactionItem::create([
+                        'transaction_id' => $transaction->id,
+                        'item_type'      => $item['item_type'],
+                        'sparepart_id'   => $item['item_type'] === 'sparepart' ? $item['sparepart_id'] : null,
+                        'item_name'      => $item['item_type'] === 'jasa'      ? $item['item_name']   : null,
+                        'note'           => $item['note'] ?? null,
+                        'qty'            => $qty,
+                        'price'          => $price,
+                        'subtotal'       => $subtotal,
+                    ]);
+
+                    if ($item['item_type'] === 'sparepart') {
+                        $sparepartTotal += $subtotal;
+                    } else {
+                        $jasaTotal += $subtotal;
+                    }
                 }
             }
 

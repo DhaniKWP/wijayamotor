@@ -193,7 +193,7 @@
     // =====================
     function buildSparepartOptions() {
         return spareparts.map(s =>
-            `<option value="${s.id}" data-price="${s.price}">${s.name} (Stok: ${s.stock})</option>`
+            `<option value="${s.id}" data-price="${s.price}" data-stock="${s.stock}">${s.name} (Stok: ${s.stock})</option>`
         ).join('');
     }
 
@@ -274,17 +274,34 @@
         // Reset price jika ganti tipe
         if (!isSparepart) {
             row.querySelector('.price-input').value = 0;
+            // Reset max attr
+            row.querySelector('input[name*="[qty]"]').removeAttribute('max');
+        } else {
+            // Auto trigger change untuk update max attr
+            onSparepartChange(row.querySelector('.sparepart-input'));
         }
         recalcAll();
     }
 
     // =====================
-    // SPAREPART SELECTED → AUTO FILL PRICE
+    // SPAREPART SELECTED → AUTO FILL PRICE & SET MAX QTY
     // =====================
     function onSparepartChange(select) {
         const row = select.closest('tr');
         const selectedOpt = select.options[select.selectedIndex];
+        if (!selectedOpt.value) return;
+
         const price = selectedOpt.dataset.price || 0;
+        const stock = parseInt(selectedOpt.dataset.stock) || 0;
+        
+        const qtyInput = row.querySelector('input[name*="[qty]"]');
+        qtyInput.max = stock;
+        
+        if (parseInt(qtyInput.value) > stock) {
+            qtyInput.value = stock;
+            alert(`Stok maksimal untuk ${selectedOpt.text.split('(')[0].trim()} adalah ${stock}`);
+        }
+
         row.querySelector('.price-input').value = price;
         recalcRow(row.querySelector('.price-input'));
     }
@@ -306,7 +323,25 @@
     // =====================
     function recalcRow(inputEl) {
         const row = inputEl.closest('tr');
-        const qty = parseInt(row.querySelector('input[name*="[qty]"]').value) || 0;
+        const qtyInput = row.querySelector('input[name*="[qty]"]');
+        let qty = parseInt(qtyInput.value) || 0;
+
+        // --- CHECK STOCK IF TYPE IS SPAREPART ---
+        const type = row.querySelector('select[name*="[item_type]"]').value;
+        if (type === 'sparepart') {
+            const spSelect = row.querySelector('select[name*="[sparepart_id]"]');
+            const selectedOpt = spSelect.options[spSelect.selectedIndex];
+            if (selectedOpt && selectedOpt.value) {
+                const stock = parseInt(selectedOpt.dataset.stock) || 0;
+                if (qty > stock) {
+                    qty = stock;
+                    qtyInput.value = stock;
+                    alert(`Stok tidak mencukupi! Sisa stok hanya ${stock}.`);
+                }
+            }
+        }
+        // ----------------------------------------
+
         const price = parseFloat(row.querySelector('.price-input').value) || 0;
         const subtotal = qty * price;
         row.querySelector('.subtotal-display').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');

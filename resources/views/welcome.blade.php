@@ -261,7 +261,7 @@
       <a href="{{ route('sparepart.show', $item->id) }}" class="group bg-white border border-gray-200 rounded-xl p-4 hover:border-danger hover:shadow-lg transition-all duration-300 flex flex-col">
         <div class="w-full aspect-square bg-gray-50 rounded-lg mb-3 overflow-hidden flex items-center justify-center">
           @if($item->image)
-            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
+            <img src="{{ asset('uploads/spareparts/' . $item->image) }}" alt="{{ $item->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300">
           @else
             <svg class="w-12 h-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
