@@ -170,15 +170,9 @@
               const a = 0.5 - Math.cos(dLat)/2 + Math.cos(workshopLat * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * (1 - Math.cos(dLon))/2;
               this.distanceKm = R * 2 * Math.asin(Math.sqrt(a));
               
-              if (this.distanceKm <= 5) {
-                  this.transportFee = 25000;
+              if (this.distanceKm <= 40) {
                   this.maxDistanceWarning = false;
-              } else if (this.distanceKm <= 10) {
-                  this.transportFee = 50000;
-                  this.maxDistanceWarning = false;
-              } else if (this.distanceKm <= 15) {
-                  this.transportFee = 75000;
-                  this.maxDistanceWarning = false;
+                  this.transportFee = Math.ceil(this.distanceKm * 1500); 
               } else {
                   this.transportFee = 0;
                   this.maxDistanceWarning = true;
@@ -320,7 +314,7 @@
         </div>
     </div><br>
 
-    <div class="bg-brand text-white py-12 relative overflow-hidden">
+    <div class="bg-ink text-white py-12 relative overflow-hidden">
         <div class="absolute right-0 top-0 opacity-10 transform translate-x-1/4 -translate-y-1/4">
             <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
@@ -537,71 +531,78 @@
         </div>
 
         <div class="lg:col-span-4 hidden lg:block" :class="!vehicleSelected ? 'opacity-50 pointer-events-none select-none' : ''">
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-28">
-                <h3 class="font-black text-ink text-lg border-b border-gray-100 pb-4 mb-4">Ringkasan Booking</h3>
+            <div class="bg-ink rounded-2xl shadow-2xl overflow-hidden sticky top-28 text-white border border-gray-800">
+                <div class="p-5 bg-slate-800/50 border-b border-gray-700/50 flex items-center justify-between">
+                    <h3 class="font-black text-white text-lg flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        Ringkasan Booking
+                    </h3>
+                </div>
                 
-                <div class="space-y-4 mb-6">
-                    <div class="flex justify-between items-start text-sm">
-                        <span class="text-gray-500">Mobil</span>
-                        <span class="font-bold text-ink text-right" x-text="vehicleSelected ? document.querySelector('input[name=vehicle_id]:checked').parentNode.querySelector('h4').innerText : '-'"></span>
+                <div class="p-6">
+                    <div class="space-y-4 mb-6">
+                        <div class="flex justify-between items-start text-sm border-b border-gray-700/50 pb-3">
+                            <span class="text-gray-400">Mobil</span>
+                            <span class="font-bold text-white text-right" x-text="vehicleSelected ? document.querySelector('input[name=vehicle_id]:checked').parentNode.querySelector('h4').innerText : '-'"></span>
+                        </div>
+                        
+                        <div class="flex justify-between items-start text-sm border-b border-gray-700/50 pb-3">
+                            <span class="text-gray-400">Layanan</span>
+                            <span class="font-bold text-white text-right" x-text="serviceType === 'berkala' ? (serviceData[kmSelected] ? serviceData[kmSelected].title : 'SERVIS BERKALA') : 'Perbaikan Umum'"></span>
+                        </div>
+
+                        <div class="flex justify-between items-start text-sm border-b border-gray-700/50 pb-3">
+                            <span class="text-gray-400">Jadwal</span>
+                            <span class="font-bold text-white text-right" x-text="(date ? date : '-') + ' / Sesi ' + (sesi ? (sesi === 'pagi' ? 'Pagi' : 'Siang') : '-')"></span>
+                        </div>
                     </div>
-                    
-                    <div class="flex justify-between items-start text-sm">
-                        <span class="text-gray-500">Layanan</span>
-                        <span class="font-bold text-ink text-right" x-text="serviceType === 'berkala' ? (serviceData[kmSelected] ? serviceData[kmSelected].title : 'SERVIS BERKALA') : 'Perbaikan Umum'"></span>
+
+                    <div class="mb-6 text-sm" x-show="serviceType === 'umum' && generalRepairs.length > 0">
+                        <p class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Pekerjaan:</p>
+                        <ul class="space-y-2 text-gray-300">
+                            <template x-for="repairKey in generalRepairs" :key="repairKey">
+                                <li class="flex justify-between items-center border-b border-gray-700/30 pb-2">
+                                    <span class="flex items-center"><svg class="w-3 h-3 text-brand mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg><span x-text="repairOptions[repairKey].name"></span></span> 
+                                    <span class="font-medium" x-text="repairOptions[repairKey].price > 0 ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(repairOptions[repairKey].price) : '-'"></span>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
 
-                    <div class="flex justify-between items-start text-sm">
-                        <span class="text-gray-500">Jadwal</span>
-                        <span class="font-bold text-ink text-right" x-text="(date ? date : '-') + ' / Sesi ' + (sesi ? (sesi === 'pagi' ? 'Pagi' : 'Siang') : '-')"></span>
+                    <div class="mb-6 text-sm" x-show="serviceType === 'berkala' && (addonAC || addonEngine)">
+                        <p class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Layanan Tambahan:</p>
+                        <ul class="space-y-2 text-gray-300">
+                            <li x-show="addonAC" class="flex justify-between items-center"><span class="flex items-center"><svg class="w-3 h-3 text-brand mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>AC Care</span> <span class="font-medium">Rp350k</span></li>
+                            <li x-show="addonEngine" class="flex justify-between items-center"><span class="flex items-center"><svg class="w-3 h-3 text-brand mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>Engine Treatment</span> <span class="font-medium">Rp400k</span></li>
+                        </ul>
                     </div>
-                </div>
 
-                <div class="border-t border-gray-100 pt-4 mb-6 text-sm" x-show="serviceType === 'umum' && generalRepairs.length > 0">
-                    <p class="text-xs font-bold text-gray-400 mb-2 uppercase">Pekerjaan:</p>
-                    <ul class="space-y-2 text-gray-600">
-                        <template x-for="repairKey in generalRepairs" :key="repairKey">
-                            <li class="flex justify-between items-center">
-                                <span x-text="repairOptions[repairKey].name"></span> 
-                                <span class="font-medium" x-text="repairOptions[repairKey].price > 0 ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(repairOptions[repairKey].price) : '-'"></span>
-                            </li>
-                        </template>
-                    </ul>
-                </div>
-
-                <div class="border-t border-gray-100 pt-4 mb-6 text-sm" x-show="serviceType === 'berkala' && (addonAC || addonEngine)">
-                    <p class="text-xs font-bold text-gray-400 mb-2 uppercase">Layanan Tambahan:</p>
-                    <ul class="space-y-2 text-gray-600">
-                        <li x-show="addonAC" class="flex justify-between"><span>AC Care</span> <span class="font-medium">Rp350k</span></li>
-                        <li x-show="addonEngine" class="flex justify-between"><span>Engine Treatment</span> <span class="font-medium">Rp400k</span></li>
-                    </ul>
-                </div>
-
-                <div class="border-t border-gray-100 pt-4 mb-6 text-sm" x-show="transportFee > 0">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-500">Biaya Kunjungan (<span x-text="distanceKm.toFixed(1)"></span> KM)</span>
-                        <span class="font-bold text-ink" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(transportFee)"></span>
+                    <div class="mb-6 text-sm" x-show="transportFee > 0">
+                        <div class="flex justify-between items-center pb-2">
+                            <span class="text-gray-400">Biaya Kunjungan (<span x-text="distanceKm.toFixed(1)"></span> KM)</span>
+                            <span class="font-bold text-white" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(transportFee)"></span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="bg-red-50 rounded-xl p-4 mb-6 border border-red-100" x-show="maxDistanceWarning">
-                    <p class="text-xs font-bold text-red-700 uppercase tracking-wider mb-1">Di Luar Jangkauan</p>
-                    <p class="text-xs text-red-600 leading-tight">Jarak lokasi Anda (<span x-text="distanceKm.toFixed(1)"></span> KM) melebihi batas maksimal layanan kami (15 KM).</p>
-                </div>
+                    <div class="bg-red-900/40 rounded-xl p-4 mb-6 border border-red-500/30" x-show="maxDistanceWarning">
+                        <p class="text-xs font-bold text-red-400 uppercase tracking-wider mb-1">Di Luar Jangkauan</p>
+                        <p class="text-xs text-red-300 leading-tight">Jarak lokasi Anda (<span x-text="distanceKm.toFixed(1)"></span> KM) melebihi batas maksimal layanan kami (40 KM).</p>
+                    </div>
 
-                <div class="bg-gray-50 rounded-xl p-4 mb-6" x-show="!maxDistanceWarning">
-                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Estimasi Biaya</p>
-                    <p class="text-2xl font-black text-ink" x-text="formattedPrice"></p>
-                    <p class="text-[10px] text-gray-400 mt-2 leading-tight">*Belum termasuk part tambahan sesuai kondisi real.</p>
-                </div>
+                    <div class="bg-slate-800 rounded-xl p-5 mb-6 border border-slate-700 relative overflow-hidden group" x-show="!maxDistanceWarning">
+                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-danger rounded-full blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Estimasi Biaya</p>
+                        <p class="text-3xl font-black text-white relative z-10" x-text="formattedPrice"></p>
+                        <p class="text-[10px] text-gray-500 mt-2 leading-tight relative z-10">*Belum termasuk part tambahan sesuai kondisi real.</p>
+                    </div>
 
-                <button type="button" @click="document.getElementById('homeServiceForm').submit()" 
-                        :disabled="!address || !date || !sesi || !vehicleSelected || maxDistanceWarning"
-                        :class="(!address || !date || !sesi || !vehicleSelected || maxDistanceWarning) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink hover:bg-ink-light text-white shadow-lg'" 
-                        class="w-full font-bold py-4 rounded-xl transition-all flex items-center justify-center group">
-                    KONFIRMASI SEKARANG
-                    <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                </button>
+                    <button type="button" @click="document.getElementById('homeServiceForm').submit()" 
+                            :disabled="!address || !date || !sesi || !vehicleSelected || maxDistanceWarning"
+                            :class="(!address || !date || !sesi || !vehicleSelected || maxDistanceWarning) ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-danger hover:bg-red-700 text-white shadow-[0_4px_15px_rgba(220,38,38,0.4)] transform hover:-translate-y-0.5'" 
+                            class="w-full font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center uppercase tracking-wide">
+                        KONFIRMASI SEKARANG
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -681,7 +682,7 @@
                 <button type="button" @click="address = tempAddress; showMapModal = false" :disabled="!tempAddress || !addressDetail || maxDistanceWarning" :class="(!tempAddress || !addressDetail || maxDistanceWarning) ? 'bg-gray-300 text-gray-500' : 'bg-gray-200 text-ink hover:bg-gray-300'" class="w-full py-3 rounded-lg text-sm font-black tracking-wide transition">
                     GUNAKAN ALAMAT INI
                 </button>
-                <p x-show="maxDistanceWarning" class="text-center text-xs text-red-500 font-bold mt-2">Area ini di luar jangkauan (maks. 15 KM)</p>
+                <p x-show="maxDistanceWarning" class="text-center text-xs text-red-500 font-bold mt-2">Area ini di luar jangkauan (maks. 40 KM)</p>
             </div>
         </div>
     </div>
