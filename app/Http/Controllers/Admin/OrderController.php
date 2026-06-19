@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmedMail;
 
 class OrderController extends Controller
 {
@@ -41,13 +43,21 @@ class OrderController extends Controller
      */
     public function confirm($id)
     {
-        $order = Order::findOrFail($id);
+        $order = Order::with(['user', 'items.sparepart'])->findOrFail($id);
 
         if ($order->status !== 'pending') {
             return back()->withErrors(['error' => 'Order tidak dalam status menunggu.']);
         }
 
         $order->update(['status' => 'confirmed']);
+
+        try {
+            if ($order->user && $order->user->email) {
+                Mail::to($order->user->email)->send(new OrderConfirmedMail($order));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim email order confirmed: ' . $e->getMessage());
+        }
 
         return redirect()->route('admin.orders.index')
                          ->with('success', 'Order #ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . ' dikonfirmasi. Customer siap untuk pickup.');

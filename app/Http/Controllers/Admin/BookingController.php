@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use Carbon\Carbon;
 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\BookingAcceptedMail;
+
 class BookingController extends Controller
 {
     // 1. HALAMAN DASHBOARD (REKAPAN)
@@ -56,8 +59,17 @@ class BookingController extends Controller
     // FUNGSI AKSI STATUS (TETAP SAMA)
     public function accept($id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::with(['user', 'vehicle', 'service'])->findOrFail($id);
         $booking->update(['status' => 'confirmed']); 
+        
+        try {
+            if ($booking->user && $booking->user->email) {
+                Mail::to($booking->user->email)->send(new BookingAcceptedMail($booking));
+            }
+        } catch (\Exception $e) {
+            \Log::error('Gagal mengirim email booking accepted: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Booking berhasil disetujui.');
     }
 
