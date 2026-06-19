@@ -194,5 +194,6 @@
 
     @stack('modals')
 
+    @include('layouts.sweetalert')
 </body>
 </html>

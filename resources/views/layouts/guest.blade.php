@@ -26,5 +26,6 @@
                 {{ $slot }}
             </div>
         </div>
+        @include('layouts.sweetalert')
     </body>
 </html>

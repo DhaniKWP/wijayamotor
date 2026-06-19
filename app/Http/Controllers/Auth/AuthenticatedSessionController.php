@@ -89,7 +89,7 @@ class AuthenticatedSessionController extends Controller
             return redirect($url)->with('success', 'Login sukses dan jadwal servis Anda telah tercatat!');
         }
 
-        return redirect($url);
+        return redirect($url)->with('success', 'Selamat datang kembali, ' . $user->name . '!');
     }
 
     /**
@@ -101,6 +101,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/')->with('success', 'Anda telah berhasil keluar (Logout).');
     }
 }
