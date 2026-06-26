@@ -19,15 +19,21 @@
             <p class="text-xs text-slate-500 font-medium mt-1">Kelola status pesanan masuk dan konfirmasi kehadiran pelanggan</p>
         </div>
         
-        <form action="{{ route('admin.bookings.index') }}" method="GET" class="flex space-x-2 animate-none" id="filterForm">
-            <select name="status" onchange="document.getElementById('filterForm').submit()" class="text-xs border border-slate-200 rounded-xl focus:ring-red-500/30 focus:border-red-500 py-2.5 pl-4 pr-10 text-slate-700 font-bold bg-slate-50 shadow-sm transition-all cursor-pointer hover:bg-slate-100 outline-none">
-                <option value="">Semua Status</option>
-                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Menunggu Persetujuan</option>
-                <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>Disetujui / Terjadwal</option>
-                <option value="process" {{ request('status') == 'process' ? 'selected' : '' }}>Sedang Dikerjakan</option>
-                <option value="done" {{ request('status') == 'done' ? 'selected' : '' }}>Selesai Servis</option>
-            </select>
-        </form>
+        @php $currentTab = request('status', 'active'); @endphp
+        <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-inner overflow-x-auto">
+            <a href="{{ route('admin.bookings.index', ['status' => 'active']) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentTab == 'active' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+                <svg class="w-3.5 h-3.5 {{ $currentTab == 'active' ? 'text-danger' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Antrean Aktif
+            </a>
+            <a href="{{ route('admin.bookings.index', ['status' => 'history']) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentTab == 'history' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+                <svg class="w-3.5 h-3.5 {{ $currentTab == 'history' ? 'text-danger' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Riwayat Selesai
+            </a>
+            <a href="{{ route('admin.bookings.index', ['status' => 'all']) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentTab == 'all' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+                <svg class="w-3.5 h-3.5 {{ $currentTab == 'all' ? 'text-danger' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                Semua
+            </a>
+        </div>
     </div>
 
     <div class="overflow-x-auto">
@@ -99,7 +105,14 @@
                                 Dikerjakan
                             </span>
                         @elseif($booking->status == 'done')
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800">Selesai</span>
+                            <div class="flex flex-col gap-1.5 items-start">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800">Selesai</span>
+                                @if($booking->transaction && $booking->transaction->payment_status == 'paid')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> Lunas</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-800"><svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg> Belum Lunas</span>
+                                @endif
+                            </div>
                         @elseif($booking->status == 'cancelled')
                             <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold bg-red-100 text-red-800">Ditolak</span>
                         @endif
@@ -130,6 +143,15 @@
                                     Selesai
                                 </a>
                             @elseif($booking->status == 'done')
+                                @if($booking->transaction && $booking->transaction->payment_status != 'paid')
+                                    <form action="{{ route('admin.bookings.mark.paid', $booking->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Tandai tagihan ini sebagai LUNAS?')">
+                                        @csrf
+                                        <button type="submit" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                            Tandai Lunas
+                                        </button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('admin.bookings.invoice', $booking->id) }}" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500/30">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                                     Invoice
@@ -377,7 +399,9 @@
         document.getElementById('modalService').innerText = data.service ? data.service.name : 'Servis Umum';
         document.getElementById('modalKm').innerText = data.kilometer ? data.kilometer.toLocaleString('id-ID') + ' KM' : '-';
         let sesi = data.sesi ? data.sesi.charAt(0).toUpperCase() + data.sesi.slice(1) : '-';
-        document.getElementById('modalJadwal').innerText = data.tanggal + ' / Sesi ' + sesi;
+        let tgl = new Date(data.tanggal);
+        let formattedTgl = !isNaN(tgl) ? tgl.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : data.tanggal;
+        document.getElementById('modalJadwal').innerText = formattedTgl + ' / Sesi ' + sesi;
         
         let harga = data.estimasi_harga ? parseFloat(data.estimasi_harga) : 0;
         document.getElementById('modalHarga').innerText = 'Rp ' + harga.toLocaleString('id-ID');

@@ -11,9 +11,9 @@
         <p class="text-slate-500 mt-1 text-sm">Kelola barang, harga jual, dan stok gudang bengkel.</p>
     </div>
     
-    <button x-data @click="$dispatch('open-add-modal')" class="bg-ink hover:bg-ink-light text-white px-5 py-2.5 rounded-xl font-semibold flex items-center transition-all duration-200 text-sm shadow-sm hover:shadow-md focus:outline-none">
-        <svg class="w-4 h-4 mr-2 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-        Stok Baru
+    <button x-data @click="$dispatch('open-add-modal')" class="bg-danger hover:bg-danger/90 text-white px-5 py-2.5 rounded-xl font-bold flex items-center transition-all duration-200 text-xs tracking-wide shadow-sm active:scale-95 focus:outline-none">
+        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+        TAMBAH STOK BARU
     </button>
 </div>
 
@@ -27,12 +27,12 @@
 <div class="bg-white rounded-2xl border border-slate-200/50 overflow-hidden shadow-sm">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-slate-100">
-            <thead class="bg-slate-50/50">
+            <thead class="bg-slate-100 border-b border-slate-200">
                 <tr>
-                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Produk</th>
-                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Harga Jual</th>
-                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Status Stok</th>
-                    <th scope="col" class="px-6 py-4 text-right text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Aksi</th>
+                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Produk</th>
+                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Harga Jual</th>
+                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Status Stok</th>
+                    <th scope="col" class="px-6 py-4 text-right text-[10px] font-black text-slate-500 uppercase tracking-widest">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-50">
@@ -81,8 +81,8 @@
                                         name: '{{ addslashes($item->name) }}',
                                         currentStock: '{{ $item->stock }}'
                                     })" 
-                                class="text-emerald-600 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-700 p-2 rounded-xl transition-all duration-200 focus:outline-none shadow-sm" title="Tambah Stok Masuk">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                                class="text-emerald-600 hover:text-white p-2 rounded-lg hover:bg-emerald-600 transition-all duration-200 focus:outline-none border border-transparent hover:border-emerald-700 hover:shadow-sm" title="Tambah Stok Masuk">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                             </button>
 
                             <button x-data @click="$dispatch('open-edit-modal', { 
@@ -92,15 +92,15 @@
                                         stock: '{{ $item->stock }}',
                                         desc: '{{ addslashes($item->description) }}' 
                                     })" 
-                                class="text-brand bg-brand/10 hover:bg-brand/20 p-2 rounded-xl transition-all duration-200 focus:outline-none shadow-sm" title="Edit Data Barang">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                class="text-blue-600 hover:text-white p-2 rounded-lg hover:bg-blue-600 transition-all duration-200 focus:outline-none border border-transparent hover:border-blue-700 hover:shadow-sm" title="Edit Data Barang">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                             </button>
                             
                             <form action="{{ route('admin.spareparts.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin bro mau hapus {{ $item->name }} secara permanen?');" class="inline-block">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-rose-600 bg-rose-50 hover:bg-rose-100 hover:text-rose-700 p-2 rounded-xl transition-all duration-200 focus:outline-none shadow-sm" title="Hapus Barang">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                <button type="submit" class="text-danger hover:text-white p-2 rounded-lg hover:bg-danger transition-all duration-200 focus:outline-none border border-transparent hover:border-red-700 hover:shadow-sm" title="Hapus Barang">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                 </button>
                             </form>
                         </div>

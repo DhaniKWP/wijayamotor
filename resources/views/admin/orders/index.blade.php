@@ -30,22 +30,38 @@
 </div>
 
 {{-- Filter & Search --}}
-<div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm mb-6">
-    <form action="{{ route('admin.orders.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
+<div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm mb-6 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+    @php $currentStatus = request('status', ''); @endphp
+    
+    <!-- TABS -->
+    <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-inner overflow-x-auto">
+        <a href="{{ route('admin.orders.index', array_merge(request()->query(), ['status' => ''])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 {{ $currentStatus == '' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+            Semua
+        </a>
+        <a href="{{ route('admin.orders.index', array_merge(request()->query(), ['status' => 'pending'])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentStatus == 'pending' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+            <div class="w-1.5 h-1.5 rounded-full bg-orange-400"></div> Menunggu
+        </a>
+        <a href="{{ route('admin.orders.index', array_merge(request()->query(), ['status' => 'confirmed'])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentStatus == 'confirmed' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> Siap Diambil
+        </a>
+        <a href="{{ route('admin.orders.index', array_merge(request()->query(), ['status' => 'done'])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentStatus == 'done' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Selesai & Lunas
+        </a>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <form action="{{ route('admin.orders.index') }}" method="GET" class="flex flex-1 sm:flex-none gap-2">
+        @if($currentStatus)
+            <input type="hidden" name="status" value="{{ $currentStatus }}">
+        @endif
         <input type="text" name="search" value="{{ request('search') }}"
-               placeholder="Cari nama customer / email / ID order..."
-               class="flex-1 text-sm border-slate-200 rounded-lg focus:ring-brand focus:border-brand">
-        <select name="status" class="text-sm border-slate-200 rounded-lg focus:ring-brand focus:border-brand sm:w-48">
-            <option value="">Semua Status</option>
-            <option value="pending"   {{ request('status') === 'pending'    ? 'selected' : '' }}>Menunggu Konfirmasi</option>
-            <option value="confirmed" {{ request('status') === 'confirmed'  ? 'selected' : '' }}>Siap Diambil</option>
-            <option value="done"      {{ request('status') === 'done'       ? 'selected' : '' }}>Selesai & Lunas</option>
-        </select>
-        <button type="submit" class="bg-ink hover:bg-ink/90 text-white text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-lg transition shadow-sm whitespace-nowrap">
+               placeholder="Cari ID / Nama..."
+               class="w-full sm:w-56 text-xs font-medium border-slate-200 rounded-lg focus:ring-danger focus:border-danger py-2.5">
+        <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition shadow-sm whitespace-nowrap">
             Cari
         </button>
-        @if(request()->anyFilled(['search','status']))
-        <a href="{{ route('admin.orders.index') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-lg transition text-center whitespace-nowrap">
+        @if(request()->anyFilled(['search']))
+        <a href="{{ route('admin.orders.index', ['status' => $currentStatus]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition text-center whitespace-nowrap flex items-center">
             Reset
         </a>
         @endif

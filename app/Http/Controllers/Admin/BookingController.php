@@ -46,11 +46,19 @@ class BookingController extends Controller
                         ->orderBy('tanggal', 'asc')
                         ->orderBy('jam', 'asc');
 
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+        // Default tab is 'active' if not specified and not explicitly 'all'
+        $statusTab = $request->get('status', 'active');
+
+        if ($statusTab == 'active') {
+            $query->whereIn('status', ['pending', 'confirmed', 'process']);
+        } elseif ($statusTab == 'history') {
+            $query->whereIn('status', ['done', 'cancelled']);
+        } elseif ($statusTab != 'all') {
+            $query->where('status', $statusTab);
         }
 
         $bookings = $query->paginate(15);
+        $bookings->appends(['status' => $statusTab]); // Keep query string in pagination
 
         // Arahin ke folder admin/booking/index.blade.php
         return view('admin.booking.index', compact('bookings'));
