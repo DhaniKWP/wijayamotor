@@ -60,6 +60,10 @@
                         $totalPrice += $subtotal;
                     @endphp
                     <div class="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row gap-6 relative">
+                        {{-- Nomor --}}
+                        <div class="absolute -top-3 -left-3 w-8 h-8 bg-gray-900 text-white font-black text-sm rounded-full flex items-center justify-center shadow-sm border-2 border-white z-10">
+                            {{ $loop->iteration }}
+                        </div>
                         
                         {{-- Tombol Hapus --}}
                         <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="absolute top-4 right-4 sm:top-6 sm:right-6">
@@ -96,13 +100,19 @@
 
                             <div class="mt-4 flex items-center justify-between">
                                 {{-- Kuantitas & Update --}}
-                                <form action="{{ route('cart.update', $item->id) }}" method="POST" class="flex items-center gap-2">
+                                <form action="{{ route('cart.update', $item->id) }}" method="POST" class="flex items-center gap-2" x-data="{ qty: {{ $item->qty }}, max: {{ $item->sparepart->stock }} }">
                                     @csrf
                                     @method('PUT')
-                                    <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden h-9 w-24">
-                                        <input type="number" name="qty" value="{{ $item->qty }}" min="1" max="{{ $item->sparepart->stock }}" class="w-full text-center text-sm font-black text-gray-900 focus:outline-none focus:ring-0 border-0 bg-gray-50 px-1">
+                                    <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden h-9 w-28 bg-white">
+                                        <button type="button" @click="if(qty > 1) qty--" class="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-danger transition">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                                        </button>
+                                        <input type="number" name="qty" x-model="qty" min="1" :max="max" class="flex-1 text-center text-sm font-black text-gray-900 focus:outline-none focus:ring-0 border-0 p-0" readonly>
+                                        <button type="button" @click="if(qty < max) qty++" class="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-green-600 transition">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                        </button>
                                     </div>
-                                    <button type="submit" class="text-xs font-bold text-gray-500 hover:text-brand transition uppercase tracking-wider bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg border border-gray-200">Update</button>
+                                    <button type="submit" class="text-[10px] font-bold text-gray-700 hover:text-white transition uppercase tracking-wider bg-gray-100 hover:bg-gray-900 px-3 py-2 rounded-lg border border-gray-200 hover:border-gray-900">Update</button>
                                 </form>
 
                                 <div class="text-right">
