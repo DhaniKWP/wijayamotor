@@ -16,7 +16,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
 
     {{-- Sidebar --}}
-    <aside class="lg:col-span-1">
+    <aside class="lg:col-span-1 lg:sticky lg:top-24 self-start">
         <div class="mb-8">
             <p class="text-gray-500 text-sm">Halo,</p>
             <h2 class="text-xl font-black text-gray-900 leading-tight mb-2">{{ Auth::user()->name }}</h2>
