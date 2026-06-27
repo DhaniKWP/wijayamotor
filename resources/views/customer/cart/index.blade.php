@@ -49,10 +49,16 @@
             </a>
         </div>
     @else
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start" x-data="cart()">
             
             {{-- Daftar Keranjang --}}
             <div class="lg:col-span-2 space-y-4">
+                {{-- Pilih Semua --}}
+                <div class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center gap-4 cursor-pointer select-none" @click="toggleAll()">
+                    <input type="checkbox" :checked="allSelected" class="w-5 h-5 text-danger rounded border-gray-300 focus:ring-danger pointer-events-none">
+                    <span class="font-bold text-gray-900 text-sm">Pilih Semua</span>
+                </div>
+
                 @php $totalPrice = 0; @endphp
                 @foreach($cartItems as $item)
                     @php 
@@ -74,8 +80,10 @@
                             </button>
                         </form>
 
-                        {{-- Gambar --}}
-                        <div class="w-full sm:w-28 h-28 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden shrink-0">
+                        {{-- Checkbox & Gambar --}}
+                        <div class="flex items-center gap-4 w-full sm:w-auto shrink-0">
+                            <input type="checkbox" value="{{ $item->id }}" x-model="selectedIds" class="w-5 h-5 text-danger rounded border-gray-300 focus:ring-danger cursor-pointer">
+                            <div class="flex-1 sm:w-28 h-28 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden">
                             @if($item->sparepart->image)
                                 <img src="{{ asset('uploads/spareparts/' . $item->sparepart->image) }}" alt="{{ $item->sparepart->name }}" class="object-cover w-full h-full">
                             @else
@@ -137,11 +145,11 @@
                 <div class="space-y-3 text-sm text-gray-600 mb-6 border-b border-gray-100 pb-6">
                     <div class="flex justify-between">
                         <span>Total Item</span>
-                        <span class="font-bold text-gray-900">{{ $cartItems->sum('qty') }} Barang</span>
+                        <span class="font-bold text-gray-900"><span x-text="totalItems"></span> Barang</span>
                     </div>
                     <div class="flex justify-between">
                         <span>Total Harga Barang</span>
-                        <span class="font-bold text-gray-900">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                        <span class="font-bold text-gray-900" x-text="formatPrice"></span>
                     </div>
                     <div class="flex justify-between text-blue-600">
                         <span>Biaya Pickup</span>
@@ -151,12 +159,15 @@
 
                 <div class="flex justify-between items-center mb-6">
                     <span class="text-xs font-black text-gray-500 uppercase tracking-wider">Total Pembayaran</span>
-                    <span class="text-2xl font-black text-danger">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
+                    <span class="text-2xl font-black text-danger" x-text="formatPrice"></span>
                 </div>
 
                 <form action="{{ route('cart.checkout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full bg-gray-900 hover:bg-black text-white font-bold uppercase tracking-widest text-xs py-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+                    <template x-for="id in selectedIds" :key="id">
+                        <input type="hidden" name="selected_items[]" :value="id">
+                    </template>
+                    <button type="submit" :disabled="selectedIds.length === 0" :class="selectedIds.length === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black'" class="w-full bg-gray-900 text-white font-bold uppercase tracking-widest text-xs py-4 rounded-xl shadow-sm transition flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                         Checkout Sekarang
                     </button>
@@ -176,3 +187,34 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('cart', () => ({
+        items: @json($cartItems->map(fn($i) => ['id' => (string)$i->id, 'price' => $i->sparepart->price, 'qty' => $i->qty])),
+        selectedIds: [],
+        
+        get totalItems() {
+            return this.items.filter(i => this.selectedIds.includes(i.id)).reduce((sum, i) => sum + i.qty, 0);
+        },
+        get totalPrice() {
+            return this.items.filter(i => this.selectedIds.includes(i.id)).reduce((sum, i) => sum + (i.price * i.qty), 0);
+        },
+        get formatPrice() {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(this.totalPrice);
+        },
+        get allSelected() {
+            return this.selectedIds.length === this.items.length && this.items.length > 0;
+        },
+        toggleAll() {
+            if (this.allSelected) {
+                this.selectedIds = [];
+            } else {
+                this.selectedIds = this.items.map(i => i.id);
+            }
+        }
+    }));
+});
+</script>
+@endpush

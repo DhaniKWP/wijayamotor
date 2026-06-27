@@ -94,10 +94,20 @@ class CartController extends Controller
      */
     public function checkout(Request $request)
     {
-        $cartItems = CartItem::with('sparepart')->where('user_id', Auth::id())->get();
+        $request->validate([
+            'selected_items' => 'required|array|min:1',
+            'selected_items.*' => 'exists:cart_items,id'
+        ], [
+            'selected_items.required' => 'Pilih minimal satu barang untuk checkout.'
+        ]);
+
+        $cartItems = CartItem::with('sparepart')
+            ->where('user_id', Auth::id())
+            ->whereIn('id', $request->selected_items)
+            ->get();
 
         if ($cartItems->isEmpty()) {
-            return redirect()->route('sparepart.index')->withErrors(['cart' => 'Keranjang masih kosong.']);
+            return back()->withErrors(['cart' => 'Barang yang dipilih tidak valid.']);
         }
 
         // Cek stok kembali
