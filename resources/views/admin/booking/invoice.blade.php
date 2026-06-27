@@ -58,28 +58,28 @@
     <div id="invoiceCard" class="bg-white border border-slate-200/60 rounded-xl shadow-sm overflow-hidden">
 
         {{-- Header Invoice --}}
-        <div class="bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-6 flex justify-between items-start">
+        <div class="border-b border-gray-200 px-8 py-8 flex justify-between items-start bg-white">
             <div>
-                <div class="flex items-center gap-3 mb-3">
-                    <img src="{{ asset('uploads/logo.webp') }}" alt="Logo Wijaya Motor" class="w-12 h-12 object-contain bg-white rounded-xl shadow-lg p-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="{{ asset('uploads/logo.webp') }}" alt="Logo Wijaya Motor" class="h-14 w-auto object-contain">
                     <div>
-                        <p class="text-white font-black text-base tracking-tight">WIJAYA MOTOR</p>
-                        <p class="text-slate-400 text-[10px] font-bold tracking-widest uppercase">Bengkel & Servis Resmi</p>
+                        <p class="text-gray-900 font-black text-xl tracking-tight">WIJAYA MOTOR</p>
+                        <p class="text-gray-500 text-[10px] font-bold tracking-widest uppercase">Bengkel & Servis Resmi</p>
                     </div>
                 </div>
-                <p class="text-slate-400 text-[10px]">Jl. Raya Contoh No. 123, Kota</p>
-                <p class="text-slate-400 text-[10px]">Telp: 021-12345678</p>
+                <p class="text-gray-500 text-xs">Jl. Raya Contoh No. 123, Kota</p>
+                <p class="text-gray-500 text-xs">Telp: 021-12345678</p>
             </div>
             <div class="text-right">
-                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Invoice</p>
-                <p class="text-white font-black text-xl">#WM-{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}</p>
-                <p class="text-slate-400 text-[10px] mt-2">Tanggal Servis</p>
-                <p class="text-white text-sm font-bold">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('d F Y') }}</p>
-                <p class="text-slate-400 text-[10px] mt-2">Status Pembayaran</p>
+                <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Invoice</p>
+                <p class="text-gray-900 font-black text-2xl">#WM-{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}</p>
+                <p class="text-gray-400 text-[10px] mt-3 font-bold uppercase tracking-widest">Tanggal Servis</p>
+                <p class="text-gray-900 text-sm font-bold">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('d F Y') }}</p>
+                <p class="text-gray-400 text-[10px] mt-3 font-bold uppercase tracking-widest">Status Pembayaran</p>
                 @if($booking->transaction->payment_status === 'paid')
-                    <span class="inline-block bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full mt-0.5">LUNAS</span>
+                    <span class="inline-block bg-emerald-100 text-emerald-700 text-[10px] font-black px-3 py-1 rounded-md mt-1 border border-emerald-200">LUNAS</span>
                 @else
-                    <span class="inline-block bg-amber-500 text-white text-[10px] font-black px-3 py-1 rounded-full mt-0.5">BELUM LUNAS</span>
+                    <span class="inline-block bg-amber-100 text-amber-700 text-[10px] font-black px-3 py-1 rounded-md mt-1 border border-amber-200">BELUM LUNAS</span>
                 @endif
             </div>
         </div>
