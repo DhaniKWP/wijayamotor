@@ -410,6 +410,11 @@
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             Selesai & Lunas
                         </span>
+                    @elseif($order->status === 'cancelled')
+                        <span class="text-red-600 bg-red-50 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            Dibatalkan
+                        </span>
                     @endif
                 </div>
             </div>
@@ -463,6 +468,11 @@
                 <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-xs text-gray-600 font-bold flex items-center gap-2">
                     <svg class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Pesanan Selesai · Bayar via {{ $order->payment_method === 'cash' ? 'Tunai' : 'Transfer' }}
+                </div>
+                @elseif($order->status === 'cancelled')
+                <div class="bg-red-50 border border-red-100 rounded-lg px-4 py-2.5 text-xs text-red-600 font-bold flex items-center gap-2">
+                    <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    Pesanan ini telah dibatalkan. Stok barang telah dikembalikan.
                 </div>
                 @endif
             </div>
