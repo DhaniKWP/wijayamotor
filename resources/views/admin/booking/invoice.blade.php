@@ -61,7 +61,7 @@
         <div class="bg-gradient-to-r from-slate-900 to-slate-800 px-8 py-6 flex justify-between items-start">
             <div>
                 <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-brand flex items-center justify-center font-black text-white text-xl shadow-lg shadow-brand/30">W</div>
+                    <img src="{{ asset('uploads/logo.webp') }}" alt="Logo Wijaya Motor" class="w-12 h-12 object-contain bg-white rounded-xl shadow-lg p-1">
                     <div>
                         <p class="text-white font-black text-base tracking-tight">WIJAYA MOTOR</p>
                         <p class="text-slate-400 text-[10px] font-bold tracking-widest uppercase">Bengkel & Servis Resmi</p>
