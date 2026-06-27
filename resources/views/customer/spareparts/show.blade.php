@@ -77,13 +77,6 @@
             {{-- Harga & Stok --}}
             <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                 <p class="text-3xl font-black text-danger">Rp {{ number_format($sparepart->price, 0, ',', '.') }}</p>
-                <div class="w-px h-8 bg-gray-200"></div>
-                <div>
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sisa Stok</p>
-                    <p class="text-sm font-bold {{ $sparepart->stock > 5 ? 'text-green-600' : ($sparepart->stock > 0 ? 'text-amber-600' : 'text-red-600') }}">
-                        {{ $sparepart->stock }} Unit
-                    </p>
-                </div>
             </div>
 
             {{-- Deskripsi --}}
