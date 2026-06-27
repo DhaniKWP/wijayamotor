@@ -451,11 +451,10 @@
                         Menunggu admin konfirmasi.
                     </div>
                     <div class="flex items-center gap-2">
-                        <a href="{{ route('customer.order.edit', $order->id) }}" class="flex-1 text-center bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold py-2 rounded-md text-[11px] transition border border-gray-200">Edit Pesanan</a>
-                        <form action="{{ route('customer.order.cancel', $order->id) }}" method="POST" class="flex-1">
+                        <form action="{{ route('customer.order.cancel', $order->id) }}" method="POST" class="w-full">
                             @csrf
                             @method('PUT')
-                            <button type="submit" onclick="return confirm('Apakah Anda yakin ingin membatalkan pesanan sparepart ini?')" class="w-full text-center bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-md text-[11px] transition border border-red-100">Batalkan</button>
+                            <button type="submit" onclick="return confirm('Apakah Anda yakin ingin membatalkan pesanan sparepart ini?')" class="w-full text-center bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-md text-[11px] transition border border-red-100">Batalkan Pesanan</button>
                         </form>
                     </div>
                 </div>
