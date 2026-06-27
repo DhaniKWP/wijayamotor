@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- Breadcrumb --}}
-<div class="bg-white border-b border-gray-200 py-3">
+<div class="bg-white border-b border-gray-200 py-3 sticky top-20 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-xs font-bold text-gray-500 tracking-wider uppercase flex items-center space-x-2">
         <a href="{{ url('/') }}" class="hover:text-danger transition">Home</a>
         <span>&rsaquo;</span>
