@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Invoice Servis #WM-{{ $booking->id }} - Wijaya Motor')
+@section('title', 'Invoice Servis #WM-' . $booking->id . ' - Wijaya Motor')
 @section('header_title', 'Invoice Servis')
 
 @section('content')
@@ -173,7 +173,7 @@
                 <div>
                     <p class="text-[9px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">Metode Pembayaran</p>
                     <p class="text-sm font-black text-slate-800">
-                        {{ $booking->transaction->payment_method === 'cash' ? '💵 Tunai (Cash)' : '🏦 Transfer Bank' }}
+                        {{ $booking->transaction->payment_method === 'cash' ? 'Tunai (Cash)' : 'Transfer Bank' }}
                     </p>
                 </div>
                 <div class="text-right">
