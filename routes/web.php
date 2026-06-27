@@ -48,6 +48,9 @@ Route::get('/booking/create', [CustomerBookingController::class, 'create'])->nam
 Route::get('/home-service', [CustomerBookingController::class, 'createHomeService'])->name('booking.homeservice');
 Route::post('/booking', [CustomerBookingController::class, 'store'])->name('booking.store');
 Route::get('/api/check-quota', [CustomerBookingController::class, 'checkQuota'])->name('api.check_quota');
+Route::get('/booking/{id}/edit', [CustomerBookingController::class, 'edit'])->name('booking.edit');
+Route::put('/booking/{id}', [CustomerBookingController::class, 'update'])->name('booking.update');
+Route::put('/booking/{id}/cancel', [CustomerBookingController::class, 'cancel'])->name('booking.cancel');
 
 // ROUTE AKSESORIS PAKE CONTROLLER CUSTOMER
 Route::get('/aksesoris', [CustomerSparepartController::class, 'index'])->name('sparepart.index');

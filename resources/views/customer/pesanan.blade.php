@@ -188,6 +188,17 @@
                     </div>
                 </div>
 
+                @if($booking->status === 'pending')
+                <div class="mt-5 border-t border-gray-100 pt-5 flex flex-col sm:flex-row items-center gap-3">
+                    <a href="{{ route('booking.edit', $booking->id) }}" class="w-full sm:flex-1 text-center bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold py-2.5 rounded-lg text-xs transition border border-gray-200">Edit Booking</a>
+                    <form action="{{ route('booking.cancel', $booking->id) }}" method="POST" class="w-full sm:flex-1">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" onclick="return confirm('Apakah Anda yakin ingin membatalkan pesanan servis ini?')" class="w-full text-center bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2.5 rounded-lg text-xs transition border border-red-100">Batalkan</button>
+                    </form>
+                </div>
+                @endif
+
                 {{-- TAGIHAN (done + belum lunas) --}}
                 @if($booking->status === 'done' && $booking->transaction)
                     @if($booking->transaction->payment_status === 'pending')

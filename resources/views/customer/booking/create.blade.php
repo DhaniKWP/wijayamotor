@@ -42,6 +42,28 @@
             
             step: 1,
             init() {
+                @if(isset($booking))
+                this.vehicleSelected = '{{ $booking->vehicle_id }}';
+                this.serviceType = '{{ $booking->jenis_servis }}';
+                this.branch = '{{ $booking->cabang }}';
+                this.date = '{{ $booking->tanggal }}';
+                this.sesi = '{{ $booking->sesi }}';
+                this.customComplaint = {{ json_encode($booking->keluhan) }};
+                
+                @if($booking->jenis_servis === 'berkala')
+                this.kmSelected = '{{ number_format($booking->kilometer, 0, ',', '.') }}';
+                @php $addons = json_decode($booking->addons, true) ?? []; @endphp
+                this.addonSpooring = {{ in_array('spooring', $addons) ? 'true' : 'false' }};
+                this.addonAC = {{ in_array('ac_care', $addons) ? 'true' : 'false' }};
+                this.addonEngine = {{ in_array('engine_care', $addons) ? 'true' : 'false' }};
+                @endif
+                
+                this.step = 3;
+                
+                if (this.date) {
+                    this.checkQuota();
+                }
+                @else
                 let draft = localStorage.getItem('booking_draft');
                 if (draft) {
                     try {
@@ -56,6 +78,7 @@
                         this.step = data.step || 1;
                     } catch(e) {}
                 }
+                @endif
 
                 this.$watch('vehicleSelected', () => this.saveDraft());
                 this.$watch('serviceType', (value) => {
@@ -245,7 +268,10 @@
                 </button>
             </div>
             
-            <form action="{{ route('booking.store') }}" method="POST" id="bookingForm">
+            <form action="{{ isset($booking) ? route('booking.update', $booking->id) : route('booking.store') }}" method="POST" id="bookingForm">
+                @if(isset($booking))
+                    @method('PUT')
+                @endif
                 @csrf
                 
                 <input type="hidden" name="service_id" :value="realServiceId">

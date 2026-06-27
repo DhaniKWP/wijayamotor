@@ -186,4 +186,101 @@ class BookingController extends Controller
             ]
         ]);
     }
+
+    public function edit($id)
+    {
+        $booking = Booking::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        
+        if ($booking->status !== 'pending') {
+            return redirect()->route('dashboard')->withErrors(['error' => 'Hanya booking berstatus pending yang dapat diedit.']);
+        }
+        
+        $vehicles = Vehicle::where('user_id', Auth::id())->get();
+        $services = Service::all();
+        
+        if ($booking->tipe_booking === 'home_service') {
+            return view('customer.booking.home-service', compact('booking', 'vehicles', 'services'));
+        }
+        
+        return view('customer.booking.create', compact('booking', 'vehicles', 'services'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $booking = Booking::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        
+        if ($booking->status !== 'pending') {
+            return redirect()->route('dashboard')->withErrors(['error' => 'Hanya booking berstatus pending yang dapat diedit.']);
+        }
+
+        $isHomeService = $request->input('tipe_booking') === 'home_service';
+
+        $rules = [
+            'vehicle_id'       => 'required|exists:vehicles,id',
+            'service_category' => 'required|in:berkala,lainnya,umum',
+            'date'             => 'required|date',
+            'sesi'             => 'required|in:pagi,siang',
+            'estimasi_harga'   => 'required|numeric',
+        ];
+
+        if ($isHomeService) {
+            $rules['alamat_lengkap'] = 'required|string';
+        } else {
+            $rules['branch'] = 'required|string';
+        }
+
+        $validatedData = $request->validate($rules);
+
+        if ($request->date !== $booking->tanggal || $request->sesi !== $booking->sesi) {
+            $currentCount = Booking::where('tanggal', $request->date)
+                                ->where('sesi', $request->sesi)
+                                ->where('status', '!=', 'cancelled')
+                                ->count();
+            
+            $maxQuota = 4;
+            if ($currentCount >= $maxQuota) {
+                return back()->withErrors(['sesi' => 'Maaf, Sesi ' . ucfirst($request->sesi) . ' di tanggal tersebut sudah penuh. Silakan pilih sesi atau tanggal lain.'])->withInput();
+            }
+        }
+
+        $addonsData = null;
+        if ($request->service_category === 'berkala' && $request->has('addons')) {
+            $addonsData = json_encode($request->addons);
+        } elseif ($request->service_category === 'umum' && $request->has('general_repairs')) {
+            $addonsData = json_encode($request->general_repairs); 
+        }
+
+        $defaultService = Service::first();
+        $finalServiceId = $request->filled('service_id') ? $request->service_id : ($defaultService ? $defaultService->id : $booking->service_id);
+
+        $booking->update([
+            'vehicle_id'     => $request->vehicle_id,
+            'service_id'     => $finalServiceId, 
+            'tipe_booking'   => $isHomeService ? 'home_service' : 'bengkel',
+            'cabang'         => $isHomeService ? null : $request->branch,
+            'alamat_lengkap' => $isHomeService ? $request->alamat_lengkap : null,
+            'jenis_servis'   => $request->service_category,
+            'kilometer'      => $request->service_category === 'berkala' ? (int) str_replace('.', '', $request->km_service) : null,
+            'addons'         => $addonsData,
+            'estimasi_harga' => $request->estimasi_harga,
+            'tanggal'        => $request->date,
+            'sesi'           => $request->sesi,
+            'keluhan'        => $request->service_category === 'lainnya' ? $request->custom_complaint : '-',
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Booking berhasil diperbarui!');
+    }
+
+    public function cancel($id)
+    {
+        $booking = Booking::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        
+        if ($booking->status !== 'pending') {
+            return back()->withErrors(['error' => 'Hanya booking berstatus pending yang dapat dibatalkan.']);
+        }
+        
+        $booking->update(['status' => 'cancelled']);
+        
+        return back()->with('success', 'Booking berhasil dibatalkan.');
+    }
 }

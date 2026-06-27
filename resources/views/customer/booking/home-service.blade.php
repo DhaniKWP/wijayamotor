@@ -188,6 +188,29 @@
           
           step: 1,
           init() {
+              @if(isset($booking))
+              this.vehicleSelected = '{{ $booking->vehicle_id }}';
+              this.serviceType = '{{ $booking->jenis_servis }}';
+              this.date = '{{ $booking->tanggal }}';
+              this.sesi = '{{ $booking->sesi }}';
+              this.address = '{{ $booking->alamat_lengkap }}';
+              
+              @if($booking->jenis_servis === 'berkala')
+              this.kmSelected = '{{ number_format($booking->kilometer, 0, ',', '.') }}';
+              @php $addons = json_decode($booking->addons, true) ?? []; @endphp
+              this.addonAC = {{ in_array('ac_care', $addons) ? 'true' : 'false' }};
+              this.addonEngine = {{ in_array('engine_care', $addons) ? 'true' : 'false' }};
+              @elseif($booking->jenis_servis === 'umum')
+              @php $repairs = json_decode($booking->addons, true) ?? []; @endphp
+              this.generalRepairs = {{ json_encode($repairs) }};
+              @endif
+              
+              this.step = 3;
+              
+              if (this.date) {
+                  this.checkQuota();
+              }
+              @else
               let draft = localStorage.getItem('homeservice_draft');
               if (draft) {
                   try {
@@ -201,6 +224,7 @@
                       this.step = data.step || 1;
                   } catch(e) {}
               }
+              @endif
 
               this.$watch('vehicleSelected', () => this.saveDraft());
               this.$watch('serviceType', (value) => {
@@ -386,7 +410,10 @@
                 </button>
             </div>
             
-            <form action="{{ route('booking.store') }}" method="POST" id="homeServiceForm">
+            <form action="{{ isset($booking) ? route('booking.update', $booking->id) : route('booking.store') }}" method="POST" id="homeServiceForm">
+                @if(isset($booking))
+                    @method('PUT')
+                @endif
                 @csrf
                 <input type="hidden" name="tipe_booking" value="home_service">
                 <input type="hidden" name="service_id" :value="realServiceId">
