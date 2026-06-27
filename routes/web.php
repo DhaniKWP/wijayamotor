@@ -101,6 +101,8 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 
     // ORDER SUCCESS
     Route::get('/order/{id}/sukses', [OrderController::class, 'success'])->name('customer.order.success');
+    Route::get('/order/{id}/edit', [OrderController::class, 'edit'])->name('customer.order.edit');
+    Route::put('/order/{id}/cancel', [OrderController::class, 'cancel'])->name('customer.order.cancel');
 
     // FITUR GARASI SAYA
     Route::get('/garasi', [VehicleController::class, 'index'])->name('garasi.index');

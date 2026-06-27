@@ -441,8 +441,18 @@
                     <p class="text-base font-black text-danger">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
                 </div>
                 @if($order->status === 'pending')
-                <div class="bg-amber-50 border border-amber-100 rounded-lg px-4 py-2.5 text-xs text-amber-700 font-bold">
-                    Menunggu admin konfirmasi. Kami akan menyiapkan barang Anda.
+                <div class="w-full sm:w-auto">
+                    <div class="bg-amber-50 border border-amber-100 rounded-lg px-4 py-2.5 text-xs text-amber-700 font-bold mb-2">
+                        Menunggu admin konfirmasi.
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('customer.order.edit', $order->id) }}" class="flex-1 text-center bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold py-2 rounded-md text-[11px] transition border border-gray-200">Edit Pesanan</a>
+                        <form action="{{ route('customer.order.cancel', $order->id) }}" method="POST" class="flex-1">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" onclick="return confirm('Apakah Anda yakin ingin membatalkan pesanan sparepart ini?')" class="w-full text-center bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2 rounded-md text-[11px] transition border border-red-100">Batalkan</button>
+                        </form>
+                    </div>
                 </div>
                 @elseif($order->status === 'confirmed')
                 <div class="bg-blue-50 border border-blue-100 rounded-lg px-4 py-2.5 text-xs text-blue-700 font-bold flex items-center gap-2">

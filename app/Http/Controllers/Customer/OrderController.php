@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Sparepart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -71,5 +72,57 @@ class OrderController extends Controller
         ];
 
         return view('customer.orders.success', compact('order', 'bankInfo'));
+    }
+
+    public function cancel($id)
+    {
+        $order = Order::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        if ($order->status !== 'pending') {
+            return back()->withErrors(['error' => 'Hanya pesanan berstatus pending yang dapat dibatalkan.']);
+        }
+
+        DB::transaction(function () use ($order) {
+            $order->update(['status' => 'cancelled']);
+
+            foreach ($order->items as $item) {
+                $item->sparepart->increment('stock', $item->qty);
+            }
+        });
+
+        return back()->with('success', 'Pesanan sparepart berhasil dibatalkan.');
+    }
+
+    public function edit($id)
+    {
+        $order = Order::with('items.sparepart')->where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        if ($order->status !== 'pending') {
+            return back()->withErrors(['error' => 'Hanya pesanan berstatus pending yang dapat diedit.']);
+        }
+
+        DB::transaction(function () use ($order) {
+            $order->update(['status' => 'cancelled']);
+            
+            foreach ($order->items as $item) {
+                $item->sparepart->increment('stock', $item->qty);
+                
+                $cartItem = CartItem::where('user_id', Auth::id())
+                    ->where('sparepart_id', $item->sparepart_id)
+                    ->first();
+                
+                if ($cartItem) {
+                    $cartItem->increment('qty', $item->qty);
+                } else {
+                    CartItem::create([
+                        'user_id'      => Auth::id(),
+                        'sparepart_id' => $item->sparepart_id,
+                        'qty'          => $item->qty,
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->route('cart.index')->with('success', 'Pesanan lama dibatalkan. Silakan ubah keranjang dan lakukan pemesanan ulang.');
     }
 }
