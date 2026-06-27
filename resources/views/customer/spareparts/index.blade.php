@@ -125,7 +125,6 @@
                                     <h3 class="font-bold text-gray-900 text-sm line-clamp-2 min-h-[40px] group-hover:text-danger transition">
                                         {{ $item->name }}
                                     </h3>
-                                    <p class="text-xs text-gray-400 mt-1">Stok: {{ $item->stock }} item</p>
                                 </div>
                             </div>
 
