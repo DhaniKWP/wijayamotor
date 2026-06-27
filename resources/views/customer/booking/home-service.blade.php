@@ -186,7 +186,23 @@
           searchResults: [],
           isSearching: false,
           
+          step: 1,
           init() {
+              let draft = localStorage.getItem('homeservice_draft');
+              if (draft) {
+                  try {
+                      let data = JSON.parse(draft);
+                      this.vehicleSelected = data.vehicleSelected || '';
+                      this.serviceType = data.serviceType || 'berkala';
+                      this.kmSelected = data.kmSelected || '1.000';
+                      this.addonAC = data.addonAC || false;
+                      this.addonEngine = data.addonEngine || false;
+                      this.addressDetail = data.addressDetail || '';
+                      this.step = data.step || 1;
+                  } catch(e) {}
+              }
+
+              this.$watch('vehicleSelected', () => this.saveDraft());
               this.$watch('serviceType', (value) => {
                   if (value === 'umum') {
                       this.addonAC = false;
@@ -201,6 +217,27 @@
                       setTimeout(() => { this.initMap(); }, 200);
                   }
               });
+              
+              this.$watch('kmSelected', () => this.saveDraft());
+              this.$watch('addonAC', () => this.saveDraft());
+              this.$watch('addonEngine', () => this.saveDraft());
+              this.$watch('addressDetail', () => this.saveDraft());
+              this.$watch('step', () => this.saveDraft());
+          },
+          
+          saveDraft() {
+              localStorage.setItem('homeservice_draft', JSON.stringify({
+                  vehicleSelected: this.vehicleSelected,
+                  serviceType: this.serviceType,
+                  kmSelected: this.kmSelected,
+                  addonAC: this.addonAC,
+                  addonEngine: this.addonEngine,
+                  addressDetail: this.addressDetail,
+                  step: this.step
+              }));
+          },
+          clearDraft() {
+              localStorage.removeItem('homeservice_draft');
           },
 
           checkQuota() {
@@ -328,6 +365,27 @@
         
         <div class="lg:col-span-8 space-y-6">
             
+            <!-- Stepper UI -->
+            <div class="bg-white p-6 md:px-10 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between relative mb-8">
+                <!-- Line background -->
+                <div class="absolute top-1/2 left-8 md:left-12 right-8 md:right-12 h-1 bg-gray-100 -z-0 -translate-y-1/2 rounded-full"></div>
+                <div class="absolute top-1/2 left-8 md:left-12 h-1 bg-brand -z-0 -translate-y-1/2 transition-all duration-500 rounded-full" :style="'width: ' + ((step - 1) / 2 * 100) + '%'"></div>
+                
+                <!-- Steps -->
+                <button type="button" @click="if(step > 1) step = 1" class="flex flex-col items-center justify-center bg-white px-2 focus:outline-none transition-all duration-300 relative z-10" :class="step >= 1 ? 'opacity-100' : 'opacity-50'">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-black text-sm md:text-base mb-2 transition-all duration-300 shadow-sm" :class="step >= 1 ? 'bg-brand text-white ring-4 ring-brand/20' : 'bg-gray-100 text-gray-400 border border-gray-200'">1</div>
+                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest hidden sm:block" :class="step >= 1 ? 'text-brand' : 'text-gray-400'">Kendaraan</span>
+                </button>
+                <button type="button" @click="if(step > 2 && vehicleSelected) step = 2" class="flex flex-col items-center justify-center bg-white px-2 focus:outline-none transition-all duration-300 relative z-10" :class="step >= 2 ? 'opacity-100' : 'opacity-50'">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-black text-sm md:text-base mb-2 transition-all duration-300 shadow-sm" :class="step >= 2 ? 'bg-brand text-white ring-4 ring-brand/20' : 'bg-gray-100 text-gray-400 border border-gray-200'">2</div>
+                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest hidden sm:block" :class="step >= 2 ? 'text-brand' : 'text-gray-400'">Layanan</span>
+                </button>
+                <button type="button" class="flex flex-col items-center justify-center bg-white px-2 focus:outline-none transition-all duration-300 relative z-10" :class="step >= 3 ? 'opacity-100' : 'opacity-50'">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-black text-sm md:text-base mb-2 transition-all duration-300 shadow-sm" :class="step >= 3 ? 'bg-brand text-white ring-4 ring-brand/20' : 'bg-gray-100 text-gray-400 border border-gray-200'">3</div>
+                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-widest hidden sm:block" :class="step >= 3 ? 'text-brand' : 'text-gray-400'">Lokasi</span>
+                </button>
+            </div>
+            
             <form action="{{ route('booking.store') }}" method="POST" id="homeServiceForm">
                 @csrf
                 <input type="hidden" name="tipe_booking" value="home_service">
@@ -336,12 +394,12 @@
                 <input type="hidden" name="alamat_lengkap" :value="address ? address + (addressDetail ? ' (Patokan: ' + addressDetail + ')' : '') : ''">
                 <input type="hidden" name="branch" value="pusat">
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <div x-show="step === 1" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
                     <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                         <div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-black text-lg">1</div>
                         <div>
                             <h2 class="text-xl font-black text-ink">Pilih Kendaraan</h2>
-                            <p class="text-xs text-gray-500 mt-1">Data ditarik dari Garasi profil {{ Auth::user()->name ?? 'Anda' }}</p>
+                            <p class="text-xs text-gray-500 mt-1">Tentukan mobil mana yang akan diservis hari ini</p>
                         </div>
                     </div>
 
@@ -360,8 +418,10 @@
                                     <div class="check-icon opacity-0 transform scale-50 transition-all duration-300 absolute top-4 right-4 w-6 h-6 bg-ink rounded-full text-white flex items-center justify-center">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                     </div>
-                                    <div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">
-                                        <img src="https://cdn-icons-png.flaticon.com/512/3204/3204990.png" class="w-8 h-8 opacity-70">
+                                    <div class="w-14 h-14 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center mb-4 peer-checked:bg-brand/10 peer-checked:text-brand group-hover:bg-brand/5 group-hover:text-brand transition-colors duration-300">
+                                        <svg class="w-8 h-8" viewBox="0 0 512 512" fill="currentColor">
+                                            <path d="M135.2 117.4L109.1 192H402.9l-26.1-74.6C372.3 104.6 360.2 96 346.6 96H165.4c-13.6 0-25.7 8.6-30.2 21.4zM39.6 196.8L74.8 96.3C88.3 57.8 124.6 32 165.4 32H346.6c40.8 0 77.1 25.8 90.6 64.3l35.2 100.5c23.2 9.6 39.6 32.5 39.6 59.2V400v48c0 17.7-14.3 32-32 32H448c-17.7 0-32-14.3-32-32V400H96v48c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V400 256c0-26.7 16.4-49.6 39.6-59.2zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm288 32a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/>
+                                        </svg>
                                     </div>
                                     <h4 class="font-black text-ink text-lg">{{ $vehicle->name }}</h4>
                                     <p class="text-sm text-gray-500 mb-3">Tahun: {{ $vehicle->year }}</p>
@@ -370,10 +430,13 @@
                             </label>
                             @endforeach
                         </div>
+                        <div class="mt-8 pt-6 border-t border-gray-100 flex justify-end">
+                            <button type="button" @click="step = 2" :disabled="!vehicleSelected" class="bg-ink hover:bg-ink-light text-white font-bold px-8 py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed">Lanjut ke Layanan</button>
+                        </div>
                     @endif
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-6 transition-all duration-300" :class="!vehicleSelected ? 'opacity-50 pointer-events-none select-none' : ''">
+                <div x-show="step === 2" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-0">
                     <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                         <div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-black text-lg">2</div>
                         <div>
@@ -461,9 +524,14 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="mt-8 pt-6 border-t border-gray-100 flex justify-between">
+                        <button type="button" @click="step = 1" class="text-gray-500 hover:text-ink font-bold px-6 py-3 rounded-xl transition border border-gray-200 hover:bg-gray-50">Kembali</button>
+                        <button type="button" @click="step = 3" class="bg-ink hover:bg-ink-light text-white font-bold px-8 py-3 rounded-xl transition">Lanjut ke Lokasi</button>
+                    </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-6 transition-all duration-300" :class="!vehicleSelected ? 'opacity-50 pointer-events-none select-none' : ''">
+                <div x-show="step === 3" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-0">
                     <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
                         <div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-black text-lg">3</div>
                         <div>
@@ -525,6 +593,10 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div class="mt-8 pt-6 border-t border-gray-100 flex justify-between">
+                        <button type="button" @click="step = 2" class="text-gray-500 hover:text-ink font-bold px-6 py-3 rounded-xl transition border border-gray-200 hover:bg-gray-50">Kembali</button>
                     </div>
                 </div>
             </form>
@@ -596,7 +668,7 @@
                         <p class="text-[10px] text-gray-500 mt-2 leading-tight relative z-10">*Belum termasuk part tambahan sesuai kondisi real.</p>
                     </div>
 
-                    <button type="button" @click="document.getElementById('homeServiceForm').submit()" 
+                    <button type="button" @click="clearDraft(); document.getElementById('homeServiceForm').submit()" 
                             :disabled="!address || !date || !sesi || !vehicleSelected || maxDistanceWarning"
                             :class="(!address || !date || !sesi || !vehicleSelected || maxDistanceWarning) ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-danger hover:bg-red-700 text-white shadow-[0_4px_15px_rgba(220,38,38,0.4)] transform hover:-translate-y-0.5'" 
                             class="w-full font-bold py-4 rounded-xl transition-all duration-300 flex items-center justify-center uppercase tracking-wide">
@@ -612,11 +684,10 @@
             <p class="text-xs font-bold text-gray-500">Estimasi Biaya</p>
             <p class="text-lg font-black text-ink" x-text="maxDistanceWarning ? '-' : formattedPrice"></p>
         </div>
-        <button type="button" @click="document.getElementById('homeServiceForm').submit()" 
-                :disabled="!address || !date || !sesi || maxDistanceWarning"
-                :class="(!address || !date || !sesi || maxDistanceWarning) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-ink text-white'" 
-                class="font-bold px-6 py-3 rounded-xl text-sm">
-            Lanjut
+        <button type="button" @click="step < 3 ? step++ : (clearDraft(), document.getElementById('homeServiceForm').submit())" 
+                :disabled="step === 3 && (!address || !date || !sesi || maxDistanceWarning)"
+                :class="(step === 3 && (!address || !date || !sesi || maxDistanceWarning)) ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : (step === 3 ? 'bg-danger text-white' : 'bg-ink text-white')" 
+                class="font-bold px-6 py-3 rounded-xl text-sm" x-text="step === 3 ? 'Selesai' : 'Lanjut'">
         </button>
     </div>
 
