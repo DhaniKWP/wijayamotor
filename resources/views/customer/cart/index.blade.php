@@ -65,7 +65,9 @@
                         $subtotal = $item->sparepart->price * $item->qty;
                         $totalPrice += $subtotal;
                     @endphp
-                    <div class="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row gap-6 relative">
+                    <div @click="toggleItemSelection('{{ $item->id }}', $event)" 
+                         class="border rounded-xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row gap-6 relative cursor-pointer transition-all duration-200" 
+                         :class="selectedIds.includes('{{ $item->id }}') ? 'bg-red-50/30 border-danger/50 ring-1 ring-danger/20' : 'bg-white border-gray-200 hover:border-gray-300'">
                         {{-- Nomor --}}
                         <div class="absolute -top-3 -left-3 w-8 h-8 bg-gray-900 text-white font-black text-sm rounded-full flex items-center justify-center shadow-sm border-2 border-white z-10">
                             {{ $loop->iteration }}
@@ -213,6 +215,17 @@ document.addEventListener('alpine:init', () => {
                 this.selectedIds = [];
             } else {
                 this.selectedIds = this.items.map(i => i.id);
+            }
+        },
+        toggleItemSelection(id, event) {
+            // Ignore if clicked on form elements or links
+            if (['BUTTON', 'INPUT', 'A', 'FORM', 'SVG', 'PATH'].includes(event.target.tagName.toUpperCase()) || event.target.closest('form') || event.target.closest('a')) {
+                return;
+            }
+            if (this.selectedIds.includes(id)) {
+                this.selectedIds = this.selectedIds.filter(i => i !== id);
+            } else {
+                this.selectedIds.push(id);
             }
         }
     }));
