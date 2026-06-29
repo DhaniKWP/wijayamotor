@@ -21,6 +21,11 @@ use App\Http\Controllers\Customer\DashboardController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Models\Sparepart;
 use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+
+// Google OAuth Routes
+Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
 
 Route::get('/', function () {
     if (Auth::check()) {

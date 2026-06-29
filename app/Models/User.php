@@ -37,6 +37,8 @@ class User extends Authenticatable
         'otp_code',       // <-- Udah ditambahin
         'otp_expires_at', // <-- Udah ditambahin
         'email_verified_at',
+        'google_id',
+        'avatar',
     ];
 
     /**
