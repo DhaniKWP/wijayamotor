@@ -46,6 +46,15 @@ class BookingController extends Controller
         $todayRevenue += $todayOrderRevenue;
         $monthRevenue += $monthOrderRevenue;
 
+        // Data untuk Grafik Tren Servis (7 Hari Terakhir)
+        $chartLabels = [];
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $chartLabels[] = $date->translatedFormat('d M');
+            $chartData[] = Booking::whereDate('tanggal', $date)->count();
+        }
+
         // Ambil 5 bookingan terbaru buat mejeng di dashboard
         $recentBookings = Booking::with(['user', 'vehicle', 'service'])
                                 ->orderBy('created_at', 'desc')
@@ -59,7 +68,9 @@ class BookingController extends Controller
             'doneMonthCount',
             'recentBookings',
             'todayRevenue',
-            'monthRevenue'
+            'monthRevenue',
+            'chartLabels',
+            'chartData'
         ));
     }
 

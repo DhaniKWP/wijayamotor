@@ -127,6 +127,19 @@
     </div>
 </div>
 
+<!-- Tren Servis Chart -->
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-8">
+    <div class="flex justify-between items-center mb-4">
+        <div>
+            <h3 class="text-lg font-extrabold text-slate-800 tracking-tight">Tren Antrean Servis (7 Hari Terakhir)</h3>
+            <p class="text-sm text-slate-500 font-medium mt-0.5">Statistik jumlah mobil yang melakukan servis per hari.</p>
+        </div>
+    </div>
+    <div class="relative h-72 w-full">
+        <canvas id="bookingTrendChart"></canvas>
+    </div>
+</div>
+
 <!-- Recent Bookings Table -->
 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
     <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -214,5 +227,91 @@
         </table>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('bookingTrendChart').getContext('2d');
+        
+        // Data dari Controller
+        const labels = @json($chartLabels);
+        const data = @json($chartData);
+
+        // Buat gradien warna untuk garis
+        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(239, 68, 68, 0.5)'); // brand color with opacity (red)
+        gradient.addColorStop(1, 'rgba(239, 68, 68, 0.05)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jumlah Servis',
+                    data: data,
+                    borderColor: '#ef4444', // text-brand / bg-brand
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#ef4444',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    tension: 0.4 // membuat garis melengkung (smooth curve)
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        titleFont: { size: 13, family: "'Inter', sans-serif" },
+                        bodyFont: { size: 14, weight: 'bold', family: "'Inter', sans-serif" },
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' Unit Mobil';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: { family: "'Inter', sans-serif", size: 11 },
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            color: '#f1f5f9',
+                            drawBorder: false,
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: { family: "'Inter', sans-serif", size: 11 },
+                            color: '#64748b'
+                        },
+                        grid: {
+                            display: false,
+                            drawBorder: false,
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+            }
+        });
+    });
+</script>
 
 @endsection
