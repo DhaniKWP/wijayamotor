@@ -385,7 +385,7 @@
         </div>
     </div><br>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 relative -mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-32 lg:pb-12 grid grid-cols-1 lg:grid-cols-12 gap-8 relative -mt-8">
         
         <div class="lg:col-span-8 space-y-6">
             
