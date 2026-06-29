@@ -126,10 +126,10 @@
                             </td>
                             <td class="px-4 py-3 text-center text-xs font-bold text-slate-600">1</td>
                             <td class="px-4 py-3 text-right text-xs font-bold text-slate-600">
-                                Rp {{ number_format($booking->estimasi_harga ?? 0, 0, ',', '.') }}
+                                Rp {{ number_format($booking->service->price_estimate ?? 0, 0, ',', '.') }}
                             </td>
                             <td class="px-4 py-3 text-right text-xs font-bold text-slate-800">
-                                Rp {{ number_format($booking->estimasi_harga ?? 0, 0, ',', '.') }}
+                                Rp {{ number_format($booking->service->price_estimate ?? 0, 0, ',', '.') }}
                             </td>
                         </tr>
 
