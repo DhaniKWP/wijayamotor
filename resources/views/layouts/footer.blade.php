@@ -42,7 +42,7 @@
   </div>
 </footer>
 
-<div class="fixed bottom-6 right-4 md:right-6 z-50 flex items-center gap-2 md:gap-3">
+<div class="fixed right-4 md:right-6 z-50 flex items-center gap-2 md:gap-3 {{ request()->routeIs('booking.create') || request()->routeIs('booking.homeservice') ? 'bottom-24 md:bottom-6' : 'bottom-6' }}">
   <!-- WIRA AI Assistant -->
   @include('components.chatbot')
 
