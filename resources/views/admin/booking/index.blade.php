@@ -40,41 +40,34 @@
         <table class="min-w-full divide-y divide-slate-100">
             <thead class="bg-slate-50/50">
                 <tr>
-                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Jadwal & Tipe</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest w-16">No</th>
+                    <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Jadwal & Info Servis</th>
                     <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Pelanggan & Kendaraan</th>
                     <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
                     <th class="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-slate-50">
-                @forelse($bookings as $booking)
+                @forelse($bookings as $index => $booking)
                 <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="px-6 py-5 whitespace-nowrap">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-100 flex flex-col items-center justify-center shrink-0">
-                                <span class="text-[10px] font-extrabold uppercase leading-none">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('M') }}</span>
-                                <span class="text-sm font-black leading-none mt-0.5">{{ \Carbon\Carbon::parse($booking->tanggal)->format('d') }}</span>
-                            </div>
-                            <div>
-                                <div class="text-sm font-bold text-slate-800">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('l, Y') }}</div>
-                                <div class="text-[10px] text-slate-400 font-extrabold tracking-wider mt-0.5 uppercase">Sesi {{ ucfirst($booking->sesi) }}</div>
-                                <div class="mt-2 flex items-center gap-1.5">
-                                    @if($booking->tipe_booking === 'home_service')
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-extrabold bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-wider">
-                                            Home Service
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] font-extrabold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wider">
-                                            Bengkel
-                                        </span>
-                                    @endif
-
-                                    @if($booking->kilometer)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-extrabold bg-red-50 text-red-600 border border-red-100 uppercase tracking-wider">
-                                            {{ number_format($booking->kilometer, 0, ',', '.') }} KM
-                                        </span>
-                                    @endif
-                                </div>
+                    <td class="px-6 py-4 text-sm font-bold text-slate-400">
+                        {{ $bookings->firstItem() + $index }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex flex-col">
+                            <div class="text-sm font-black text-slate-800">{{ \Carbon\Carbon::parse($booking->tanggal)->translatedFormat('d M Y') }}</div>
+                            <div class="text-[11px] font-semibold text-slate-500 mt-0.5">Sesi {{ ucfirst($booking->sesi) }}</div>
+                            <div class="text-[10px] font-bold text-slate-400 mt-1 flex items-center gap-1.5">
+                                @if($booking->tipe_booking === 'home_service')
+                                    <span class="text-blue-500">Home Service</span>
+                                @else
+                                    <span>Di Bengkel</span>
+                                @endif
+                                
+                                @if($booking->kilometer)
+                                    <span>•</span>
+                                    <span>{{ number_format($booking->kilometer, 0, ',', '.') }} KM</span>
+                                @endif
                             </div>
                         </div>
                     </td>
@@ -82,11 +75,11 @@
                         <div class="text-sm font-extrabold text-slate-800 flex items-center gap-2">
                             {{ $booking->user->name ?? $booking->user->username ?? 'Pelanggan' }}
                         </div>
-                        <div class="flex items-center gap-2 mt-2 flex-wrap">
-                            <span class="inline-flex text-[10px] font-bold bg-slate-800 text-white border-2 border-slate-700 px-2.5 py-0.5 rounded shadow-sm tracking-widest uppercase font-mono">
+                        <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                            <span class="inline-flex text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-300 px-2 py-0.5 rounded tracking-widest uppercase">
                                 {{ $booking->vehicle->plat_nomor ?? $booking->vehicle->plate_number ?? '-' }}
                             </span>
-                            <span class="text-[11px] text-slate-500 font-semibold bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                            <span class="text-[11px] text-slate-500 font-medium">
                                 {{ $booking->vehicle->name ?? '-' }}
                             </span>
                         </div>
@@ -126,16 +119,16 @@
                             @if($booking->status == 'pending')
                                 <form action="{{ route('admin.bookings.accept', $booking->id) }}" method="POST" class="inline-block">
                                     @csrf
-                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/30">Terima</button>
+                                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">Terima</button>
                                 </form>
                                 <form action="{{ route('admin.bookings.reject', $booking->id) }}" method="POST" class="inline-block">
                                     @csrf
-                                    <button type="submit" class="bg-white hover:bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-100">Tolak</button>
+                                    <button type="submit" class="bg-white hover:bg-red-50 text-red-600 border border-slate-200 hover:border-red-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-100">Tolak</button>
                                 </form>
                             @elseif($booking->status == 'confirmed')
                                 <form action="{{ route('admin.bookings.process', $booking->id) }}" method="POST" class="inline-block">
                                     @csrf
-                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/30">Mulai Kerja</button>
+                                    <button type="submit" class="bg-brand hover:bg-brand-dark text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500/30">Mulai Kerja</button>
                                 </form>
                             @elseif($booking->status == 'process')
                                 <a href="{{ route('admin.bookings.complete.form', $booking->id) }}" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">
@@ -162,7 +155,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-16 text-center">
+                    <td colspan="5" class="px-6 py-16 text-center">
                         <div class="w-14 h-14 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 border border-slate-100">
                             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                         </div>
