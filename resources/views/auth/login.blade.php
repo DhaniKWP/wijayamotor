@@ -90,6 +90,12 @@
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm border border-red-100 font-medium">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div class="mb-5">
