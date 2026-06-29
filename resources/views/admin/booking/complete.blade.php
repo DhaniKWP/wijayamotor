@@ -429,6 +429,24 @@
             Memproses...
         `;
     });
+    
+    // =====================
+    // AUTO-FILL HOME SERVICE FEE
+    // =====================
+    document.addEventListener('DOMContentLoaded', () => {
+        const homeServiceFee = {{ floatval($homeServiceFee ?? 0) }};
+        if (homeServiceFee > 0) {
+            addRow('jasa');
+            const newRow = document.querySelector('.item-row:last-child');
+            if (newRow) {
+                newRow.querySelector('.jasa-input').value = 'Biaya Kunjungan (Home Service)';
+                newRow.querySelector('.price-input').value = homeServiceFee;
+                newRow.querySelector('input[name*="[note]"]').value = 'Otomatis dari estimasi awal';
+                recalcRow(newRow.querySelector('.price-input'));
+            }
+        }
+    });
+
 </script>
 
 @endsection

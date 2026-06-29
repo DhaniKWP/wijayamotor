@@ -26,8 +26,40 @@ class TransactionController extends Controller
             return redirect()->route('admin.bookings.index')
                 ->with('error', 'Hanya booking berstatus "process" yang bisa diselesaikan.');
         }
+        
+        $homeServiceFee = 0;
+        if ($booking->tipe_booking === 'home_service') {
+            $totalKnown = 0;
+            if ($booking->jenis_servis === 'umum') {
+                $repairPrices = [
+                    'engine_oil' => 498000, 'brake_service' => 286000,
+                    'engine_tune_up' => 450000, 'fuel_filter' => 416000,
+                    'brake_pads' => 607000, 'reset_alarm' => 63000,
+                    'engine_diagnose' => 216000, 'other' => 0
+                ];
+                $repairs = json_decode($booking->addons, true) ?? [];
+                foreach ($repairs as $r) {
+                    $totalKnown += $repairPrices[$r] ?? 0;
+                }
+            } else {
+                $totalKnown += $booking->service->price_estimate ?? 0;
+                $addons = json_decode($booking->addons, true) ?? [];
+                if (in_array('ac', $addons) || in_array('ac_care', $addons)) $totalKnown += 350000;
+                if (in_array('engine', $addons) || in_array('engine_care', $addons)) $totalKnown += 400000;
+                
+                $km = $booking->kilometer;
+                $serviceData = [
+                    1000 => 0, 10000 => 550000, 20000 => 710000, 30000 => 550000,
+                    40000 => 1020000, 50000 => 550000, 60000 => 710000, 70000 => 550000,
+                    80000 => 1020000, 90000 => 550000, 100000 => 810000,
+                ];
+                $totalKnown += $serviceData[$km] ?? 0;
+            }
+            $homeServiceFee = $booking->estimasi_harga - $totalKnown;
+            if ($homeServiceFee < 0) $homeServiceFee = 0;
+        }
 
-        return view('admin.booking.complete', compact('booking', 'spareparts'));
+        return view('admin.booking.complete', compact('booking', 'spareparts', 'homeServiceFee'));
     }
 
     /**
