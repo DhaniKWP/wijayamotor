@@ -135,7 +135,7 @@ class BookingController extends Controller
     public function reject($id)
     {
         $booking = Booking::findOrFail($id);
-        $booking->update(['status' => 'cancelled']); 
+        $booking->update(['status' => 'rejected']); 
         return redirect()->back()->with('success', 'Booking berhasil ditolak.');
     }
 

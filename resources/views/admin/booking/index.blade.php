@@ -131,6 +131,8 @@
                                 @endif
                             </div>
                         @elseif($booking->status == 'cancelled')
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-50 text-slate-500 border border-slate-200">Dibatalkan</span>
+                        @elseif($booking->status == 'rejected')
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-600 border border-red-100">Ditolak</span>
                         @endif
                     </td>
