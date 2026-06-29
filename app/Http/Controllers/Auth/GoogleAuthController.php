@@ -35,7 +35,7 @@ class GoogleAuthController extends Controller
                     'email' => $googleUser->getEmail(),
                     'google_id' => $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
-                    'role' => 'user',
+                    'role' => 'customer',
                     // Password dikosongkan karena login via Google
                     'password' => null, 
                 ]);
