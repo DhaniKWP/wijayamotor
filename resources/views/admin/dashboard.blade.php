@@ -20,7 +20,7 @@
 </div>
 
 <!-- Key Metrics Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
     
     <!-- Card 1 -->
     <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
@@ -85,6 +85,38 @@
                 <div class="flex items-baseline gap-1 mt-0.5">
                     <h3 class="text-2xl font-black text-slate-800">{{ $doneMonthCount }}</h3>
                     <span class="text-sm font-bold text-slate-400">Mobil</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 5 (Pemasukan Hari Ini) -->
+    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-50 rounded-full group-hover:scale-110 transition-transform duration-500 ease-out"></div>
+        <div class="relative flex items-center gap-4">
+            <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center shrink-0 shadow-inner">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Pemasukan Hari Ini</p>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <h3 class="text-xl font-black text-slate-800">Rp {{ number_format($todayRevenue, 0, ',', '.') }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 6 (Pemasukan Bulan Ini) -->
+    <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-24 h-24 bg-violet-50 rounded-full group-hover:scale-110 transition-transform duration-500 ease-out"></div>
+        <div class="relative flex items-center gap-4">
+            <div class="w-12 h-12 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center shrink-0 shadow-inner">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Pemasukan Bulan Ini</p>
+                <div class="flex items-baseline gap-1 mt-0.5">
+                    <h3 class="text-xl font-black text-slate-800">Rp {{ number_format($monthRevenue, 0, ',', '.') }}</h3>
                 </div>
             </div>
         </div>

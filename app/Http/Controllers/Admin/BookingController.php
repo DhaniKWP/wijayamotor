@@ -23,6 +23,29 @@ class BookingController extends Controller
                                 ->whereMonth('updated_at', Carbon::now()->month)
                                 ->count();
 
+        // Hitung Pemasukan (Dari Servis)
+        $todayRevenue = \App\Models\ServiceTransaction::where('payment_status', 'paid')
+                                ->whereDate('updated_at', Carbon::today())
+                                ->sum('total_cost');
+        
+        $monthRevenue = \App\Models\ServiceTransaction::where('payment_status', 'paid')
+                                ->whereMonth('updated_at', Carbon::now()->month)
+                                ->whereYear('updated_at', Carbon::now()->year)
+                                ->sum('total_cost');
+
+        // Tambah dari Sparepart Online jika ada
+        $todayOrderRevenue = \App\Models\Order::whereIn('status', ['paid', 'shipped', 'done'])
+                                ->whereDate('updated_at', Carbon::today())
+                                ->sum('total_price');
+        
+        $monthOrderRevenue = \App\Models\Order::whereIn('status', ['paid', 'shipped', 'done'])
+                                ->whereMonth('updated_at', Carbon::now()->month)
+                                ->whereYear('updated_at', Carbon::now()->year)
+                                ->sum('total_price');
+
+        $todayRevenue += $todayOrderRevenue;
+        $monthRevenue += $monthOrderRevenue;
+
         // Ambil 5 bookingan terbaru buat mejeng di dashboard
         $recentBookings = Booking::with(['user', 'vehicle', 'service'])
                                 ->orderBy('created_at', 'desc')
@@ -34,7 +57,9 @@ class BookingController extends Controller
             'todayCount', 
             'processCount', 
             'doneMonthCount',
-            'recentBookings'
+            'recentBookings',
+            'todayRevenue',
+            'monthRevenue'
         ));
     }
 
