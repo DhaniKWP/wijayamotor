@@ -57,6 +57,13 @@
             </div>
         @endif
 
+        @if(session('info'))
+            <div class="mb-6 p-4 rounded-xl bg-amber-50 text-amber-700 text-sm font-bold border border-amber-100 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                {{ session('info') }}
+            </div>
+        @endif
+
         <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
             <div class="p-6 sm:p-8">
                 <form action="{{ route('customer.profile.settings.update') }}" method="POST">
