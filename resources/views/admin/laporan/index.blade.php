@@ -131,6 +131,7 @@
             <table class="min-w-full divide-y divide-slate-100">
                 <thead class="bg-slate-50/50 sticky top-0 z-10">
                     <tr>
+                        <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider w-12">No</th>
                         <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tgl / Invoice</th>
                         <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Pelanggan</th>
                         <th class="px-5 py-3 text-right text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Total</th>
@@ -139,6 +140,9 @@
                 <tbody class="bg-white divide-y divide-slate-50">
                     @forelse($services as $svc)
                     <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-5 py-3 text-xs font-bold text-slate-500">
+                            {{ $loop->iteration }}
+                        </td>
                         <td class="px-5 py-3">
                             <div class="text-xs font-bold text-slate-800">{{ $svc->created_at->format('d/m/Y') }}</div>
                             <div class="text-[10px] text-slate-500 font-medium mt-0.5 uppercase">#INV-{{ str_pad($svc->id, 5, '0', STR_PAD_LEFT) }}</div>
@@ -153,7 +157,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="3" class="px-5 py-8 text-center">
+                        <td colspan="4" class="px-5 py-8 text-center">
                             <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             <p class="text-sm text-slate-500 font-medium">Belum ada pemasukan servis di periode ini.</p>
                         </td>
@@ -176,6 +180,7 @@
             <table class="min-w-full divide-y divide-slate-100">
                 <thead class="bg-slate-50/50 sticky top-0 z-10">
                     <tr>
+                        <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider w-12">No</th>
                         <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Tgl / Order ID</th>
                         <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Pelanggan</th>
                         <th class="px-5 py-3 text-right text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Total</th>
@@ -184,6 +189,9 @@
                 <tbody class="bg-white divide-y divide-slate-50">
                     @forelse($orders as $ord)
                     <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-5 py-3 text-xs font-bold text-slate-500">
+                            {{ $loop->iteration }}
+                        </td>
                         <td class="px-5 py-3">
                             <div class="text-xs font-bold text-slate-800">{{ $ord->created_at->format('d/m/Y') }}</div>
                             <div class="text-[10px] text-slate-500 font-medium mt-0.5 uppercase">#ORD-{{ str_pad($ord->id, 5, '0', STR_PAD_LEFT) }}</div>
@@ -198,7 +206,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="3" class="px-5 py-8 text-center">
+                        <td colspan="4" class="px-5 py-8 text-center">
                             <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                             <p class="text-sm text-slate-500 font-medium">Belum ada penjualan langsung di periode ini.</p>
                         </td>
@@ -221,6 +229,7 @@
             <table class="min-w-full divide-y divide-slate-100">
                 <thead class="bg-slate-50/50 sticky top-0 z-10">
                     <tr>
+                        <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider w-12">No</th>
                         <th class="px-5 py-3 text-left text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Nama Barang</th>
                         <th class="px-5 py-3 text-right text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Harga Satuan</th>
                         <th class="px-5 py-3 text-center text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">Sisa Stok</th>
@@ -230,6 +239,9 @@
                 <tbody class="bg-white divide-y divide-slate-50">
                     @forelse($spareparts as $item)
                     <tr class="hover:bg-slate-50/50 transition-colors {{ $item->stock <= 3 ? 'bg-rose-50/30' : '' }}">
+                        <td class="px-5 py-3 text-xs font-bold text-slate-500">
+                            {{ $loop->iteration }}
+                        </td>
                         <td class="px-5 py-3">
                             <div class="text-xs font-bold text-slate-800">{{ $item->name }}</div>
                             @if($item->stock <= 3)
@@ -248,7 +260,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="px-5 py-8 text-center">
+                        <td colspan="5" class="px-5 py-8 text-center">
                             <svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                             <p class="text-sm text-slate-500 font-medium">Belum ada data sparepart di gudang.</p>
                         </td>
