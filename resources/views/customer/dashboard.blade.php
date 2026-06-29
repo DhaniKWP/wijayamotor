@@ -16,29 +16,7 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-4 gap-8">
 
     {{-- Sidebar --}}
-    <aside class="lg:col-span-1 lg:sticky lg:top-36 self-start">
-        <div class="mb-8">
-            <p class="text-gray-500 text-sm">Halo,</p>
-            <h2 class="text-xl font-black text-gray-900 leading-tight mb-2">{{ Auth::user()->name }}</h2>
-            <p class="text-xs text-gray-400">{{ Auth::user()->email }}</p>
-        </div>
-        <nav class="space-y-1">
-            <a href="{{ route('dashboard') }}" class="flex items-center px-2 py-3 text-danger font-bold border-b border-gray-100">Dashboard Profil</a>
-            <a href="{{ route('customer.pesanan') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">Pesanan Saya</a>
-            <a href="{{ route('garasi.index') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">Garasi Saya</a>
-            <a href="{{ route('booking.create') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">Booking Baru</a>
-            <a href="{{ route('customer.profile.settings') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">Pengaturan Profil</a>
-            
-            <form method="POST" action="{{ route('logout') }}" class="block">
-                @csrf
-                <a href="{{ route('logout') }}"
-                   onclick="event.preventDefault(); this.closest('form').submit();"
-                   class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">
-                    Logout
-                </a>
-            </form>
-        </nav>
-    </aside>
+    @include('customer.partials.sidebar')
 
     {{-- Main Content --}}
     <main class="lg:col-span-3">
