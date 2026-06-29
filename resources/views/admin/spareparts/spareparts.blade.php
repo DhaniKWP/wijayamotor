@@ -198,8 +198,8 @@
                     </div>
 
                     <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100 mt-6 shrink-0">
-                        <button type="button" @click="showAddModal = false" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition-colors">Batal</button>
-                        <button type="submit" class="bg-ink hover:bg-ink-light text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:shadow transition-all duration-200">Simpan Data</button>
+                        <button type="button" @click="showAddModal = false" class="px-5 py-2.5 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">Batal</button>
+                        <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:shadow transition-all duration-200">Simpan Data</button>
                     </div>
                 </form>
             </div>
@@ -260,8 +260,8 @@
                     </div>
 
                     <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100 mt-6 shrink-0">
-                        <button type="button" @click="showEditModal = false" class="px-5 py-2.5 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl transition-colors">Batal</button>
-                        <button type="submit" class="bg-ink hover:bg-ink-light text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:shadow transition-all duration-200">Update Data</button>
+                        <button type="button" @click="showEditModal = false" class="px-5 py-2.5 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">Batal</button>
+                        <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:shadow transition-all duration-200">Update Data</button>
                     </div>
                 </form>
             </div>
