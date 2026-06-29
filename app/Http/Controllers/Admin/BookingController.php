@@ -99,7 +99,7 @@ class BookingController extends Controller
         if ($statusTab == 'active') {
             $query->whereIn('status', ['pending', 'confirmed', 'process']);
         } elseif ($statusTab == 'history') {
-            $query->whereIn('status', ['done', 'cancelled']);
+            $query->whereIn('status', ['done', 'cancelled', 'rejected']);
         } elseif ($statusTab != 'all') {
             $query->where('status', $statusTab);
         }
