@@ -26,7 +26,7 @@ class BookingController extends Controller
     {
         $user = Auth::user();
         if (empty($user->phone) || empty($user->address)) {
-            return redirect()->route('profile.complete')->with('info', 'Silakan lengkapi nomor HP dan alamat Anda sebelum melakukan booking.');
+            return redirect()->route('customer.profile.settings')->with('info', 'Silakan lengkapi nomor HP dan alamat Anda sebelum melakukan booking.');
         }
 
         $vehicles = \App\Models\Vehicle::where('user_id', Auth::id())->get();
@@ -44,7 +44,7 @@ class BookingController extends Controller
     {
         $user = Auth::user();
         if (empty($user->phone) || empty($user->address)) {
-            return redirect()->route('profile.complete')->with('info', 'Silakan lengkapi nomor HP dan alamat Anda sebelum melakukan booking Home Service.');
+            return redirect()->route('customer.profile.settings')->with('info', 'Silakan lengkapi nomor HP dan alamat Anda sebelum melakukan booking Home Service.');
         }
 
         // Ambil data kendaraan khusus milik user yang login

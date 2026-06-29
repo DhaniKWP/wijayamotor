@@ -43,11 +43,6 @@ class GoogleAuthController extends Controller
 
             Auth::login($user);
 
-            // Redirect to profile completion if phone or address is empty
-            if (empty($user->phone) || empty($user->address)) {
-                return redirect()->route('profile.complete')->with('info', 'Silakan lengkapi nomor HP dan alamat Anda.');
-            }
-
             // Redirect ke dashboard atau halaman yang dituju
             return redirect()->intended(route('user.dashboard'));
             
