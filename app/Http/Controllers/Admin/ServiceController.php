@@ -11,7 +11,11 @@ class ServiceController extends Controller
     // Tampilkan halaman tabel master servis
     public function index()
     {
-        $services = Service::orderBy('created_at', 'desc')->get();
+        // Ambil semua servis dan urutkan berdasarkan angka KM di dalam nama
+        $services = Service::all()->sortBy(function ($service) {
+            preg_match('/(\d+)(\.\d+)?/', $service->name, $matches);
+            return isset($matches[0]) ? (int) str_replace('.', '', $matches[0]) : 999999;
+        });
         // UBAH: Arahkan ke view admin.services.index
         return view('admin.services.index', compact('services'));
     }
