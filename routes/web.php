@@ -119,10 +119,11 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
 // =========================================
 // ROUTE KHUSUS ADMIN
 // =========================================
-// =========================================
-// ROUTE KHUSUS ADMIN
-// =========================================
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile/complete', [App\Http\Controllers\ProfileCompletionController::class, 'edit'])->name('profile.complete');
+    Route::post('/profile/complete', [App\Http\Controllers\ProfileCompletionController::class, 'update'])->name('profile.complete.update');
+
+    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
     
     // DASHBOARD REKAPAN
     Route::get('/dashboard', [AdminBookingController::class, 'dashboard'])->name('dashboard');
@@ -164,6 +165,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/laporan/export', [ReportController::class, 'export'])->name('laporan.export');
     Route::get('/laporan/export-pdf', [ReportController::class, 'exportPdf'])->name('laporan.export.pdf');
 
+});
 });
 
 // =========================================
