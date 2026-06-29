@@ -74,6 +74,7 @@
         <table class="w-full text-sm">
             <thead>
                 <tr class="border-b border-slate-100 bg-slate-50/80">
+                    <th class="text-left px-5 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-16">No</th>
                     <th class="text-left px-5 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Order</th>
                     <th class="text-left px-5 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Customer</th>
                     <th class="text-left px-5 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Item</th>
@@ -86,6 +87,9 @@
             <tbody class="divide-y divide-slate-50">
                 @forelse($orders as $order)
                 <tr class="hover:bg-slate-50/50 transition group" x-data="{ confirmModal: false }">
+                    <td class="px-5 py-4 text-xs font-bold text-slate-500">
+                        {{ ($orders->currentPage() - 1) * $orders->perPage() + $loop->iteration }}
+                    </td>
                     <td class="px-5 py-4">
                         <p class="font-black text-slate-800 text-xs tracking-wider">#ORD-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</p>
                     </td>
@@ -137,6 +141,11 @@
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-green-50 text-green-700 border border-green-100">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                                 Lunas
+                            </span>
+                        @elseif($order->status === 'cancelled')
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-100">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                Dibatalkan
                             </span>
                         @else
                             <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600">{{ $order->status }}</span>
@@ -233,7 +242,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-5 py-16 text-center">
+                    <td colspan="8" class="px-5 py-16 text-center">
                         <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-300">
                             <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                         </div>
