@@ -5,14 +5,19 @@
         <p class="text-xs text-gray-400">{{ Auth::user()->email }}</p>
     </div>
     
-    <!-- Mobile User Info (Compact) -->
-    <div class="mb-4 lg:hidden flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-black text-lg">
-            {{ substr(Auth::user()->name, 0, 1) }}
+    <!-- Mobile User Info & Swipe Hint (Compact) -->
+    <div class="mb-4 lg:hidden flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-brand/10 text-brand flex items-center justify-center font-black text-lg">
+                {{ substr(Auth::user()->name, 0, 1) }}
+            </div>
+            <div>
+                <h2 class="text-sm font-black text-gray-900 leading-tight">{{ Auth::user()->name }}</h2>
+                <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+            </div>
         </div>
-        <div>
-            <h2 class="text-sm font-black text-gray-900 leading-tight">{{ Auth::user()->name }}</h2>
-            <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
+        <div class="flex items-center text-danger/70 text-[10px] font-bold uppercase tracking-wider animate-pulse">
+            Geser Menu <svg class="w-3 h-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
         </div>
     </div>
 
