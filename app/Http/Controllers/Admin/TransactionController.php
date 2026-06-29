@@ -52,8 +52,8 @@ class TransactionController extends Controller
 
         DB::transaction(function () use ($request, $booking) {
 
-            // Hitung biaya dari service utama (estimasi jadi biaya dasar)
-            $serviceCost = floatval($booking->estimasi_harga ?? 0);
+            // Ambil biaya jasa dasar dari master katalog servis
+            $serviceCost = floatval($booking->service->price_estimate ?? 0);
 
             // Buat transaksi induk
             $transaction = ServiceTransaction::create([

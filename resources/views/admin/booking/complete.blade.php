@@ -69,7 +69,7 @@
                 </button>
             </div>
 
-            {{-- Baris item service utama (readonly, auto-filled dari booking) --}}
+            {{-- Baris item service utama (readonly, auto-filled dari master katalog servis) --}}
             <div class="px-6 pt-4 pb-2">
                 <div class="flex items-center gap-2 px-4 py-3 bg-brand/5 border border-brand/20 rounded-lg">
                     <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center shrink-0">
@@ -77,10 +77,10 @@
                     </div>
                     <div class="flex-1">
                         <p class="text-xs font-black text-brand">{{ $booking->service->name ?? 'Layanan Utama' }}</p>
-                        <p class="text-[10px] text-slate-500">Biaya jasa dasar (dari estimasi booking)</p>
+                        <p class="text-[10px] text-slate-500">Biaya jasa dasar (dari master katalog servis)</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-xs font-black text-slate-800">Rp {{ number_format($booking->estimasi_harga ?? 0, 0, ',', '.') }}</p>
+                        <p class="text-xs font-black text-slate-800">Rp {{ number_format($booking->service->price_estimate ?? 0, 0, ',', '.') }}</p>
                         <p class="text-[10px] text-slate-400">Sudah termasuk</p>
                     </div>
                 </div>
@@ -140,7 +140,7 @@
                 <div class="space-y-2.5 text-sm">
                     <div class="flex justify-between text-slate-500">
                         <span>Jasa Dasar ({{ $booking->service->name ?? '-' }})</span>
-                        <span class="font-bold">Rp <span id="summaryBase">{{ number_format($booking->estimasi_harga ?? 0, 0, ',', '.') }}</span></span>
+                        <span class="font-bold">Rp <span id="summaryBase">{{ number_format($booking->service->price_estimate ?? 0, 0, ',', '.') }}</span></span>
                     </div>
                     <div class="flex justify-between text-slate-500">
                         <span>Jasa Tambahan</span>
@@ -152,7 +152,7 @@
                     </div>
                     <div class="border-t border-slate-100 pt-3 flex justify-between text-slate-800">
                         <span class="font-extrabold text-sm">TOTAL</span>
-                        <span class="font-black text-brand text-lg">Rp <span id="summaryTotal">{{ number_format($booking->estimasi_harga ?? 0, 0, ',', '.') }}</span></span>
+                        <span class="font-black text-brand text-lg">Rp <span id="summaryTotal">{{ number_format($booking->service->price_estimate ?? 0, 0, ',', '.') }}</span></span>
                     </div>
                 </div>
             </div>
@@ -185,7 +185,7 @@
 
 <script>
     const spareparts = JSON.parse(document.getElementById('spareparts-data').textContent);
-    const basePrice  = {{ floatval($booking->estimasi_harga ?? 0) }};
+    const basePrice  = {{ floatval($booking->service->price_estimate ?? 0) }};
     let rowIndex     = 0;
 
     // =====================
