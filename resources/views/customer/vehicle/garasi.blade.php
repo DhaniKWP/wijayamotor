@@ -29,6 +29,7 @@
             <a href="{{ route('customer.pesanan') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">Pesanan Saya</a>
             <a href="{{ route('garasi.index') }}" class="flex items-center px-2 py-3 text-danger font-bold border-b border-gray-100">Garasi Saya</a>
             <a href="{{ route('booking.create') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">Booking Baru</a>
+            <a href="{{ route('customer.profile.settings') }}" class="flex items-center px-2 py-3 text-gray-600 hover:text-danger transition border-b border-gray-100 font-medium">Pengaturan Profil</a>
             
             <form method="POST" action="{{ route('logout') }}" class="block">
                 @csrf

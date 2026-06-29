@@ -24,6 +24,11 @@ class BookingController extends Controller
      */
     public function create()
     {
+        $user = Auth::user();
+        if (empty($user->phone) || empty($user->address)) {
+            return redirect()->route('profile.complete')->with('info', 'Silakan lengkapi nomor HP dan alamat Anda sebelum melakukan booking.');
+        }
+
         $vehicles = \App\Models\Vehicle::where('user_id', Auth::id())->get();
         
         // Ambil SEMUA data master servis untuk dilempar ke Alpine.js
@@ -37,6 +42,11 @@ class BookingController extends Controller
      */
     public function createHomeService()
     {
+        $user = Auth::user();
+        if (empty($user->phone) || empty($user->address)) {
+            return redirect()->route('profile.complete')->with('info', 'Silakan lengkapi nomor HP dan alamat Anda sebelum melakukan booking Home Service.');
+        }
+
         // Ambil data kendaraan khusus milik user yang login
         $vehicles = Vehicle::where('user_id', Auth::id())->get();
         

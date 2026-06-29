@@ -101,6 +101,10 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::delete('/keranjang/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::post('/keranjang/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
+    // Rute Pengaturan Profil Customer
+    Route::get('/profile/settings', [App\Http\Controllers\Customer\ProfileSettingsController::class, 'edit'])->name('customer.profile.settings');
+    Route::put('/profile/settings', [App\Http\Controllers\Customer\ProfileSettingsController::class, 'update'])->name('customer.profile.settings.update');
+
     // ORDER LANGSUNG (Beli Sekarang)
     Route::post('/order', [OrderController::class, 'store'])->name('customer.order.store');
 
