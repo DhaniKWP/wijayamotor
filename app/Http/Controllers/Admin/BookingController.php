@@ -78,9 +78,20 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         // Query Data dengan Filter
-        $query = Booking::with(['user', 'vehicle', 'service'])
-                        ->orderBy('tanggal', 'asc')
-                        ->orderBy('jam', 'asc');
+        $query = Booking::with(['user', 'vehicle', 'service']);
+
+        // Filter by Date
+        if ($request->filled('date')) {
+            $query->whereDate('tanggal', $request->date);
+        }
+
+        // Sort Order
+        $sortOrder = $request->get('sort', 'asc'); // default asc
+        if ($sortOrder === 'desc') {
+            $query->orderBy('tanggal', 'desc')->orderBy('jam', 'desc');
+        } else {
+            $query->orderBy('tanggal', 'asc')->orderBy('jam', 'asc');
+        }
 
         // Default tab is 'active' if not specified and not explicitly 'all'
         $statusTab = $request->get('status', 'active');
@@ -94,7 +105,11 @@ class BookingController extends Controller
         }
 
         $bookings = $query->paginate(15);
-        $bookings->appends(['status' => $statusTab]); // Keep query string in pagination
+        $bookings->appends([
+            'status' => $statusTab,
+            'date' => $request->date,
+            'sort' => $sortOrder
+        ]); // Keep query string in pagination
 
         // Arahin ke folder admin/booking/index.blade.php
         return view('admin.booking.index', compact('bookings'));

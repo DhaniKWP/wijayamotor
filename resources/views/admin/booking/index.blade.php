@@ -36,6 +36,30 @@
         </div>
     </div>
 
+    {{-- Filter Bar --}}
+    <div class="px-6 py-3 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <form action="{{ route('admin.bookings.index') }}" method="GET" class="flex flex-wrap items-center gap-4 w-full">
+            <input type="hidden" name="status" value="{{ $currentTab }}">
+            <div class="flex items-center gap-2">
+                <label for="date" class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Tanggal:</label>
+                <input type="date" name="date" id="date" value="{{ request('date') }}" class="text-xs font-bold text-slate-700 border border-slate-200 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-brand/20 focus:border-brand h-8">
+            </div>
+            <div class="flex items-center gap-2">
+                <label for="sort" class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Urutkan:</label>
+                <select name="sort" id="sort" class="text-xs font-bold text-slate-700 border border-slate-200 rounded-lg pl-3 pr-8 py-1.5 focus:ring-2 focus:ring-brand/20 focus:border-brand h-8 bg-white">
+                    <option value="asc" {{ request('sort', 'asc') == 'asc' ? 'selected' : '' }}>Terlama ke Terbaru (Asc)</option>
+                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru ke Terlama (Desc)</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="submit" class="bg-brand hover:bg-brand/90 text-white px-4 py-1.5 rounded-lg text-xs font-black h-8 shadow-sm transition-colors">Terapkan Filter</button>
+                @if(request()->has('date') || request()->has('sort'))
+                    <a href="{{ route('admin.bookings.index', ['status' => $currentTab]) }}" class="text-xs font-bold text-slate-400 hover:text-slate-600 px-2 py-1.5 transition-colors">Reset</a>
+                @endif
+            </div>
+        </form>
+    </div>
+
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-slate-100">
             <thead class="bg-slate-50/50">
