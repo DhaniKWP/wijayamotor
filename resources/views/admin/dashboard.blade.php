@@ -11,7 +11,11 @@
         <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Halo, {{ Auth::user()->name }}! 👋</h2>
         <p class="text-sm text-slate-500 mt-1 font-medium">Berikut adalah pantauan ringkas operasional Wijaya Motor hari ini.</p>
     </div>
-    <div>
+    <div class="flex items-center gap-3">
+        <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-slate-200 text-slate-600 hover:text-slate-800 hover:border-slate-300 hover:bg-slate-50 text-sm font-bold rounded-xl shadow-sm transition-all hover:-translate-y-0.5">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            Pesanan Online
+        </a>
         <a href="{{ route('admin.bookings.index') }}" class="inline-flex items-center px-4 py-2 bg-brand hover:bg-brand-dark text-white text-sm font-bold rounded-xl shadow-sm shadow-brand/20 transition-all hover:-translate-y-0.5">
             <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
             Kelola Antrean
