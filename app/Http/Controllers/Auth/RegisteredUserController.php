@@ -36,10 +36,14 @@ class RegisteredUserController extends Controller
         // 1. Validasi: HAPUS rule 'unique' di email
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
-            'phone' => ['required', 'string', 'max:20'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'ends_with:@gmail.com'],
+            'phone' => ['required', 'numeric', 'digits_between:9,15'],
             'address' => ['required', 'string'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
+        ], [
+            'email.ends_with' => 'Maaf, pendaftaran saat ini wajib menggunakan email dari @gmail.com',
+            'phone.numeric' => 'Nomor telepon hanya boleh berisi angka saja.',
+            'phone.digits_between' => 'Nomor telepon harus berjumlah antara 9 sampai 15 angka.'
         ]);
 
         // 2. Cek apakah email sudah ada di database
