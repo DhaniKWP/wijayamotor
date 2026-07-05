@@ -77,11 +77,17 @@ class BookingController extends Controller
     // 2. HALAMAN MANAJEMEN BOOKING (TABEL FULL)
     public function index(Request $request)
     {
+        // Base Query untuk Hitung Statistik (supaya ngikutin filter tanggal)
+        $statsQuery = Booking::query();
+        if ($request->filled('date')) {
+            $statsQuery->whereDate('tanggal', $request->date);
+        }
+
         // Hitung Statistik untuk Stat Cards
-        $pending   = Booking::where('status', 'pending')->count();
-        $confirmed = Booking::where('status', 'confirmed')->count();
-        $process   = Booking::where('status', 'process')->count();
-        $done      = Booking::where('status', 'done')->count();
+        $pending   = (clone $statsQuery)->where('status', 'pending')->count();
+        $confirmed = (clone $statsQuery)->where('status', 'confirmed')->count();
+        $process   = (clone $statsQuery)->where('status', 'process')->count();
+        $done      = (clone $statsQuery)->where('status', 'done')->count();
 
         // Query Data dengan Filter
         $query = Booking::with(['user', 'vehicle', 'service']);
