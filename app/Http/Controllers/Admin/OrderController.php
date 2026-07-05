@@ -72,7 +72,7 @@ class OrderController extends Controller
             'payment_method' => 'required|in:cash,transfer',
         ]);
 
-        $order = Order::findOrFail($id);
+        $order = Order::with(['user', 'items.sparepart'])->findOrFail($id);
 
         if ($order->status !== 'confirmed') {
             return back()->withErrors(['error' => 'Order harus dikonfirmasi terlebih dahulu sebelum ditandai lunas.']);
@@ -83,8 +83,23 @@ class OrderController extends Controller
             'payment_method' => $request->payment_method,
         ]);
 
+        // Generate PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.order-invoice-print', compact('order'));
+
+        // Cek email user
+        if (!empty($order->user->email)) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($order->user->email)->send(new \App\Mail\OrderInvoiceMail($order, $pdf->output()));
+                $message = 'Order #ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . ' lunas dan Nota PDF otomatis dikirim ke email pelanggan.';
+            } catch (\Exception $e) {
+                $message = 'Order #ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . ' lunas, namun gagal mengirim email: ' . $e->getMessage();
+            }
+        } else {
+            $message = 'Order #ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . ' lunas. (Pelanggan tidak ada email, nota tidak dikirim).';
+        }
+
         return redirect()->route('admin.orders.index')
-                         ->with('success', 'Order #ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . ' berhasil ditandai lunas.');
+                         ->with('success', $message);
     }
 
     /**
