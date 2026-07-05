@@ -7,6 +7,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OrderConfirmedMail;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
