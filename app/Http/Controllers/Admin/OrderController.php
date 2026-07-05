@@ -16,30 +16,48 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Order::with(['user', 'items.sparepart'])->latest();
+        $statusTab = $request->get('status', 'pending');
+        $filterDate = $request->input('date');
 
-        // Filter by status
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        // Default ke hari ini jika BUKAN tab menunggu dan user belum milih tanggal
+        if ($statusTab != 'pending' && !$request->has('date')) {
+            $filterDate = Carbon::today()->format('Y-m-d');
         }
 
-        // Filter by date
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
+        $query = Order::with(['user', 'items.sparepart']);
+
+        if (!empty($filterDate)) {
+            $query->whereDate('created_at', $filterDate);
+        }
+
+        if ($statusTab != 'all') {
+            $query->where('status', $statusTab);
+        }
+
+        // Sort Order Cerdas
+        if ($statusTab === 'pending') {
+            $query->orderBy('created_at', 'asc'); // Siapa cepat dia dapat
+        } else {
+            $query->latest(); // Default terbaru
         }
 
         // Filter by search (nama customer / id order)
         if ($request->filled('search')) {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
-            })->orWhere('id', $request->search);
+            $query->where(function($q) use ($request) {
+                $q->whereHas('user', function ($qUser) use ($request) {
+                    $qUser->where('name', 'like', '%' . $request->search . '%')
+                      ->orWhere('email', 'like', '%' . $request->search . '%');
+                })->orWhere('id', $request->search);
+            });
         }
 
-        $orders = $query->paginate(20)->withQueryString();
+        $orders = $query->paginate(20)->appends([
+            'status' => $statusTab,
+            'date'   => $filterDate,
+            'search' => $request->search
+        ]);
 
         // Smart Statistik untuk Stat Cards
-        $filterDate = $request->input('date');
         $statDate = $filterDate ?: Carbon::today()->format('Y-m-d');
 
         // Menunggu & Siap Diambil: Tampilkan semua waktu, kecuali jika difilter
@@ -54,7 +72,7 @@ class OrderController extends Controller
         // Selesai: Selalu default ke Hari Ini
         $done = Order::whereDate('created_at', $statDate)->where('status', 'done')->count();
 
-        return view('admin.orders.index', compact('orders', 'pending', 'confirmed', 'done'));
+        return view('admin.orders.index', compact('orders', 'pending', 'confirmed', 'done', 'statusTab', 'filterDate'));
     }
 
     /**
