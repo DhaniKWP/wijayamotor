@@ -35,10 +35,18 @@ class OrderController extends Controller
             })->orWhere('id', $request->search);
         }
 
-        $orders    = $query->paginate(20)->withQueryString();
-        $pending   = Order::where('status', 'pending')->count();
-        $confirmed = Order::where('status', 'confirmed')->count();
-        $done      = Order::where('status', 'done')->count();
+        $orders = $query->paginate(20)->withQueryString();
+
+        // Base Query untuk Hitung Statistik (supaya ngikutin filter tanggal)
+        $statsQuery = Order::query();
+        if ($request->filled('date')) {
+            $statsQuery->whereDate('created_at', $request->date);
+        }
+
+        // Hitung Statistik
+        $pending = (clone $statsQuery)->where('status', 'pending')->count();
+        $confirmed = (clone $statsQuery)->where('status', 'confirmed')->count();
+        $done = (clone $statsQuery)->where('status', 'done')->count();
 
         return view('admin.orders.index', compact('orders', 'pending', 'confirmed', 'done'));
     }
