@@ -68,18 +68,13 @@
         <input type="date" name="date" value="{{ $currentDate }}"
                class="w-full sm:w-auto text-xs font-medium border-slate-200 rounded-lg focus:ring-danger focus:border-danger py-2.5">
                
-        @if($statusTab !== 'pending')
-        <select name="sort" class="w-full sm:w-auto text-xs font-medium border-slate-200 rounded-lg focus:ring-danger focus:border-danger py-2.5 appearance-none pr-8">
-            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terdekat ke Terbaru</option>
-            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru ke Terdekat</option>
-        </select>
-        @endif
+
         
         <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition shadow-sm">
             Filter
         </button>
         
-        @if(request()->anyFilled(['date', 'sort']) || (request()->has('date') && empty(request('date'))))
+        @if(request()->anyFilled(['date']) || (request()->has('date') && empty(request('date'))))
         <a href="{{ route('admin.bookings.index', ['status' => $statusTab, 'date' => '']) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition text-center whitespace-nowrap flex items-center">
             Reset
         </a>
