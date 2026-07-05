@@ -151,7 +151,7 @@
                             <div class="text-xs font-bold text-slate-800 truncate max-w-[150px]">{{ $svc->booking->user->name ?? 'Guest' }}</div>
                         </td>
                         <td class="px-5 py-3 text-right">
-                            <div class="text-sm font-black text-slate-800">Rp{{ number_format($svc->total_cost, 0, ',', '.') }}</div>
+                            <div class="text-sm font-black text-slate-800">Rp{{ number_format($svc->service_cost, 0, ',', '.') }}</div>
                             <div class="text-[10px] text-green-600 font-bold mt-0.5">Lunas via {{ ucfirst($svc->payment_method) }}</div>
                         </td>
                     </tr>
@@ -193,15 +193,16 @@
                             {{ $loop->iteration }}
                         </td>
                         <td class="px-5 py-3">
-                            <div class="text-xs font-bold text-slate-800">{{ $ord->created_at->format('d/m/Y') }}</div>
-                            <div class="text-[10px] text-slate-500 font-medium mt-0.5 uppercase">#ORD-{{ str_pad($ord->id, 5, '0', STR_PAD_LEFT) }}</div>
+                            <div class="text-xs font-bold text-slate-800">{{ $ord->date->format('d/m/Y') }}</div>
+                            <div class="text-[10px] text-slate-500 font-medium mt-0.5 uppercase">{{ $ord->invoice }}</div>
                         </td>
                         <td class="px-5 py-3">
-                            <div class="text-xs font-bold text-slate-800 truncate max-w-[150px]">{{ $ord->user->name ?? 'Pelanggan' }}</div>
+                            <div class="text-xs font-bold text-slate-800 truncate max-w-[150px]">{{ $ord->customer }}</div>
+                            <div class="text-[10px] text-slate-500 mt-1 truncate max-w-[200px]" title="{{ $ord->items_text }}">{{ Str::limit($ord->items_text, 40) }}</div>
                         </td>
                         <td class="px-5 py-3 text-right">
-                            <div class="text-sm font-black text-slate-800">Rp{{ number_format($ord->total_price, 0, ',', '.') }}</div>
-                            <div class="text-[10px] text-green-600 font-bold mt-0.5">Selesai</div>
+                            <div class="text-sm font-black text-slate-800">Rp{{ number_format($ord->total, 0, ',', '.') }}</div>
+                            <div class="text-[10px] text-green-600 font-bold mt-0.5">{{ $ord->status }}</div>
                         </td>
                     </tr>
                     @empty

@@ -108,7 +108,7 @@
                     <td>{{ $svc->booking->user->name ?? 'Guest' }}</td>
                     <td>{{ $svc->booking->vehicle->name ?? '-' }} ({{ $svc->booking->vehicle->plat_nomor ?? $svc->booking->vehicle->plate_number ?? '-' }})</td>
                     <td>{{ ucfirst($svc->payment_method) }}</td>
-                    <td class="text-right">{{ number_format($svc->total_cost, 0, ',', '.') }}</td>
+                    <td class="text-right">{{ number_format($svc->service_cost, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>
@@ -142,16 +142,12 @@
         <tbody>
             @forelse($orders as $ord)
                 <tr>
-                    <td>{{ $ord->created_at->format('d/m/Y H:i') }}</td>
-                    <td>#ORD-{{ str_pad($ord->id, 5, '0', STR_PAD_LEFT) }}</td>
-                    <td>{{ $ord->user->name ?? 'Pelanggan Umum' }}</td>
-                    <td>
-                        @foreach($ord->items as $item)
-                            {{ $item->sparepart->name ?? 'Unknown' }} (x{{ $item->quantity }})<br>
-                        @endforeach
-                    </td>
-                    <td>{{ ucfirst($ord->payment_method ?? 'cash') }}</td>
-                    <td class="text-right">{{ number_format($ord->total_price, 0, ',', '.') }}</td>
+                    <td>{{ $ord->date->format('d/m/Y H:i') }}</td>
+                    <td>{{ $ord->invoice }}</td>
+                    <td>{{ $ord->customer }}</td>
+                    <td>{{ $ord->items_text }}</td>
+                    <td>{{ ucfirst($ord->method) }}</td>
+                    <td class="text-right">{{ number_format($ord->total, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>

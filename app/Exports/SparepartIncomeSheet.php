@@ -28,34 +28,59 @@ class SparepartIncomeSheet implements FromCollection, WithHeadings, WithTitle, W
 
     public function collection()
     {
-        $orders = \App\Models\Order::with(['user', 'items.sparepart'])
+        $onlineOrders = \App\Models\Order::with(['user', 'items.sparepart'])
             ->where('status', 'done')
             ->whereBetween('created_at', [$this->startDate, $this->endDate])
             ->latest()
             ->get();
             
-        $this->totalIncome = $orders->sum('total_price');
+        $serviceSpareparts = \App\Models\ServiceTransaction::with(['booking', 'booking.user'])
+            ->where('payment_status', 'paid')
+            ->where('sparepart_cost', '>', 0)
+            ->whereBetween('created_at', [$this->startDate, $this->endDate])
+            ->latest()
+            ->get();
+            
+        $this->totalIncome = $onlineOrders->sum('total_price') + $serviceSpareparts->sum('sparepart_cost');
         
-        return $orders;
+        $combinedList = collect();
+        foreach($onlineOrders as $ord) {
+            $itemText = collect($ord->items)->map(function($i) {
+                return ($i->sparepart->name ?? 'Unknown') . ' (x' . $i->quantity . ')';
+            })->implode(', ');
+            
+            $combinedList->push((object)[
+                'date' => $ord->created_at,
+                'invoice' => 'ORD-' . str_pad($ord->id, 5, '0', STR_PAD_LEFT),
+                'customer' => $ord->user->name ?? 'Pelanggan Umum',
+                'items_text' => $itemText,
+                'total' => $ord->total_price,
+                'method' => $ord->payment_method ?? 'cash'
+            ]);
+        }
+        foreach($serviceSpareparts as $svc) {
+            $combinedList->push((object)[
+                'date' => $svc->created_at,
+                'invoice' => 'INV-' . str_pad($svc->id, 5, '0', STR_PAD_LEFT),
+                'customer' => $svc->booking->user->name ?? 'Pelanggan Bengkel',
+                'items_text' => 'Pembelian via Servis',
+                'total' => $svc->sparepart_cost,
+                'method' => $svc->payment_method ?? 'cash'
+            ]);
+        }
+        
+        return $combinedList->sortByDesc('date');
     }
 
-    public function map($order): array
+    public function map($item): array
     {
-        // Concatenate items
-        $itemsDesc = [];
-        foreach ($order->items as $item) {
-            $sparepartName = $item->sparepart->name ?? 'Unknown';
-            $itemsDesc[] = $sparepartName . ' (x' . $item->quantity . ')';
-        }
-        $itemsString = implode(', ', $itemsDesc);
-
         return [
-            $order->created_at->format('d/m/Y H:i'),
-            'ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT),
-            $order->user->name ?? 'Pelanggan Umum',
-            $itemsString,
-            ucfirst($order->payment_method ?? 'cash'),
-            $order->total_price,
+            $item->date->format('d/m/Y H:i'),
+            $item->invoice,
+            $item->customer,
+            $item->items_text,
+            ucfirst($item->method),
+            $item->total,
         ];
     }
 

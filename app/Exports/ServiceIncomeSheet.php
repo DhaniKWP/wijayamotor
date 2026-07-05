@@ -34,7 +34,7 @@ class ServiceIncomeSheet implements FromCollection, WithHeadings, WithTitle, Wit
             ->latest()
             ->get();
             
-        $this->totalIncome = $services->sum('total_cost');
+        $this->totalIncome = $services->sum('service_cost');
         
         return $services;
     }
@@ -48,7 +48,7 @@ class ServiceIncomeSheet implements FromCollection, WithHeadings, WithTitle, Wit
             $transaction->booking->vehicle->name ?? '-',
             $transaction->booking->vehicle->plat_nomor ?? $transaction->booking->vehicle->plate_number ?? '-',
             ucfirst($transaction->payment_method),
-            $transaction->total_cost,
+            $transaction->service_cost,
         ];
     }
 
