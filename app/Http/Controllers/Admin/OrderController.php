@@ -22,6 +22,11 @@ class OrderController extends Controller
             $query->where('status', $request->status);
         }
 
+        // Filter by date
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
         // Filter by search (nama customer / id order)
         if ($request->filled('search')) {
             $query->whereHas('user', function ($q) use ($request) {

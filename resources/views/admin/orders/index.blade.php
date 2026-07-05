@@ -57,13 +57,17 @@
         @if($currentStatus)
             <input type="hidden" name="status" value="{{ $currentStatus }}">
         @endif
+        
+        <input type="date" name="date" value="{{ request('date') }}"
+               class="w-full sm:w-auto text-xs font-medium border-slate-200 rounded-lg focus:ring-danger focus:border-danger py-2.5">
+               
         <input type="text" name="search" value="{{ request('search') }}"
                placeholder="Cari ID / Nama..."
                class="w-full sm:w-56 text-xs font-medium border-slate-200 rounded-lg focus:ring-danger focus:border-danger py-2.5">
         <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition shadow-sm whitespace-nowrap">
             Cari
         </button>
-        @if(request()->anyFilled(['search']))
+        @if(request()->anyFilled(['search', 'date']))
         <a href="{{ route('admin.orders.index', ['status' => $currentStatus]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition text-center whitespace-nowrap flex items-center">
             Reset
         </a>
@@ -98,7 +102,7 @@
                     </td>
                     <td class="px-5 py-4">
                         <p class="font-bold text-slate-800">{{ $order->user->name ?? '-' }}</p>
-                        <p class="text-xs text-slate-400 mt-0.5">{{ $order->user->email ?? '-' }}</p>
+                        <p class="text-xs text-slate-500 font-medium mt-0.5">{{ $order->user->phone ?? '-' }}</p>
                     </td>
                     <td class="px-5 py-4 max-w-[200px]">
                         <div class="space-y-1">
@@ -121,7 +125,7 @@
                     </td>
                     <td class="px-5 py-4">
                         <p class="font-black text-slate-800">Rp {{ number_format($order->total_price, 0, ',', '.') }}</p>
-                        @if($order->payment_method)
+                        @if($order->status === 'done' && $order->payment_method)
                             <p class="text-[10px] text-slate-400 mt-0.5 uppercase font-bold">{{ $order->payment_method === 'cash' ? 'Tunai' : 'Transfer' }}</p>
                         @endif
                     </td>
@@ -163,11 +167,13 @@
                         <div class="flex items-center justify-center gap-2">
 
                             {{-- Tombol Print Struk --}}
+                            @if($order->status !== 'cancelled')
                             <a href="{{ route('admin.orders.struk', $order->id) }}" target="_blank"
                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-black uppercase tracking-wider rounded-lg transition">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                                 Struk
                             </a>
+                            @endif
 
                             {{-- STEP 1: Konfirmasi Order (hanya kalau pending) --}}
                             @if($order->status === 'pending')
