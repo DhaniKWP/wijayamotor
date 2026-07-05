@@ -172,7 +172,12 @@ class TransactionController extends Controller
      */
     public function markPaid($id)
     {
-        $booking = Booking::with('transaction')->findOrFail($id);
+        $booking = Booking::with([
+            'user',
+            'vehicle',
+            'service',
+            'transaction.items.sparepart',
+        ])->findOrFail($id);
 
         if (!$booking->transaction) {
             return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
@@ -180,8 +185,24 @@ class TransactionController extends Controller
 
         $booking->transaction->update(['payment_status' => 'paid']);
 
+        // Generate PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.invoice-print', compact('booking'));
+        
+        // Cek email user
+        if (!empty($booking->user->email)) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($booking->user->email)->send(new \App\Mail\InvoiceMail($booking, $pdf->output()));
+                $message = 'Pembayaran berhasil ditandai LUNAS dan Invoice PDF otomatis dikirim ke email pelanggan.';
+            } catch (\Exception $e) {
+                // If email fails, don't break the transaction update
+                $message = 'Pembayaran LUNAS, namun gagal mengirim email ke pelanggan: ' . $e->getMessage();
+            }
+        } else {
+            $message = 'Pembayaran LUNAS. (Pelanggan tidak memiliki email terdaftar, invoice tidak dikirim).';
+        }
+
         return redirect()->route('admin.bookings.invoice', $booking->id)
-            ->with('success', 'Pembayaran berhasil ditandai LUNAS.');
+            ->with('success', $message);
     }
 
     /**
