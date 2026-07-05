@@ -93,7 +93,7 @@ class TransactionController extends Controller
                 'service_cost'   => $serviceCost,
                 'sparepart_cost' => 0,
                 'total_cost'     => 0,
-                'payment_status' => 'pending',
+                'payment_status' => 'paid',
                 'payment_method' => $request->payment_method,
             ]);
 
