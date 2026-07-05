@@ -77,10 +77,18 @@ class BookingController extends Controller
     // 2. HALAMAN MANAJEMEN BOOKING (TABEL FULL)
     public function index(Request $request)
     {
+        $statusTab = $request->get('status', 'pending'); // Default langsung masuk ke "Menunggu"
+        
+        $filterDate = $request->input('date');
+        // Default ke hari ini jika BUKAN tab menunggu dan user belum milih tanggal (fresh load)
+        if ($statusTab != 'pending' && !$request->has('date')) {
+            $filterDate = Carbon::today()->format('Y-m-d');
+        }
+
         // Base Query untuk Hitung Statistik (supaya ngikutin filter tanggal)
         $statsQuery = Booking::query();
-        if ($request->filled('date')) {
-            $statsQuery->whereDate('tanggal', $request->date);
+        if (!empty($filterDate)) {
+            $statsQuery->whereDate('tanggal', $filterDate);
         }
 
         // Hitung Statistik untuk Stat Cards
@@ -92,35 +100,36 @@ class BookingController extends Controller
         // Query Data dengan Filter
         $query = Booking::with(['user', 'vehicle', 'service']);
 
-        // Filter by Date
-        if ($request->filled('date')) {
-            $query->whereDate('tanggal', $request->date);
+        if (!empty($filterDate)) {
+            $query->whereDate('tanggal', $filterDate);
         }
 
-        // Sort Order
-        $sortOrder = $request->get('sort', 'asc'); // default asc
-        if ($sortOrder === 'desc') {
-            $query->orderBy('tanggal', 'desc')->orderBy('jam', 'desc');
-        } else {
-            $query->orderBy('tanggal', 'asc')->orderBy('jam', 'asc');
-        }
-
-        // Default tab is 'all' (empty string)
-        $statusTab = $request->get('status', '');
-
-        if ($statusTab != '') {
+        if ($statusTab != 'all') {
             $query->where('status', $statusTab);
+        }
+
+        // Sort Order Cerdas
+        if ($statusTab === 'pending') {
+            // Menunggu: Siapa cepat booking dia dapat (diurutkan berdasarkan waktu dibuat)
+            $query->orderBy('created_at', 'asc');
+        } else {
+            // Selain menunggu: Berdasarkan jadwal servis (waktu dan jam) terdekat
+            $sortOrder = $request->get('sort', 'asc'); // default asc
+            if ($sortOrder === 'desc') {
+                $query->orderBy('tanggal', 'desc')->orderBy('jam', 'desc');
+            } else {
+                $query->orderBy('tanggal', 'asc')->orderBy('jam', 'asc');
+            }
         }
 
         $bookings = $query->paginate(15);
         $bookings->appends([
             'status' => $statusTab,
-            'date' => $request->date,
-            'sort' => $sortOrder
-        ]); // Keep query string in pagination
+            'date'   => $filterDate,
+            'sort'   => $request->get('sort', 'asc')
+        ]);
 
-        // Arahin ke folder admin/booking/index.blade.php
-        return view('admin.booking.index', compact('bookings', 'pending', 'confirmed', 'process', 'done'));
+        return view('admin.booking.index', compact('bookings', 'pending', 'confirmed', 'process', 'done', 'statusTab', 'filterDate'));
     }
 
     // FUNGSI AKSI STATUS (TETAP SAMA)

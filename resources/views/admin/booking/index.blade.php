@@ -35,11 +35,14 @@
 
 {{-- Filter & Tabs --}}
 <div class="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm mb-6 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-    @php $currentStatus = request('status', ''); @endphp
+    @php 
+        $currentStatus = $statusTab ?? request('status', 'pending'); 
+        $currentDate = $filterDate ?? request('date');
+    @endphp
     
     <!-- TABS -->
     <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200/80 shadow-inner overflow-x-auto">
-        <a href="{{ route('admin.bookings.index', array_merge(request()->query(), ['status' => ''])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 {{ $currentStatus == '' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+        <a href="{{ route('admin.bookings.index', array_merge(request()->query(), ['status' => 'all'])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 {{ $currentStatus == 'all' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
             Semua
         </a>
         <a href="{{ route('admin.bookings.index', array_merge(request()->query(), ['status' => 'pending'])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentStatus == 'pending' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
@@ -54,31 +57,30 @@
         <a href="{{ route('admin.bookings.index', array_merge(request()->query(), ['status' => 'done'])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentStatus == 'done' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
             <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Selesai
         </a>
-        <a href="{{ route('admin.bookings.index', array_merge(request()->query(), ['status' => 'cancelled'])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $currentStatus == 'cancelled' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
+        <a href="{{ route('admin.bookings.index', array_merge(request()->query(), ['status' => 'cancelled'])) }}" class="px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 {{ $statusTab == 'cancelled' ? 'bg-white text-danger shadow-sm ring-1 ring-slate-200/50' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/60' }}">
             <div class="w-1.5 h-1.5 rounded-full bg-slate-500"></div> Batal
         </a>
     </div>
 
-    <!-- DATE & SORT FILTERS -->
+    <!-- FILTER DATE & SORT -->
     <form action="{{ route('admin.bookings.index') }}" method="GET" class="flex flex-1 sm:flex-none gap-2">
-        @if($currentStatus)
-            <input type="hidden" name="status" value="{{ $currentStatus }}">
-        @endif
-        
-        <input type="date" name="date" value="{{ request('date') }}"
+        <input type="hidden" name="status" value="{{ $statusTab }}">
+        <input type="date" name="date" value="{{ $currentDate }}"
                class="w-full sm:w-auto text-xs font-medium border-slate-200 rounded-lg focus:ring-danger focus:border-danger py-2.5">
                
-        <select name="sort" class="w-full sm:w-auto text-xs font-medium border-slate-200 rounded-lg focus:ring-danger focus:border-danger py-2.5 bg-white">
-            <option value="asc" {{ request('sort', 'asc') == 'asc' ? 'selected' : '' }}>Terlama ke Terbaru</option>
-            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru ke Terlama</option>
+        @if($statusTab !== 'pending')
+        <select name="sort" class="w-full sm:w-auto text-xs font-medium border-slate-200 rounded-lg focus:ring-danger focus:border-danger py-2.5 appearance-none pr-8">
+            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terdekat ke Terbaru</option>
+            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru ke Terdekat</option>
         </select>
+        @endif
         
-        <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition shadow-sm whitespace-nowrap">
+        <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition shadow-sm">
             Filter
         </button>
         
-        @if(request()->anyFilled(['date', 'sort']) && (request('sort') != 'asc' || request('date')))
-        <a href="{{ route('admin.bookings.index', ['status' => $currentStatus]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition text-center whitespace-nowrap flex items-center">
+        @if(request()->anyFilled(['date', 'sort']) || (request()->has('date') && empty(request('date'))))
+        <a href="{{ route('admin.bookings.index', ['status' => $statusTab, 'date' => '']) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg transition text-center whitespace-nowrap flex items-center">
             Reset
         </a>
         @endif
