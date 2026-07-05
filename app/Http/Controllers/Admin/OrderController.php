@@ -37,16 +37,21 @@ class OrderController extends Controller
 
         $orders = $query->paginate(20)->withQueryString();
 
-        // Base Query untuk Hitung Statistik (supaya ngikutin filter tanggal)
-        $statsQuery = Order::query();
+        // Smart Statistik untuk Stat Cards
+        $filterDate = $request->input('date');
+        $statDate = $filterDate ?: Carbon::today()->format('Y-m-d');
+
+        // Menunggu & Siap Diambil: Tampilkan semua waktu, kecuali jika difilter
         if ($request->filled('date')) {
-            $statsQuery->whereDate('created_at', $request->date);
+            $pending = Order::whereDate('created_at', $filterDate)->where('status', 'pending')->count();
+            $confirmed = Order::whereDate('created_at', $filterDate)->where('status', 'confirmed')->count();
+        } else {
+            $pending = Order::where('status', 'pending')->count();
+            $confirmed = Order::where('status', 'confirmed')->count();
         }
 
-        // Hitung Statistik
-        $pending = (clone $statsQuery)->where('status', 'pending')->count();
-        $confirmed = (clone $statsQuery)->where('status', 'confirmed')->count();
-        $done = (clone $statsQuery)->where('status', 'done')->count();
+        // Selesai: Selalu default ke Hari Ini
+        $done = Order::whereDate('created_at', $statDate)->where('status', 'done')->count();
 
         return view('admin.orders.index', compact('orders', 'pending', 'confirmed', 'done'));
     }

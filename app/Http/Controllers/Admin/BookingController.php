@@ -85,17 +85,20 @@ class BookingController extends Controller
             $filterDate = Carbon::today()->format('Y-m-d');
         }
 
-        // Base Query untuk Hitung Statistik (supaya ngikutin filter tanggal)
-        $statsQuery = Booking::query();
-        if (!empty($filterDate)) {
-            $statsQuery->whereDate('tanggal', $filterDate);
+        // Smart Statistik untuk Stat Cards
+        $statDate = $filterDate ?: Carbon::today()->format('Y-m-d');
+
+        // Menunggu: Jika user secara spesifik milih tanggal, tampilkan sesuai tanggal. Jika tidak, tampilkan SEMUA yang butuh ACC.
+        if ($request->has('date') && !empty($request->input('date'))) {
+            $pending = Booking::whereDate('tanggal', $filterDate)->where('status', 'pending')->count();
+        } else {
+            $pending = Booking::where('status', 'pending')->count();
         }
 
-        // Hitung Statistik untuk Stat Cards
-        $pending   = (clone $statsQuery)->where('status', 'pending')->count();
-        $confirmed = (clone $statsQuery)->where('status', 'confirmed')->count();
-        $process   = (clone $statsQuery)->where('status', 'process')->count();
-        $done      = (clone $statsQuery)->where('status', 'done')->count();
+        // Status operasional lainnya selalu default ke Hari Ini (atau tanggal yang difilter)
+        $confirmed = Booking::whereDate('tanggal', $statDate)->where('status', 'confirmed')->count();
+        $process   = Booking::whereDate('tanggal', $statDate)->where('status', 'process')->count();
+        $done      = Booking::whereDate('tanggal', $statDate)->where('status', 'done')->count();
 
         // Query Data dengan Filter
         $query = Booking::with(['user', 'vehicle', 'service']);
