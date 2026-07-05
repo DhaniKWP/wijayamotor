@@ -77,6 +77,12 @@ class BookingController extends Controller
     // 2. HALAMAN MANAJEMEN BOOKING (TABEL FULL)
     public function index(Request $request)
     {
+        // Hitung Statistik untuk Stat Cards
+        $pending   = Booking::where('status', 'pending')->count();
+        $confirmed = Booking::where('status', 'confirmed')->count();
+        $process   = Booking::where('status', 'process')->count();
+        $done      = Booking::where('status', 'done')->count();
+
         // Query Data dengan Filter
         $query = Booking::with(['user', 'vehicle', 'service']);
 
@@ -93,14 +99,10 @@ class BookingController extends Controller
             $query->orderBy('tanggal', 'asc')->orderBy('jam', 'asc');
         }
 
-        // Default tab is 'active' if not specified and not explicitly 'all'
-        $statusTab = $request->get('status', 'active');
+        // Default tab is 'all' (empty string)
+        $statusTab = $request->get('status', '');
 
-        if ($statusTab == 'active') {
-            $query->whereIn('status', ['pending', 'confirmed', 'process']);
-        } elseif ($statusTab == 'history') {
-            $query->whereIn('status', ['done', 'cancelled', 'rejected']);
-        } elseif ($statusTab != 'all') {
+        if ($statusTab != '') {
             $query->where('status', $statusTab);
         }
 
@@ -112,7 +114,7 @@ class BookingController extends Controller
         ]); // Keep query string in pagination
 
         // Arahin ke folder admin/booking/index.blade.php
-        return view('admin.booking.index', compact('bookings'));
+        return view('admin.booking.index', compact('bookings', 'pending', 'confirmed', 'process', 'done'));
     }
 
     // FUNGSI AKSI STATUS (TETAP SAMA)
