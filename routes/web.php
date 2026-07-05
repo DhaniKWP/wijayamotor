@@ -156,6 +156,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // PESANAN SPAREPART (Order dari customer)
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::post('/orders/{id}/confirm', [AdminOrderController::class, 'confirm'])->name('orders.confirm');
+    Route::post('/orders/{id}/cancel', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
     Route::post('/orders/{id}/mark-done', [AdminOrderController::class, 'markDone'])->name('orders.mark.done');
     Route::get('/orders/{id}/struk', [AdminOrderController::class, 'struk'])->name('orders.struk');
 

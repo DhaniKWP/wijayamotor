@@ -103,6 +103,38 @@ class OrderController extends Controller
     }
 
     /**
+     * Membatalkan order dan mengembalikan stok
+     */
+    public function cancel(Request $request, $id)
+    {
+        $request->validate([
+            'cancel_reason' => 'required|string|max:255',
+        ]);
+
+        $order = Order::with(['items.sparepart'])->findOrFail($id);
+
+        if ($order->status !== 'pending') {
+            return back()->withErrors(['error' => 'Hanya order dengan status menunggu yang bisa dibatalkan.']);
+        }
+
+        // Kembalikan stok
+        foreach ($order->items as $item) {
+            if ($item->sparepart) {
+                $item->sparepart->increment('stock', $item->qty);
+            }
+        }
+
+        // Update status order
+        $order->update([
+            'status' => 'cancelled',
+            'cancel_reason' => $request->cancel_reason,
+        ]);
+
+        return redirect()->route('admin.orders.index')
+                         ->with('success', 'Order #ORD-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . ' berhasil dibatalkan. Stok barang telah dikembalikan.');
+    }
+
+    /**
      * Halaman print struk / nota pembelian sparepart.
      */
     public function struk($id)
