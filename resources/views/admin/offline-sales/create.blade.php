@@ -5,7 +5,7 @@
 
 @section('content')
 
-<div x-data="kasirPOS()" class="flex gap-5 h-[calc(100vh-9rem)]">
+<div x-data="kasirPOS()" x-init="$watch('search', value => filterSearch(value))" class="flex gap-5 h-[calc(100vh-9rem)]">
 
     {{-- KIRI: Katalog Produk --}}
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -24,8 +24,9 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 @foreach($spareparts as $sp)
                 <div
+                    data-name="{{ strtolower($sp->name) }}"
                     @click="addToCart({{ $sp->id }}, '{{ addslashes($sp->name) }}', {{ $sp->price }}, {{ $sp->stock }}, '{{ $sp->image ? asset('uploads/spareparts/' . $sp->image) : asset('images/no-image.png') }}')"
-                    class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand/40 cursor-pointer transition-all duration-200 overflow-hidden group relative select-none"
+                    class="catalog-card bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand/40 cursor-pointer transition-all duration-200 overflow-hidden group relative select-none"
                     :class="{{ $sp->stock }} === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-0.5 active:scale-95'"
                 >
                     {{-- Badge Stok Habis --}}
@@ -207,6 +208,21 @@ function kasirPOS() {
             return this.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
         },
 
+        filterSearch(q) {
+            q = q.toLowerCase();
+            let count = 0;
+            document.querySelectorAll('.catalog-card').forEach(card => {
+                const name = card.dataset.name || '';
+                if (name.includes(q)) {
+                    card.style.display = '';
+                    count++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            this.filteredCount = count;
+        },
+
         addToCart(id, name, price, stock, image) {
             if (stock <= 0) return;
 
@@ -280,26 +296,6 @@ function kasirPOS() {
     }
 }
 
-// Filter sparepart cards by search
-document.addEventListener('alpine:init', () => {
-    Alpine.effect(() => {
-        // Filtering handled by CSS visibility via JS
-    });
-});
-
-// Live search filter untuk card katalog
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('input[x-model="search"]');
-    if (!searchInput) return;
-
-    searchInput.addEventListener('input', function() {
-        const q = this.value.toLowerCase();
-        document.querySelectorAll('.catalog-card').forEach(card => {
-            const name = card.dataset.name.toLowerCase();
-            card.style.display = name.includes(q) ? '' : 'none';
-        });
-    });
-});
 </script>
 
 <style>
