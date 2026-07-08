@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ServiceTransaction;
 use App\Models\Order;
+use App\Models\OfflineSale;
 use Carbon\Carbon;
 
 class ReportController extends Controller
@@ -49,36 +50,60 @@ class ReportController extends Controller
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->latest()
                 ->get();
+
+            // Data dari Kasir Offline
+            $offlineSales = OfflineSale::with(['admin', 'items.sparepart'])
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->latest()
+                ->get();
                 
-            $totalOrderIncome = $onlineOrders->sum('total_price') + $serviceSpareparts->sum('sparepart_cost');
+            $totalOrderIncome = $onlineOrders->sum('total_price') 
+                + $serviceSpareparts->sum('sparepart_cost')
+                + $offlineSales->sum('total_amount');
             
             $combinedList = collect();
             foreach($onlineOrders as $ord) {
                 $itemText = collect($ord->items)->map(function($i) {
-                    return ($i->sparepart->name ?? 'Unknown') . ' (x' . $i->quantity . ')';
+                    return ($i->sparepart->name ?? 'Unknown') . ' (x' . $i->qty . ')';
                 })->implode(', ');
                 
                 $combinedList->push((object)[
-                    'type' => 'online',
-                    'date' => $ord->created_at,
-                    'invoice' => '#ORD-' . str_pad($ord->id, 5, '0', STR_PAD_LEFT),
-                    'customer' => $ord->user->name ?? 'Pelanggan Umum',
+                    'type'       => 'online',
+                    'date'       => $ord->created_at,
+                    'invoice'    => '#ORD-' . str_pad($ord->id, 5, '0', STR_PAD_LEFT),
+                    'customer'   => $ord->user->name ?? 'Pelanggan Umum',
                     'items_text' => $itemText,
-                    'total' => $ord->total_price,
-                    'status' => 'Pesanan Online',
-                    'method' => $ord->payment_method ?? 'cash'
+                    'total'      => $ord->total_price,
+                    'status'     => 'Pesanan Online',
+                    'method'     => $ord->payment_method ?? 'cash'
                 ]);
             }
             foreach($serviceSpareparts as $svc) {
                 $combinedList->push((object)[
-                    'type' => 'offline',
-                    'date' => $svc->created_at,
-                    'invoice' => '#INV-' . str_pad($svc->id, 5, '0', STR_PAD_LEFT),
-                    'customer' => $svc->booking->user->name ?? 'Pelanggan Bengkel',
+                    'type'       => 'offline',
+                    'date'       => $svc->created_at,
+                    'invoice'    => '#INV-' . str_pad($svc->id, 5, '0', STR_PAD_LEFT),
+                    'customer'   => $svc->booking->user->name ?? 'Pelanggan Bengkel',
                     'items_text' => 'Pembelian via Servis',
-                    'total' => $svc->sparepart_cost,
-                    'status' => 'Servis Offline',
-                    'method' => $svc->payment_method ?? 'cash'
+                    'total'      => $svc->sparepart_cost,
+                    'status'     => 'Servis Offline',
+                    'method'     => $svc->payment_method ?? 'cash'
+                ]);
+            }
+            foreach($offlineSales as $os) {
+                $itemText = $os->items->map(function($i) {
+                    return ($i->sparepart->name ?? 'Unknown') . ' (x' . $i->qty . ')';
+                })->implode(', ');
+
+                $combinedList->push((object)[
+                    'type'       => 'kasir',
+                    'date'       => $os->created_at,
+                    'invoice'    => '#OFF-' . str_pad($os->id, 5, '0', STR_PAD_LEFT),
+                    'customer'   => $os->customer_name,
+                    'items_text' => $itemText,
+                    'total'      => $os->total_amount,
+                    'status'     => 'Kasir Offline',
+                    'method'     => $os->payment_method
                 ]);
             }
             $orders = $combinedList->sortByDesc('date');

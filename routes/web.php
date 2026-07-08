@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\SparepartController as AdminSparepartController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\OfflineSaleController;
 use App\Http\Controllers\Customer\DashboardController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Models\Sparepart;
@@ -164,6 +165,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/export', [ReportController::class, 'export'])->name('laporan.export');
     Route::get('/laporan/export-pdf', [ReportController::class, 'exportPdf'])->name('laporan.export.pdf');
+
+    // PENJUALAN OFFLINE (Kasir)
+    Route::get('/offline-sales', [OfflineSaleController::class, 'index'])->name('offline-sales.index');
+    Route::get('/offline-sales/create', [OfflineSaleController::class, 'create'])->name('offline-sales.create');
+    Route::post('/offline-sales', [OfflineSaleController::class, 'store'])->name('offline-sales.store');
+    Route::get('/offline-sales/{id}', [OfflineSaleController::class, 'show'])->name('offline-sales.show');
 
 });
 
