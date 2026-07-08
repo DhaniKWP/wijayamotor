@@ -69,6 +69,12 @@ class TransactionController extends Controller
     {
         $booking = Booking::findOrFail($id);
 
+        // Mencegah duplicate entry jika admin ter-refresh atau klik Selesai 2 kali
+        if ($booking->status === 'done' || $booking->transaction) {
+            return redirect()->route('admin.bookings.invoice', $booking->id)
+                ->with('success', 'Servis ini sudah diselesaikan sebelumnya.');
+        }
+
         $request->validate([
             'payment_method'     => 'required|in:cash,transfer',
             'items'              => 'nullable|array',
