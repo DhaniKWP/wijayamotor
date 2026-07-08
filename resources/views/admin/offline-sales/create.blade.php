@@ -239,14 +239,39 @@ function kasirPOS() {
         },
 
         resetCart() {
-            if (confirm('Kosongkan semua item di keranjang?')) {
-                this.cart = [];
-            }
+            Swal.fire({
+                title: 'Kosongkan Keranjang?',
+                text: "Semua item akan dihapus dari keranjang.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Ya, Kosongkan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.cart = [];
+                }
+            });
         },
 
         submitSale(form) {
             if (this.cart.length === 0) return;
-            form.submit();
+            
+            Swal.fire({
+                title: 'Selesaikan Penjualan?',
+                html: `Total Belanja: <b class="text-brand text-lg">Rp ${this.formatRupiah(this.grandTotal)}</b><br><br>Pastikan item dan uang yang diterima sudah benar.`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Ya, Selesaikan & Cetak!',
+                cancelButtonText: 'Kembali'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         },
 
         formatRupiah(val) {
