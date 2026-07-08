@@ -24,7 +24,7 @@
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 @foreach($spareparts as $sp)
                 <div
-                    @click="addToCart({{ $sp->id }}, '{{ addslashes($sp->name) }}', {{ $sp->price }}, {{ $sp->stock }}, '{{ $sp->image ? asset('storage/' . $sp->image) : asset('images/no-image.png') }}')"
+                    @click="addToCart({{ $sp->id }}, '{{ addslashes($sp->name) }}', {{ $sp->price }}, {{ $sp->stock }}, '{{ $sp->image ? asset('uploads/spareparts/' . $sp->image) : asset('images/no-image.png') }}')"
                     class="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand/40 cursor-pointer transition-all duration-200 overflow-hidden group relative select-none"
                     :class="{{ $sp->stock }} === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-0.5 active:scale-95'"
                 >
@@ -45,7 +45,7 @@
                     {{-- Gambar --}}
                     <div class="aspect-square bg-slate-50 overflow-hidden">
                         @if($sp->image)
-                            <img src="{{ asset('storage/' . $sp->image) }}" alt="{{ $sp->name }}"
+                            <img src="{{ asset('uploads/spareparts/' . $sp->image) }}" alt="{{ $sp->name }}"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                         @else
                             <div class="w-full h-full flex items-center justify-center">
