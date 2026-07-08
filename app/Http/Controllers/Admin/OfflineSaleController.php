@@ -39,7 +39,8 @@ class OfflineSaleController extends Controller
      */
     public function create()
     {
-        $spareparts = Sparepart::where('stock', '>', 0)->orderBy('name')->get();
+        // Tampilkan semua sparepart, yang ada stok duluan
+        $spareparts = Sparepart::orderByDesc('stock')->orderBy('name')->get();
         return view('admin.offline-sales.create', compact('spareparts'));
     }
 
