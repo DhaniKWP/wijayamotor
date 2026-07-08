@@ -163,8 +163,25 @@ class TransactionController extends Controller
             $booking->update(['status' => 'done']);
         });
 
+        // Reload relations needed for PDF
+        $booking->load(['user', 'vehicle', 'service', 'transaction.items.sparepart']);
+
+        // Generate PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.invoice-print', compact('booking'));
+        
+        // Kirim email ke user
+        $message = 'Servis selesai dan Invoice telah dibuat.';
+        if (!empty($booking->user->email)) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($booking->user->email)->send(new \App\Mail\InvoiceMail($booking, $pdf->output()));
+                $message = 'Servis selesai, pembayaran LUNAS, dan Invoice PDF otomatis dikirim ke email pelanggan.';
+            } catch (\Exception $e) {
+                $message = 'Servis selesai & LUNAS, namun gagal mengirim email ke pelanggan: ' . $e->getMessage();
+            }
+        }
+
         return redirect()->route('admin.bookings.invoice', $booking->id)
-            ->with('success', 'Servis selesai! Invoice telah dibuat.');
+            ->with('success', $message);
     }
 
     /**
